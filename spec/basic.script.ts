@@ -4,7 +4,7 @@ import {
   relationship,
   getAttributeNames,
   getRelationshipNames,
-  fromJsonApiResponse,
+  fromJsonApiTopLevel,
   toJsonApi,
   JsonapiEntity,
   ATTRIBUTES_MAP,
@@ -55,4 +55,4 @@ console.log('toJsonApi', jsonify(toJsonApi(person)));
 const personJsonapi = { data: toJsonApi(person) };
 const address1Jsonapi = toJsonApi(address1);
 const address2Jsonapi = toJsonApi(address2);
-console.log('fromJsonApi', jsonify(fromJsonApiResponse(personJsonapi, [address1Jsonapi, address2Jsonapi])));
+console.log('fromJsonApi', jsonify(fromJsonApiTopLevel(personJsonapi, [address1Jsonapi, address2Jsonapi])));

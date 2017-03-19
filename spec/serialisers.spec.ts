@@ -1,5 +1,7 @@
 import {
+  byTypeAndId,
   fromJsonApiResourceObject,
+  jsonapiIdentifier,
   toJsonApi,
 } from '../src';
 
@@ -92,10 +94,39 @@ describe('serialisers', () => {
       expect(address1FromJsonapi).toEqual(address1);
     });
 
-    it('should deserialise an object with relationships', () => {
-      const person1FromJsonapi: Person = fromJsonApiResourceObject(person1Jsonapi, {});
+    it('should deserialise an object with unresolved relationships omitted', () => {
+      const person1FromJsonapi: Person = fromJsonApiResourceObject(person1Jsonapi, {}, false);
       expect(person1FromJsonapi).toEqual(jasmine.any(Person));
-      expect(person1FromJsonapi).toEqual(person1);
+      expect(person1FromJsonapi.id).toEqual('person1');
+      expect(person1FromJsonapi.firstName).toEqual('David');
+      expect(person1FromJsonapi.surname).toEqual('Brooks');
+      expect(person1FromJsonapi.address).toBeUndefined();
+      expect(person1FromJsonapi.old_addresses).toEqual([]);
+    });
+
+    it('should deserialise an object with unresolved relationships left as identifiers', () => {
+      const person1FromJsonapi: Person = fromJsonApiResourceObject(person1Jsonapi, {}, true);
+      expect(person1FromJsonapi).toEqual(jasmine.any(Person));
+      expect(person1FromJsonapi.id).toEqual('person1');
+      expect(person1FromJsonapi.firstName).toEqual('David');
+      expect(person1FromJsonapi.surname).toEqual('Brooks');
+      expect(person1FromJsonapi.address).toEqual(jsonapiIdentifier(address1));
+      expect(person1FromJsonapi.old_addresses).toEqual([jsonapiIdentifier(address2)]);
+    });
+
+    it('should deserialise an object with resolvable relationships', () => {
+      const INCLUDED = {
+        [byTypeAndId(address1)]: address1Jsonapi,
+        [byTypeAndId(address2)]: address2Jsonapi,
+      };
+
+      const person1FromJsonapi: Person = fromJsonApiResourceObject(person1Jsonapi, INCLUDED, true);
+      expect(person1FromJsonapi).toEqual(jasmine.any(Person));
+      expect(person1FromJsonapi.id).toEqual('person1');
+      expect(person1FromJsonapi.firstName).toEqual('David');
+      expect(person1FromJsonapi.surname).toEqual('Brooks');
+      expect(person1FromJsonapi.address).toEqual(address1);
+      expect(person1FromJsonapi.old_addresses).toEqual([address2]);
     });
   });
 });

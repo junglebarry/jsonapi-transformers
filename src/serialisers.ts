@@ -16,17 +16,18 @@ import {
 
 import {
   isEmptyObject,
+  isDefined,
   keyBy,
 } from './utils';
 
 declare const console;
 
-export function toJsonApi(target: ResourceIdentifier) {
+export function toJsonApi(target: ResourceIdentifier): ResourceObject {
   const attrs = getAttributeNames(target.constructor);
   const attributeReducer = (soFar, attr) => {
     const targetAttribute = target[attr];
-    return (!targetAttribute) ? soFar : Object.assign(soFar, {
-      [attr]: target[attr],
+    return !isDefined(targetAttribute) ? soFar : Object.assign(soFar, {
+      [attr]: targetAttribute,
     });
   }
   const attributes = Array.from(attrs).reduce(attributeReducer, {});
@@ -35,7 +36,7 @@ export function toJsonApi(target: ResourceIdentifier) {
 
   const relationshipReducer = (soFar, relationshipName) => {
     const linkage = jsonapiLinkage(target[relationshipName]);
-    return (typeof linkage === 'undefined') ? soFar : Object.assign(soFar, {
+    return !isDefined(linkage) ? soFar : Object.assign(soFar, {
       [relationshipName]: { data: linkage },
     });
   }
@@ -53,7 +54,7 @@ export function toJsonApi(target: ResourceIdentifier) {
   });
 }
 
-function byTypeAndId(obj: ResourceObject): string {
+export function byTypeAndId(obj: ResourceObject): string {
   return JSON.stringify(jsonapiIdentifier(obj));
 }
 
@@ -76,7 +77,7 @@ export function fromJsonApiTopLevel(topLevel: TopLevel, resourceObjects?: Resour
 }
 
 
-export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resourceObjectsByTypeAndId: IncludedLookup): any {
+export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resourceObjectsByTypeAndId: IncludedLookup, whenNoIncludeRetainIdentifier: boolean = false): any {
 
   // deconstruct primary data and remap into an instance of the chosen type
   const {
@@ -101,31 +102,51 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
 
   // transfer attributes from JSON API to target
   attributeNames.forEach(attribute => {
-    instance[attribute] = attributes[attribute];
+    const sourceAttribute = attributes[attribute];
+    if (isDefined(sourceAttribute)) {
+      instance[attribute] = attributes[attribute];
+    }
   });
+
+  const extractResourceObject = (linkage) => extractResourceObjectOrObjectsFromRelationship(
+    linkage,
+    resourceObjectsByTypeAndId,
+    whenNoIncludeRetainIdentifier
+  );
 
   relationshipNames.forEach(relationship => {
      const relationshipIdentifierData = relationships[relationship];
      const { data = undefined } = relationshipIdentifierData || {};
      if (data) {
-       instance[relationship] = extractResourceObjectOrObjectsFromRelationship(data, resourceObjectsByTypeAndId);
+       instance[relationship] = extractResourceObject(data);
      }
   });
 
   return instance;
 }
 
-function extractResourceObjectFromRelationship(relationIdentifier: ResourceIdentifier, resourceObjectsByTypeAndId: IncludedLookup) {
+function extractResourceObjectFromRelationship(relationIdentifier: ResourceIdentifier, resourceObjectsByTypeAndId: IncludedLookup, whenUndefinedRetainIdentifier: boolean) {
   const relationId = byTypeAndId(relationIdentifier);
-  const includedForRelationId = resourceObjectsByTypeAndId[relationId];
-  return !includedForRelationId ? undefined : fromJsonApiResourceObject(includedForRelationId, resourceObjectsByTypeAndId);
+  const includedForRelationId = relationId ? resourceObjectsByTypeAndId[relationId] : undefined;
+
+  if (!includedForRelationId) {
+    return whenUndefinedRetainIdentifier ? relationIdentifier : undefined;
+  }
+
+  return fromJsonApiResourceObject(includedForRelationId, resourceObjectsByTypeAndId);
 }
 
-function extractResourceObjectOrObjectsFromRelationship(resourceLinkage: ResourceLinkage, resourceObjectsByTypeAndId: IncludedLookup) {
+function extractResourceObjectOrObjectsFromRelationship(resourceLinkage: ResourceLinkage, resourceObjectsByTypeAndId: IncludedLookup, whenUndefinedRetainIdentifier: boolean) {
+  const extractResourceObject = (linkage) => extractResourceObjectFromRelationship(
+    linkage,
+    resourceObjectsByTypeAndId,
+    whenUndefinedRetainIdentifier
+  );
+
   if (Array.isArray(resourceLinkage)) {
-    return resourceLinkage.map(linkage => extractResourceObjectFromRelationship(linkage, resourceObjectsByTypeAndId));
+    return resourceLinkage.map(extractResourceObject).filter(isDefined);
   } else if (resourceLinkage) {
-    return extractResourceObjectFromRelationship(resourceLinkage, resourceObjectsByTypeAndId);
+    return extractResourceObject(resourceLinkage);
   } else if (resourceLinkage === null) {
     return null;
   }
