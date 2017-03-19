@@ -1,5 +1,3 @@
-import "reflect-metadata";
-
 import {
   ResourceObject,
 } from './jsonapi-types';
@@ -20,7 +18,7 @@ class TypeMap {
   }
 }
 
-type TypeByPropertyName = { [attributeName: string]: Function };
+type TypeByPropertyName = { [attributeName: string]: true };
 type PropertyTypesForType = { [typeName: string]: TypeByPropertyName };
 
 class MetadataMap {
@@ -30,9 +28,9 @@ class MetadataMap {
     return this.metadataByType[typeName] || {};
   }
 
-  setMetadataByType(typeName: string, keyName: string, constructorFunc: Function): void {
+  setMetadataByType(typeName: string, keyName: string): void {
     this.metadataByType[typeName] = Object.assign({}, this.getMetadataByType(typeName), {
-      [keyName]: constructorFunc,
+      [keyName]: true,
     });
   }
 }
@@ -51,11 +49,11 @@ export function getConstructorForJsonapiType(type: string): any {
 }
 
 export function attribute(target: any, key: string) {
-  ATTRIBUTES_MAP.setMetadataByType(target.constructor.name, key, Reflect.getMetadata("design:type", target, key));
+  ATTRIBUTES_MAP.setMetadataByType(target.constructor.name, key);
 }
 
 export function relationship(target : any, key: string) {
-  RELATIONSHIPS_MAP.setMetadataByType(target.constructor.name, key, Reflect.getMetadata("design:type", target, key));
+  RELATIONSHIPS_MAP.setMetadataByType(target.constructor.name, key);
 }
 
 export function getAttributeNames(target: any) {
@@ -75,8 +73,10 @@ export function entity({ type }) {
 
     // a utility function to generate instances of a class
     const construct = (constructorFunc, args) => {
-      const constructorClosure : any = () => constructorFunc.apply(this, args);
-      constructorClosure.prototype = original.prototype;
+      const constructorClosure : any = function () {
+        return constructorFunc.apply(this, args);
+      }
+      constructorClosure.prototype = constructorFunc.prototype;
 
       // construct an instance and bind "type" correctly
       const instance = new constructorClosure();

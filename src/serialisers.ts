@@ -23,27 +23,34 @@ declare const console;
 
 export function toJsonApi(target: ResourceIdentifier) {
   const attrs = getAttributeNames(target.constructor);
-  const attributeReducer = (soFar, attr) => Object.assign(soFar, {
-    [attr]: target[attr],
-  });
+  const attributeReducer = (soFar, attr) => {
+    const targetAttribute = target[attr];
+    return (!targetAttribute) ? soFar : Object.assign(soFar, {
+      [attr]: target[attr],
+    });
+  }
   const attributes = Array.from(attrs).reduce(attributeReducer, {});
 
   const relationshipNames = getRelationshipNames(target.constructor);
 
-  const relationshipReducer = (relationshipsSoFar, relationshipName) => Object.assign(relationshipsSoFar, {
-    [relationshipName]: {
-      data: jsonapiLinkage(target[relationshipName]),
-    },
-  });
+  const relationshipReducer = (soFar, relationshipName) => {
+    const linkage = jsonapiLinkage(target[relationshipName]);
+    return (typeof linkage === 'undefined') ? soFar : Object.assign(soFar, {
+      [relationshipName]: { data: linkage },
+    });
+  }
 
   const relationships = Array.from(relationshipNames).reduce(relationshipReducer, {});
 
-  return {
+  const entityWithAttributes = {
     id: target.id,
     type: target.type,
     attributes,
-    relationships: (isEmptyObject(relationships) ? undefined : relationships),
   };
+
+  return isEmptyObject(relationships) ? entityWithAttributes : Object.assign(entityWithAttributes, {
+    relationships,
+  });
 }
 
 function byTypeAndId(obj: ResourceObject): string {
@@ -52,7 +59,7 @@ function byTypeAndId(obj: ResourceObject): string {
 
 type IncludedLookup = { [typeAndId: string]: ResourceObject };
 
-export function fromJsonApiResponse(topLevel: TopLevel, resourceObjects?: ResourceObject[]): any {
+export function fromJsonApiTopLevel(topLevel: TopLevel, resourceObjects?: ResourceObject[]): any {
   // extract primary data and included resources
   const { data, included } = topLevel;
 
