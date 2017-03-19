@@ -9,13 +9,14 @@
     "experimentalDecorators": true,
     "lib": [
       "es2016"
-    ]
+    ],
+    "target": "es6",
   },
   "include": [
-    "src/**/*",
-    "test/**/*"
+    "src/**/*.ts"
   ],
   "exclude": [
+    "spec/**/*.spec.ts"
     "node_modules"
   ]
 }

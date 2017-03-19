@@ -75,11 +75,10 @@ export function entity({ type }) {
 
     // a utility function to generate instances of a class
     const construct = (constructorFunc, args) => {
-      const constructorClosure : any = function () {
-        return constructorFunc.apply(this, args);
-      }
-
+      const constructorClosure : any = () => constructorFunc.apply(this, args);
       constructorClosure.prototype = original.prototype;
+
+      // construct an instance and bind "type" correctly
       const instance = new constructorClosure();
       instance.type = type;
       return instance;
