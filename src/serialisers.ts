@@ -23,7 +23,14 @@ import {
 
 declare const console;
 
+/**
+ * Convert a target JSON:API entity into a JSON:API representation.
+ *
+ * @param  {ResourceIdentifier} target - a source entity
+ * @return {ResourceObject} a JSON:API resource representation
+ */
 export function toJsonApi(target: ResourceIdentifier): ResourceObject {
+  // convert attributes
   const attributeMetadata = getAttributeMetadata(target.constructor);
   const attributeReducer = (soFar, attr) => {
     const metadata = attributeMetadata[attr];
@@ -34,6 +41,7 @@ export function toJsonApi(target: ResourceIdentifier): ResourceObject {
   }
   const attributes = Object.keys(attributeMetadata).reduce(attributeReducer, {});
 
+  // convert relationships
   const relationshipMetadata = getRelationshipMetadata(target.constructor);
 
   const relationshipReducer = (soFar, relationshipName) => {
@@ -46,6 +54,7 @@ export function toJsonApi(target: ResourceIdentifier): ResourceObject {
 
   const relationships = Object.keys(relationshipMetadata).reduce(relationshipReducer, {});
 
+  // compose the object and return
   const entityWithAttributes = {
     id: target.id,
     type: target.type,
@@ -57,12 +66,29 @@ export function toJsonApi(target: ResourceIdentifier): ResourceObject {
   });
 }
 
+/**
+ * Key a resource object by type and ID.
+ *
+ * @param  {ResourceObject} obj - a resource object
+ * @return {string} - a key for an object identifier
+ */
 export function byTypeAndId(obj: ResourceObject): string {
   return JSON.stringify(jsonapiIdentifier(obj));
 }
 
+/**
+ * Resource objects, keyed by type-and-id
+ * @type { { [string]: ResourceObject } }
+ */
 type IncludedLookup = { [typeAndId: string]: ResourceObject };
 
+/**
+ * Deserialise an entity or entities from JSON:API.
+ *
+ * @param  {TopLevel} topLevel - a JSON:API top-level
+ * @param  {ResourceObject[]} resourceObjects - known resource objects, for resolution
+ * @return {any} - an entity or entities representing the top-level
+ */
 export function fromJsonApiTopLevel(topLevel: TopLevel, resourceObjects?: ResourceObject[]): any {
   // extract primary data and included resources
   const { data, included } = topLevel;
@@ -79,7 +105,13 @@ export function fromJsonApiTopLevel(topLevel: TopLevel, resourceObjects?: Resour
   }
 }
 
-
+/**
+ * Deserialise a resoruce object from JSON:API.
+ *
+ * @param  {ResourceObject} jsonapiResource - a resource object's JSON:API representation
+ * @param  {IncludedLookup} resourceObjectsByTypeAndId - known resources, keyed by type-and-ID
+ * @return {any} - a resource object, deserialised from JSON:API
+ */
 export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resourceObjectsByTypeAndId: IncludedLookup): any {
 
   // deconstruct primary data and remap into an instance of the chosen type
@@ -133,9 +165,13 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
 }
 
 /**
- * @param {ResourceIdentifier}
- * @param {IncludedLookup}
- * @param {boolean}
+ * Given a resource identifier, resolve to a deserialised resource object.
+ *
+ * Optionally, if `allowIdentifiersIfUnresolved === true`, allow identifiers in place of unresolved objects.
+ *
+ * @param {ResourceIdentifier} relationIdentifier - a resource identifier
+ * @param {IncludedLookup} resourceObjectsByTypeAndId - resolved objects keyed by type-and-ID
+ * @param {boolean} allowIdentifiersIfUnresolved - when `true`, identifiers are substituted for unresolved objects
  * @return {any}
  */
 function extractResourceObjectFromRelationship(relationIdentifier: ResourceIdentifier, resourceObjectsByTypeAndId: IncludedLookup, allowIdentifiersIfUnresolved: boolean): any {
@@ -150,6 +186,10 @@ function extractResourceObjectFromRelationship(relationIdentifier: ResourceIdent
 }
 
 /**
+ * Given one, many, or no resource identifier, resolve to a deserialised resource object.
+ *
+ * Optionally, if `allowIdentifiersIfUnresolved === true`, allow identifiers in place of unresolved objects.
+ *
  * @param {ResourceLinkage} resourceLinkage -  a resource linkage datum
  * @param {IncludedLookup} resourceObjectsByTypeAndId - resolved objects keyed by type-and-ID
  * @param {boolean} allowIdentifiersIfUnresolved - when `true`, identifiers are substituted for unresolved objects
