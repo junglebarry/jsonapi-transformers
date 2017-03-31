@@ -26,7 +26,7 @@ person1.id = 'person1';
 person1.firstName = 'David';
 person1.surname = 'Brooks';
 person1.address = address1;
-person1.old_addresses = [address2];
+person1.oldAddresses = [address2];
 
 
 describe('decorators', () => {

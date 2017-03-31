@@ -4,6 +4,9 @@ export interface ResourceIdentifier {
   type: string;
 }
 
+export type OneIdentifierOr<T> = ResourceIdentifier | T;
+export type ManyIdentifiersOr<T> = ResourceIdentifier[] | T[];
+
 export type AttributesObject = { [attributeName: string]: any };
 
 export type ResourceLinkage = null | ResourceIdentifier | ResourceIdentifier[];

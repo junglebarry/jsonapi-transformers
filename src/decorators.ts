@@ -18,26 +18,26 @@ class TypeMap {
   }
 }
 
-type TypeByPropertyName = { [attributeName: string]: true };
-type PropertyTypesForType = { [typeName: string]: TypeByPropertyName };
+type MetadataByPropertyName<T> = { [attributeName: string]: T };
+type PropertyTypesForType<T> = { [typeName: string]: MetadataByPropertyName<T> };
 
-class MetadataMap {
-  private metadataByType: PropertyTypesForType = {};
+class MetadataMap<T> {
+  private metadataByType: PropertyTypesForType<T> = {};
 
-  getMetadataByType(typeName: string): TypeByPropertyName {
+  getMetadataByType(typeName: string): MetadataByPropertyName<T> {
     return this.metadataByType[typeName] || {};
   }
 
-  setMetadataByType(typeName: string, keyName: string): void {
+  setMetadataByType(typeName: string, keyName: string, metadata: T): void {
     this.metadataByType[typeName] = Object.assign({}, this.getMetadataByType(typeName), {
-      [keyName]: true,
+      [keyName]: metadata,
     });
   }
 }
 
 export const ENTITIES_MAP = new TypeMap();
-export const ATTRIBUTES_MAP = new MetadataMap();
-export const RELATIONSHIPS_MAP = new MetadataMap();
+export const ATTRIBUTES_MAP = new MetadataMap<AttributeOptions>();
+export const RELATIONSHIPS_MAP = new MetadataMap<RelationshipOptions>();
 
 export function getClassForJsonapiType(type: string): any {
   return ENTITIES_MAP.get(type);
@@ -48,25 +48,64 @@ export function getConstructorForJsonapiType(type: string): any {
   return clazz && clazz.prototype && clazz.prototype.constructor;
 }
 
-export function attribute(target: any, key: string) {
-  ATTRIBUTES_MAP.setMetadataByType(target.constructor.name, key);
+export interface AttributeOptions {
+  name?: string;
 }
 
-export function relationship(target : any, key: string) {
-  RELATIONSHIPS_MAP.setMetadataByType(target.constructor.name, key);
+export function attribute(options?: AttributeOptions): PropertyDecorator {
+  const opts = options || {};
+  return (target: any, key: string) => {
+    ATTRIBUTES_MAP.setMetadataByType(target.constructor.name, key, Object.assign({
+      name: key,
+    }, opts));
+  }
 }
 
-export function getAttributeNames(target: any) {
-  const metadataByType = ATTRIBUTES_MAP.getMetadataByType(target.name);
-  return Object.keys(metadataByType);
+export interface RelationshipOptions {
+  allowIdentifiersIfUnresolved?: boolean;
+  name?: string;
 }
 
-export function getRelationshipNames(target: any) {
-  const metadataByType = RELATIONSHIPS_MAP.getMetadataByType(target.name);
-  return Object.keys(metadataByType);
+const DefaultRelationshipOptions: RelationshipOptions = {
+  allowIdentifiersIfUnresolved: false,
+};
+
+export function relationship(options?: RelationshipOptions): PropertyDecorator {
+  const opts = Object.assign({}, DefaultRelationshipOptions, options || {});
+  return (target : any, key: string) => {
+    RELATIONSHIPS_MAP.setMetadataByType(target.constructor.name, key, Object.assign({
+      name: key,
+    }, opts));
+  }
 }
 
-export function entity({ type }) {
+export type AttributeMetadata = { [name: string]: AttributeOptions };
+
+export function getAttributeMetadata(target: any): AttributeMetadata {
+  return ATTRIBUTES_MAP.getMetadataByType(target.name);
+}
+
+export type RelationshipMetadata = { [name: string]: RelationshipOptions };
+
+export function getRelationshipMetadata(target: any): RelationshipMetadata {
+  return RELATIONSHIPS_MAP.getMetadataByType(target.name);
+}
+
+interface EntityOptions {
+  type: string
+}
+
+/**
+ * Annotates a class to indicate that it is a JSON:API entity definition.
+ *
+ * Any class annotated with `@entity` should be considered serialisable to JSON:API,
+ * and should have `@attribute` and `@relationship` decorators to indicate properties
+ * to be serialisable to and deserialisable from appropriate JSON:API data.
+ *
+ */
+export function entity(options: EntityOptions): ClassDecorator {
+  const { type } = options;
+
   return (constructor: ResourceObjectConstructor) => {
 
     const original = constructor;

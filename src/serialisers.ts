@@ -1,8 +1,9 @@
 import {
-  getAttributeNames,
+  getAttributeMetadata,
   getClassForJsonapiType,
   getConstructorForJsonapiType,
-  getRelationshipNames,
+  getRelationshipMetadata,
+  RelationshipOptions,
 } from './decorators';
 
 import {
@@ -23,25 +24,27 @@ import {
 declare const console;
 
 export function toJsonApi(target: ResourceIdentifier): ResourceObject {
-  const attrs = getAttributeNames(target.constructor);
+  const attributeMetadata = getAttributeMetadata(target.constructor);
   const attributeReducer = (soFar, attr) => {
+    const metadata = attributeMetadata[attr];
     const targetAttribute = target[attr];
     return !isDefined(targetAttribute) ? soFar : Object.assign(soFar, {
-      [attr]: targetAttribute,
+      [metadata.name]: targetAttribute,
     });
   }
-  const attributes = Array.from(attrs).reduce(attributeReducer, {});
+  const attributes = Object.keys(attributeMetadata).reduce(attributeReducer, {});
 
-  const relationshipNames = getRelationshipNames(target.constructor);
+  const relationshipMetadata = getRelationshipMetadata(target.constructor);
 
   const relationshipReducer = (soFar, relationshipName) => {
+    const metadata = relationshipMetadata[relationshipName];
     const linkage = jsonapiLinkage(target[relationshipName]);
     return !isDefined(linkage) ? soFar : Object.assign(soFar, {
-      [relationshipName]: { data: linkage },
+      [metadata.name]: { data: linkage },
     });
   }
 
-  const relationships = Array.from(relationshipNames).reduce(relationshipReducer, {});
+  const relationships = Object.keys(relationshipMetadata).reduce(relationshipReducer, {});
 
   const entityWithAttributes = {
     id: target.id,
@@ -77,7 +80,7 @@ export function fromJsonApiTopLevel(topLevel: TopLevel, resourceObjects?: Resour
 }
 
 
-export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resourceObjectsByTypeAndId: IncludedLookup, whenNoIncludeRetainIdentifier: boolean = false): any {
+export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resourceObjectsByTypeAndId: IncludedLookup): any {
 
   // deconstruct primary data and remap into an instance of the chosen type
   const {
@@ -92,8 +95,8 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
   const targetConstructor = getConstructorForJsonapiType(type);
 
   // fetch type-specific data
-  const attributeNames = getAttributeNames(targetConstructor);
-  const relationshipNames = getRelationshipNames(targetConstructor);
+  const attributeMetadata = getAttributeMetadata(targetConstructor);
+  const relationshipMetadata = getRelationshipMetadata(targetConstructor);
 
   // construct a basic instance with only ID and type specified
   const instance = new targetType();
@@ -101,53 +104,60 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
   instance.type = type;
 
   // transfer attributes from JSON API to target
-  attributeNames.forEach(attribute => {
-    const sourceAttribute = attributes[attribute];
+  Object.keys(attributeMetadata).forEach(attribute => {
+    const metadata = attributeMetadata[attribute];
+    const jsonapiName = metadata.name;
+    const sourceAttribute = attributes[jsonapiName];
     if (isDefined(sourceAttribute)) {
-      instance[attribute] = attributes[attribute];
+      instance[attribute] = attributes[jsonapiName];
     }
   });
 
-  const extractResourceObject = (linkage) => extractResourceObjectOrObjectsFromRelationship(
-    linkage,
-    resourceObjectsByTypeAndId,
-    whenNoIncludeRetainIdentifier
-  );
+  const extractResourceObject = (linkage: ResourceLinkage, whenNoIncludeRetainIdentifier: boolean) =>
+    extractResourceObjectOrObjectsFromRelationship(
+      linkage,
+      resourceObjectsByTypeAndId,
+      whenNoIncludeRetainIdentifier
+    );
 
-  relationshipNames.forEach(relationship => {
-     const relationshipIdentifierData = relationships[relationship];
-     const { data = undefined } = relationshipIdentifierData || {};
-     if (data) {
-       instance[relationship] = extractResourceObject(data);
-     }
+  Object.keys(relationshipMetadata).forEach(relationshipName => {
+    const { allowIdentifiersIfUnresolved, name } = relationshipMetadata[relationshipName];
+    const relationshipIdentifierData = relationships[name];
+    const { data = undefined } = relationshipIdentifierData || {};
+    if (data) {
+      instance[relationshipName] = extractResourceObject(data, allowIdentifiersIfUnresolved);
+    }
   });
 
   return instance;
 }
 
-function extractResourceObjectFromRelationship(relationIdentifier: ResourceIdentifier, resourceObjectsByTypeAndId: IncludedLookup, whenUndefinedRetainIdentifier: boolean) {
+function extractResourceObjectFromRelationship(relationIdentifier: ResourceIdentifier, resourceObjectsByTypeAndId: IncludedLookup, allowIdentifiersIfUnresolved: boolean) {
   const relationId = byTypeAndId(relationIdentifier);
   const includedForRelationId = relationId ? resourceObjectsByTypeAndId[relationId] : undefined;
 
   if (!includedForRelationId) {
-    return whenUndefinedRetainIdentifier ? relationIdentifier : undefined;
+    return allowIdentifiersIfUnresolved ? relationIdentifier : undefined;
   }
 
   return fromJsonApiResourceObject(includedForRelationId, resourceObjectsByTypeAndId);
 }
 
-function extractResourceObjectOrObjectsFromRelationship(resourceLinkage: ResourceLinkage, resourceObjectsByTypeAndId: IncludedLookup, whenUndefinedRetainIdentifier: boolean) {
+function extractResourceObjectOrObjectsFromRelationship(resourceLinkage: ResourceLinkage, resourceObjectsByTypeAndId: IncludedLookup, allowIdentifiersIfUnresolved: boolean) {
   const extractResourceObject = (linkage) => extractResourceObjectFromRelationship(
     linkage,
     resourceObjectsByTypeAndId,
-    whenUndefinedRetainIdentifier
+    allowIdentifiersIfUnresolved
   );
 
   if (Array.isArray(resourceLinkage)) {
+    // relationship to-many
     return resourceLinkage.map(extractResourceObject).filter(isDefined);
   } else if (resourceLinkage) {
+    // relationship to-one
     return extractResourceObject(resourceLinkage);
   } else if (resourceLinkage === null) {
+    // relationship removal
     return null;
   }
 

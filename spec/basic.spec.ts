@@ -6,39 +6,28 @@ import {
   JsonapiEntity,
 } from '../src';
 
-@entity({ type: 'addresses' })
-class Address extends JsonapiEntity {
-  @attribute houseNumber?: number;
-  @attribute street: string;
-  @attribute city: string;
-  @attribute county?: string;
-}
-
-@entity({ type: 'people' })
-class Person extends JsonapiEntity {
-  @attribute firstName: string;
-  @attribute surname: string;
-  @relationship address: Address;
-  @relationship old_addresses: Address[];
-}
+import {
+  Address,
+  Person,
+} from './test-data';
 
 
-  const address1: Address = new Address();
-  address1.id = 'address1';
-  address1.street = '8 Midland Road';
-  address1.city = 'Birmingham';
+const address1: Address = new Address();
+address1.id = 'address1';
+address1.street = '8 Midland Road';
+address1.city = 'Birmingham';
 
-  const address2: Address = new Address();
-  address2.id = 'address2';
-  address2.street = '97 Clarence Road';
-  address2.city = 'Birmingham';
+const address2: Address = new Address();
+address2.id = 'address2';
+address2.street = '97 Clarence Road';
+address2.city = 'Birmingham';
 
-  const person: Person = new Person();
-  person.id = 'person1';
-  person.firstName = 'David';
-  person.surname = 'Brooks';
-  person.address = address1;
-  person.old_addresses = [address2];
+const person: Person = new Person();
+person.id = 'person1';
+person.firstName = 'David';
+person.surname = 'Brooks';
+person.address = address1;
+person.oldAddresses = [address2];
 
 
 describe('E2E', () => {
