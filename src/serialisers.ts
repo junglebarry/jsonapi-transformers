@@ -132,7 +132,13 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
   return instance;
 }
 
-function extractResourceObjectFromRelationship(relationIdentifier: ResourceIdentifier, resourceObjectsByTypeAndId: IncludedLookup, allowIdentifiersIfUnresolved: boolean) {
+/**
+ * @param {ResourceIdentifier}
+ * @param {IncludedLookup}
+ * @param {boolean}
+ * @return {any}
+ */
+function extractResourceObjectFromRelationship(relationIdentifier: ResourceIdentifier, resourceObjectsByTypeAndId: IncludedLookup, allowIdentifiersIfUnresolved: boolean): any {
   const relationId = byTypeAndId(relationIdentifier);
   const includedForRelationId = relationId ? resourceObjectsByTypeAndId[relationId] : undefined;
 
@@ -143,7 +149,13 @@ function extractResourceObjectFromRelationship(relationIdentifier: ResourceIdent
   return fromJsonApiResourceObject(includedForRelationId, resourceObjectsByTypeAndId);
 }
 
-function extractResourceObjectOrObjectsFromRelationship(resourceLinkage: ResourceLinkage, resourceObjectsByTypeAndId: IncludedLookup, allowIdentifiersIfUnresolved: boolean) {
+/**
+ * @param {ResourceLinkage} resourceLinkage -  a resource linkage datum
+ * @param {IncludedLookup} resourceObjectsByTypeAndId - resolved objects keyed by type-and-ID
+ * @param {boolean} allowIdentifiersIfUnresolved - when `true`, identifiers are substituted for unresolved objects
+ * @return {any} -
+ */
+function extractResourceObjectOrObjectsFromRelationship(resourceLinkage: ResourceLinkage, resourceObjectsByTypeAndId: IncludedLookup, allowIdentifiersIfUnresolved: boolean): any {
   const extractResourceObject = (linkage) => extractResourceObjectFromRelationship(
     linkage,
     resourceObjectsByTypeAndId,
