@@ -1,3 +1,3 @@
 export * from './decorators';
-export * from './jsonapi-types';
+export * from './jsonapi';
 export * from './serialisers';

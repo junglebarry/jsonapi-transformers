@@ -1,6 +1,6 @@
 import {
   ResourceIdentifier,
-} from './jsonapi-types';
+} from './jsonapi';
 
 interface ResourceIdentifierConstructor {
   new (): ResourceIdentifier

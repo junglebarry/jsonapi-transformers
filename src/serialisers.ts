@@ -14,7 +14,7 @@ import {
   ResourceLinkage,
   ResourceObject,
   TopLevel,
-} from './jsonapi-types';
+} from './jsonapi';
 
 import {
   isEmptyObject,
