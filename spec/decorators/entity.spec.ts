@@ -4,12 +4,12 @@ import {
   relationship,
   toJsonApi,
   JsonapiEntity,
-} from '../src';
+} from '../../src';
 
 import {
   Address,
   Person,
-} from './test-data';
+} from '../test-data';
 
 const address1: Address = new Address();
 address1.id = 'address1';
