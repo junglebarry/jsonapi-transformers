@@ -9,6 +9,7 @@ import {
 import {
   jsonapiIdentifier,
   jsonapiLinkage,
+  unresolvedIdentifier,
   ResourceIdentifier,
   ResourceLinkage,
   ResourceObject,
@@ -179,7 +180,7 @@ function extractResourceObjectFromRelationship(relationIdentifier: ResourceIdent
   const includedForRelationId = relationId ? resourceObjectsByTypeAndId[relationId] : undefined;
 
   if (!includedForRelationId) {
-    return allowIdentifiersIfUnresolved ? relationIdentifier : undefined;
+    return allowIdentifiersIfUnresolved ? unresolvedIdentifier(relationIdentifier) : undefined;
   }
 
   return fromJsonApiResourceObject(includedForRelationId, resourceObjectsByTypeAndId);

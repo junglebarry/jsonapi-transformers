@@ -3,8 +3,8 @@ import {
   entity,
   relationship,
   JsonapiEntity,
-  OneIdentifierOr,
-  ManyIdentifiersOr,
+  OneUnresolvedIdentifierOr,
+  ManyUnresolvedIdentifiersOr,
 } from '../../src';
 
 import { Address } from './address';
@@ -26,7 +26,7 @@ export class Person extends JsonapiEntity {
 
   // relationships that can be resolved to identifiers or specific types
   @relationship({ allowIdentifiersIfUnresolved: true })
-  work_address: OneIdentifierOr<Address>;
+  work_address: OneUnresolvedIdentifierOr<Address>;
   @relationship({ allowIdentifiersIfUnresolved: true })
-  old_work_addresses: ManyIdentifiersOr<Address>;
+  old_work_addresses: ManyUnresolvedIdentifiersOr<Address>;
 }

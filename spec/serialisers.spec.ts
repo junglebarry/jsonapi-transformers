@@ -3,6 +3,7 @@ import {
   fromJsonApiResourceObject,
   jsonapiIdentifier,
   toJsonApi,
+  unresolvedIdentifier,
 } from '../src';
 
 import {
@@ -122,8 +123,8 @@ describe('serialisers', () => {
       expect(person2FromJsonapi.surname).toEqual('Brooks');
       expect(person2FromJsonapi.address).toBeFalsy();
       expect(person2FromJsonapi.oldAddresses).toBeFalsy();
-      expect(person2FromJsonapi.work_address).toEqual(jsonapiIdentifier(address1));
-      expect(person2FromJsonapi.old_work_addresses).toEqual([jsonapiIdentifier(address2)]);
+      expect(person2FromJsonapi.work_address).toEqual(unresolvedIdentifier(address1));
+      expect(person2FromJsonapi.old_work_addresses).toEqual([unresolvedIdentifier(address2)]);
     });
 
     it('should deserialise an object with resolvable relationships', () => {

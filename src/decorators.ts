@@ -1,19 +1,19 @@
 import {
-  ResourceObject,
+  ResourceIdentifier,
 } from './jsonapi-types';
 
-interface ResourceObjectConstructor {
-  new (): ResourceObject
+interface ResourceIdentifierConstructor {
+  new (): ResourceIdentifier
 }
 
 class TypeMap {
-  private constructorsByJsonapiType: { [typeName: string]: any } = {};
+  private constructorsByJsonapiType: { [typeName: string]: ResourceIdentifierConstructor } = {};
 
-  get(typeName: string): any {
+  get(typeName: string): ResourceIdentifierConstructor {
     return this.constructorsByJsonapiType[typeName];
   }
 
-  set(typeName: string, constructorType: any): void {
+  set(typeName: string, constructorType: ResourceIdentifierConstructor): void {
     this.constructorsByJsonapiType[typeName] = constructorType;
   }
 }
@@ -39,11 +39,11 @@ export const ENTITIES_MAP = new TypeMap();
 export const ATTRIBUTES_MAP = new MetadataMap<AttributeOptions>();
 export const RELATIONSHIPS_MAP = new MetadataMap<RelationshipOptions>();
 
-export function getClassForJsonapiType(type: string): any {
+export function getClassForJsonapiType(type: string): ResourceIdentifierConstructor {
   return ENTITIES_MAP.get(type);
 }
 
-export function getConstructorForJsonapiType(type: string): any {
+export function getConstructorForJsonapiType(type: string): Function {
   const clazz = getClassForJsonapiType(type);
   return clazz && clazz.prototype && clazz.prototype.constructor;
 }
@@ -106,12 +106,12 @@ interface EntityOptions {
 export function entity(options: EntityOptions): ClassDecorator {
   const { type } = options;
 
-  return (constructor: ResourceObjectConstructor) => {
+  return (constructor: ResourceIdentifierConstructor) => {
 
     const original = constructor;
 
     // a utility function to generate instances of a class
-    const construct = (constructorFunc, args) => {
+    const construct = (constructorFunc: ResourceIdentifierConstructor, args) => {
       const constructorClosure : any = function () {
         return constructorFunc.apply(this, args);
       }
