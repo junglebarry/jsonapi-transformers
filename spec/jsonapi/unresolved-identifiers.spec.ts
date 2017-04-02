@@ -4,9 +4,9 @@ import {
   JsonapiEntity,
   ResourceIdentifier,
   UnresolvedResourceIdentifier,
-} from '../src';
+} from '../../src';
 
-describe('jsonapi-types', () => {
+describe('unresolved-identifiers', () => {
 
   class FakeJsonapiEntity extends JsonapiEntity {
     id = 'foo';
