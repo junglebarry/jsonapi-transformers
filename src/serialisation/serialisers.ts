@@ -4,7 +4,7 @@ import {
   getConstructorForJsonapiType,
   getRelationshipMetadata,
   RelationshipOptions,
-} from './decorators';
+} from '../decorators';
 
 import {
   jsonapiIdentifier,
@@ -14,7 +14,7 @@ import {
   ResourceLinkage,
   ResourceObject,
   TopLevel,
-} from './jsonapi';
+} from '../jsonapi';
 
 import {
   isEmptyObject,

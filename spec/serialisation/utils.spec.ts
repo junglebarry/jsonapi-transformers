@@ -2,7 +2,7 @@ import {
   isEmptyObject,
   isDefined,
   keyBy,
-} from '../src/utils';
+} from '../../src/serialisation/utils';
 
 class TestObj {
   constructor(public foo?: number) {}
