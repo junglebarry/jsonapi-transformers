@@ -154,11 +154,11 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
     );
 
   Object.keys(relationshipMetadata).forEach(relationshipName => {
-    const { allowIdentifiersIfUnresolved, name } = relationshipMetadata[relationshipName];
+    const { allowUnresolvedIdentifiers, name } = relationshipMetadata[relationshipName];
     const relationshipIdentifierData = relationships[name];
     const { data = undefined } = relationshipIdentifierData || {};
     if (data) {
-      instance[relationshipName] = extractResourceObject(data, allowIdentifiersIfUnresolved);
+      instance[relationshipName] = extractResourceObject(data, allowUnresolvedIdentifiers);
     }
   });
 
@@ -168,19 +168,19 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
 /**
  * Given a resource identifier, resolve to a deserialised resource object.
  *
- * Optionally, if `allowIdentifiersIfUnresolved === true`, allow identifiers in place of unresolved objects.
+ * Optionally, if `allowUnresolvedIdentifiers === true`, allow identifiers in place of unresolved objects.
  *
  * @param {ResourceIdentifier} relationIdentifier - a resource identifier
  * @param {IncludedLookup} resourceObjectsByTypeAndId - resolved objects keyed by type-and-ID
- * @param {boolean} allowIdentifiersIfUnresolved - when `true`, identifiers are substituted for unresolved objects
+ * @param {boolean} allowUnresolvedIdentifiers - when `true`, identifiers are substituted for unresolved objects
  * @return {any}
  */
-function extractResourceObjectFromRelationship(relationIdentifier: ResourceIdentifier, resourceObjectsByTypeAndId: IncludedLookup, allowIdentifiersIfUnresolved: boolean): any {
+function extractResourceObjectFromRelationship(relationIdentifier: ResourceIdentifier, resourceObjectsByTypeAndId: IncludedLookup, allowUnresolvedIdentifiers: boolean): any {
   const relationId = byTypeAndId(relationIdentifier);
   const includedForRelationId = relationId ? resourceObjectsByTypeAndId[relationId] : undefined;
 
   if (!includedForRelationId) {
-    return allowIdentifiersIfUnresolved ? unresolvedIdentifier(relationIdentifier) : undefined;
+    return allowUnresolvedIdentifiers ? unresolvedIdentifier(relationIdentifier) : undefined;
   }
 
   return fromJsonApiResourceObject(includedForRelationId, resourceObjectsByTypeAndId);
@@ -189,18 +189,18 @@ function extractResourceObjectFromRelationship(relationIdentifier: ResourceIdent
 /**
  * Given one, many, or no resource identifier, resolve to a deserialised resource object.
  *
- * Optionally, if `allowIdentifiersIfUnresolved === true`, allow identifiers in place of unresolved objects.
+ * Optionally, if `allowUnresolvedIdentifiers === true`, allow identifiers in place of unresolved objects.
  *
  * @param {ResourceLinkage} resourceLinkage -  a resource linkage datum
  * @param {IncludedLookup} resourceObjectsByTypeAndId - resolved objects keyed by type-and-ID
- * @param {boolean} allowIdentifiersIfUnresolved - when `true`, identifiers are substituted for unresolved objects
+ * @param {boolean} allowUnresolvedIdentifiers - when `true`, identifiers are substituted for unresolved objects
  * @return {any} -
  */
-function extractResourceObjectOrObjectsFromRelationship(resourceLinkage: ResourceLinkage, resourceObjectsByTypeAndId: IncludedLookup, allowIdentifiersIfUnresolved: boolean): any {
+function extractResourceObjectOrObjectsFromRelationship(resourceLinkage: ResourceLinkage, resourceObjectsByTypeAndId: IncludedLookup, allowUnresolvedIdentifiers: boolean): any {
   const extractResourceObject = (linkage) => extractResourceObjectFromRelationship(
     linkage,
     resourceObjectsByTypeAndId,
-    allowIdentifiersIfUnresolved
+    allowUnresolvedIdentifiers
   );
 
   if (Array.isArray(resourceLinkage)) {

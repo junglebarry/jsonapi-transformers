@@ -62,12 +62,12 @@ export function attribute(options?: AttributeOptions): PropertyDecorator {
 }
 
 export interface RelationshipOptions {
-  allowIdentifiersIfUnresolved?: boolean;
+  allowUnresolvedIdentifiers?: boolean;
   name?: string;
 }
 
 const DefaultRelationshipOptions: RelationshipOptions = {
-  allowIdentifiersIfUnresolved: false,
+  allowUnresolvedIdentifiers: false,
 };
 
 export function relationship(options?: RelationshipOptions): PropertyDecorator {

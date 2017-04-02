@@ -25,8 +25,8 @@ export class Person extends JsonapiEntity {
   oldAddresses: Address[];
 
   // relationships that can be resolved to identifiers or specific types
-  @relationship({ allowIdentifiersIfUnresolved: true })
+  @relationship({ allowUnresolvedIdentifiers: true })
   work_address: OneUnresolvedIdentifierOr<Address>;
-  @relationship({ allowIdentifiersIfUnresolved: true })
+  @relationship({ allowUnresolvedIdentifiers: true })
   old_work_addresses: ManyUnresolvedIdentifiersOr<Address>;
 }

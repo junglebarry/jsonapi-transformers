@@ -33,16 +33,6 @@ export interface ResourceObject extends ResourceIdentifier {
 }
 
 /**
- * A to-one relationship that permits replacement with an unresolved identifier.
- */
-export type OneUnresolvedIdentifierOr<T> = UnresolvedResourceIdentifier | T;
-
-/**
- * A to-many relationship that permits replacement with unresolved identifiers.
- */
-export type ManyUnresolvedIdentifiersOr<T> = (UnresolvedResourceIdentifier | T)[];
-
-/**
  * JSON:API base class providing `id` and `type` for resources.
  */
 export class JsonapiEntity implements ResourceIdentifier {
@@ -131,3 +121,13 @@ export function isUnresolvedIdentifier(identifier: ResourceIdentifier): boolean 
   return (identifier instanceof UnresolvedResourceIdentifier);
 }
 
+
+/**
+ * A to-one relationship that permits replacement with an unresolved identifier.
+ */
+export type OneUnresolvedIdentifierOr<T> = UnresolvedResourceIdentifier | T;
+
+/**
+ * A to-many relationship that permits replacement with unresolved identifiers.
+ */
+export type ManyUnresolvedIdentifiersOr<T> = (UnresolvedResourceIdentifier | T)[];
