@@ -59,7 +59,7 @@ export function fromJsonApiTopLevel(topLevel: TopLevel, resourceObjects?: Resour
 }
 
 /**
- * Deserialise a resoruce object from JSON:API.
+ * Deserialise a resource object from JSON:API.
  *
  * @param  {ResourceObject} jsonapiResource - a resource object's JSON:API representation
  * @param  {IncludedLookup} resourceObjectsByTypeAndId - known resources, keyed by type-and-ID
@@ -71,8 +71,8 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
   const {
     id,
     type,
-    attributes,
-    relationships,
+    attributes = {},
+    relationships = {},
   } = jsonapiResource;
 
   // fetch the Typescript class responsible for deserialisation

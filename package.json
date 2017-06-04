@@ -4,6 +4,7 @@
   "description": "Typescript-based JSON API serialisation/deserialisation",
   "main": "index.js",
   "scripts": {
+    "build": "gulp clean && gulp build",
     "test": "gulp test",
     "test:watch": "gulp test:watch"
   },
