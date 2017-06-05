@@ -14,8 +14,6 @@ import {
   isDefined,
 } from './utils';
 
-declare const console;
-
 /**
  * Convert a target JSON:API entity into a JSON:API representation.
  *
