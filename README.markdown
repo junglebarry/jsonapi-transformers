@@ -33,6 +33,8 @@ The motivation for this library is manifold:
 
 # What can you do?
 
+Well, you can define Typescript classes, and have them serialise to JSON:API and deserialise from JSON:API.
+
 ## Entities and attributes
 
 Imagine a Typescript interface representing the basics of an address:
