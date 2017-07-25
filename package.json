@@ -2,7 +2,7 @@
   "name": "jsonapi-transformers",
   "version": "1.0.0",
   "description": "Typescript-based JSON API serialisation/deserialisation",
-  "main": "index.js",
+  "main": "./index.d.ts",
   "scripts": {
     "build": "gulp clean && gulp build",
     "test": "gulp test",
