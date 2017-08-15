@@ -10,7 +10,7 @@ Specifically, it:
 
 # Todo
 
-- [ ] Work out distribution pattern and consumption from within a TS application
+- [x] Work out distribution pattern and consumption from within a TS application
 - [ ] Update tests and documented examples to be a neutral domain
 - [ ] Configure as a CircleCI private project
 - [ ] Install a code coverage tool and get test coverage to a reasonable level
