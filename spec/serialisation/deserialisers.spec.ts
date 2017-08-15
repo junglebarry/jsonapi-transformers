@@ -52,7 +52,8 @@ class Agent extends JsonapiEntity {
 describe('deserialisers', () => {
   describe('fromJsonApiTopLevel', () => {
     describe('JSON API top-level array deserialisation', () => {
-      const FAKE_JSON_DESERIALISED: Item[] = fromJsonApiTopLevel(FAKE_JSON);
+      const { deserialised, referents } = fromJsonApiTopLevel(FAKE_JSON)
+      const FAKE_JSON_DESERIALISED: Item[] = deserialised;
 
       it('should deserialise entries from the array, populating object properties', () => {
         const [item1] = FAKE_JSON_DESERIALISED;

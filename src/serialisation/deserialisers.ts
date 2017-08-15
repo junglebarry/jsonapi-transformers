@@ -42,7 +42,7 @@ type IncludedLookup = { [typeAndId: string]: ResourceObject };
  * @param  {ResourceObject[]} resourceObjects - known resource objects, for resolution
  * @return {any} - an entity or entities representing the top-level
  */
-export function fromJsonApiTopLevel(topLevel: TopLevel, resourceObjects?: ResourceObject[]): any {
+export function fromJsonApiTopLevel(topLevel: TopLevel, resourceObjects: ResourceObject[] = []): any {
   // extract primary data and included resources
   const { data, included } = topLevel;
 
@@ -51,11 +51,17 @@ export function fromJsonApiTopLevel(topLevel: TopLevel, resourceObjects?: Resour
 
   const resourceObjectsByTypeAndId: IncludedLookup = keyBy(allResourceObjects, byTypeAndId);
 
+  let deserialised;
   if (Array.isArray(data)) {
-    return data.map(datum => fromJsonApiResourceObject(datum, resourceObjectsByTypeAndId));
+    deserialised = data.map(datum => fromJsonApiResourceObject(datum, resourceObjectsByTypeAndId));
   } else if (data) {
-    return fromJsonApiResourceObject(data, resourceObjectsByTypeAndId);
+    deserialised = fromJsonApiResourceObject(data, resourceObjectsByTypeAndId);
   }
+
+  return {
+    deserialised,
+    referents: allResourceObjects,
+  };
 }
 
 /**
