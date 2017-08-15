@@ -6,83 +6,66 @@ import {
   JsonapiEntity,
 } from '../../src';
 
-import { FAKE_JSON } from './fake-response';
+import {
+  Address,
+  Person,
+} from '../test-data';
 
-@entity({ type: 'sections' })
-class Section extends JsonapiEntity {
-  @attribute() description?: string;
-  @attribute() title: string;
-  @relationship() children?: Section[];
-}
-
-@entity({ type: 'lists' })
-class List extends JsonapiEntity {
-  @attribute() date_created?: string;
-  @attribute() description?: string;
-  @attribute() last_published?: string;
-  @attribute() last_updated?: string;
-  @attribute() title: string;
-  @attribute() published_status: string;
-  @relationship() owner?: Agent;
-  @relationship() sections?: Section[];
-}
-
-@entity({ type: 'items' })
-class Item extends JsonapiEntity {
-  @attribute() citation: string;
-  @relationship() container?: List | Section;
-  @relationship() list: List;
-}
-
-@entity({ type: 'agents' })
-class Agent extends JsonapiEntity {
-  @attribute({ name: 'first_name' }) firstName: string;
-  @attribute() surname: string;
-
-  /**
-   * Compute the full name from first and surname.
-   *
-   * A trivial example of a derived property relying upon deserialisation.
-   */
-  get fullName() {
-    return `${this.firstName} ${this.surname}`;
-  }
-}
+import { FAKE_SINGLE_RESPONSE } from './fake-single-response.json';
 
 describe('deserialisers', () => {
   describe('fromJsonApiTopLevel', () => {
-    describe('JSON API top-level array deserialisation', () => {
-      const { deserialised, referents } = fromJsonApiTopLevel(FAKE_JSON)
-      const FAKE_JSON_DESERIALISED: Item[] = deserialised;
+    describe('JSON API top-level datum deserialisation', () => {
+      const { deserialised, referents } = fromJsonApiTopLevel(FAKE_SINGLE_RESPONSE)
+      const PERSON_1: Person = deserialised;
 
-      it('should deserialise entries from the array, populating object properties', () => {
-        const [item1] = FAKE_JSON_DESERIALISED;
-        expect(item1).toBeDefined();
-        expect(item1.citation).toEqual('<div data-item-id="ITEM-1" class="csl-entry">K. R. M. Short (1979) <i>The dynamite war</i>. Atlantic Highlands, N.J: Humanities Press.</div>');
+      it('should deserialise the top-level datum from the response, populating object attributes', () => {
+        expect(PERSON_1).toEqual(jasmine.any(Person));
+        const { id, type, firstName, surname } = PERSON_1;
+        expect(id).toEqual('person1');
+        expect(type).toEqual('people');
+        expect(firstName).toEqual('Eric');
+        expect(surname).toEqual('Wimp');
       });
 
       it('should deserialise related objects, populating their properties', () => {
-        const { list } = FAKE_JSON_DESERIALISED[0];
-        expect(list.title).toBeDefined();
-        expect(list.title).toEqual('Invision Mirror list');
+        expect(PERSON_1.address).toEqual(jasmine.any(Address));
+        const { houseNumber, street, city } = PERSON_1.address;
+        expect(houseNumber).toEqual(29);
+        expect(street).toEqual("Acacia Road");
+        expect(city).toEqual("Nuttytown");
+      });
+
+      it('should deserialise related objects with the same type but different name, populating their properties', () => {
+        expect(PERSON_1.oldAddresses).toBeDefined();
+        expect(PERSON_1.oldAddresses.length).toEqual(1);
+        const [oldAddress] = PERSON_1.oldAddresses;
+        expect(oldAddress).toEqual(jasmine.any(Address));
+        expect(oldAddress.houseNumber).toEqual(1007);
+        expect(oldAddress.street).toEqual("Mountain Drive");
+        expect(oldAddress.city).toEqual("Gotham City");
       });
 
       it('should recursively deserialise related objects, populating their properties', () => {
-        const { list } = FAKE_JSON_DESERIALISED[0];
-        expect(list.owner).toBeDefined();
-        expect(list.owner.surname).toEqual('Brooks');
-      });
+        // traverse one level
+        expect(PERSON_1.oldAddresses).toBeDefined();
+        expect(PERSON_1.oldAddresses.length).toEqual(1);
+        const [oldAddress] = PERSON_1.oldAddresses;
 
-      it('should recursively deserialise related objects, populating renamed properties', () => {
-        const { list } = FAKE_JSON_DESERIALISED[0];
-        expect(list.owner).toBeDefined();
-        expect(list.owner.firstName).toEqual('David James');
-      });
+        // traverse two levels
+        const { mostFamousInhabitant } = oldAddress;
+        expect(mostFamousInhabitant).toEqual(jasmine.any(Address));
+        expect(mostFamousInhabitant.id).toEqual('person2');
+        expect(mostFamousInhabitant.type).toEqual('people');
+        expect(mostFamousInhabitant.firstName).toEqual('Bruce');
+        expect(mostFamousInhabitant.surname).toEqual('Wayne');
 
-      it('should deserialise related objects, including computed properties', () => {
-        const { list } = FAKE_JSON_DESERIALISED[0];
-        expect(list.owner).toBeDefined();
-        expect(list.owner.fullName).toEqual('David James Brooks');
+        // traverse three levels
+        expect(mostFamousInhabitant.address).toEqual(jasmine.any(Address));
+        const { address } = mostFamousInhabitant;
+        expect(address.houseNumber).toEqual(1007);
+        expect(address.street).toEqual("Mountain Drive");
+        expect(address.city).toEqual("Gotham City");
       });
     });
   });
