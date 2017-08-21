@@ -45,7 +45,6 @@ export function entity(options: EntityOptions): ClassDecorator {
   const { type } = options;
 
   return (constructor: ResourceIdentifierConstructor) => {
-
     const original = constructor;
 
     // a utility function to generate instances of a class
@@ -66,6 +65,11 @@ export function entity(options: EntityOptions): ClassDecorator {
 
     // copy prototype so intanceof operator still works
     wrappedConstructor.prototype = original.prototype;
+
+    // transfer the original function name for pretty-printing
+    Object.defineProperty(wrappedConstructor, 'name', { writable: true });
+    wrappedConstructor.name = original.name;
+    Object.defineProperty(wrappedConstructor, 'name', { writable: false });
 
     // add the type to the reverse lookup for deserialisation
     ENTITIES_MAP.set(type, wrappedConstructor);
