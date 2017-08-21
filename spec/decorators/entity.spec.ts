@@ -11,20 +11,23 @@ import {
   Person,
 } from '../test-data';
 
+
 const address1: Address = new Address();
 address1.id = 'address1';
-address1.street = '8 Midland Road';
-address1.city = 'Birmingham';
+address1.houseNumber = 8;
+address1.street = 'Acacia Road';
+address1.city = 'Nuttytown';
+address1.county = 'West Nutshire';
 
 const address2: Address = new Address();
 address2.id = 'address2';
-address2.street = '97 Clarence Road';
-address2.city = 'Birmingham';
+address2.street = 'Mountain Drive';
+address2.city = 'Gotham City';
 
 const person1: Person = new Person();
 person1.id = 'person1';
-person1.firstName = 'David';
-person1.surname = 'Brooks';
+person1.firstName = 'Eric';
+person1.surname = 'Wimp';
 person1.address = address1;
 person1.oldAddresses = [address2];
 
@@ -33,6 +36,18 @@ describe('entity', () => {
     expect(address1).toEqual(jasmine.any(Address));
     expect(address2).toEqual(jasmine.any(Address));
     expect(person1).toEqual(jasmine.any(Person));
+  });
+
+  it('should respect constructor names', () => {
+    expect(address1.constructor.name).toEqual(Address.name);
+    expect(address2.constructor.name).toEqual(Address.name);
+    expect(person1.constructor.name).toEqual(Person.name);
+  });
+
+  it('should pretty-print type names', () => {
+    expect(address1.constructor.name).toEqual('Address');
+    expect(address2.constructor.name).toEqual('Address');
+    expect(person1.constructor.name).toEqual('Person');
   });
 
   it('should add a type property from the decorator definition', () => {
@@ -45,8 +60,8 @@ describe('entity', () => {
     expect(address1).toEqual(jasmine.objectContaining({
       id: 'address1',
       type: 'addresses',
-      street: '8 Midland Road',
-      city: 'Birmingham',
+      street: 'Acacia Road',
+      city: 'Nuttytown',
     }));
   });
 });
