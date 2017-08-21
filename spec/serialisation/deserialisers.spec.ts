@@ -12,6 +12,7 @@ import {
 } from '../test-data';
 
 import { FAKE_SINGLE_RESPONSE } from './fake-single-response.json';
+import { FAKE_MULTIPLE_RESPONSE } from './fake-multiple-response.json';
 
 describe('deserialisers', () => {
   describe('fromJsonApiTopLevel', () => {
@@ -51,6 +52,81 @@ describe('deserialisers', () => {
         expect(PERSON_1.oldAddresses).toBeDefined();
         expect(PERSON_1.oldAddresses.length).toEqual(1);
         const [oldAddress] = PERSON_1.oldAddresses;
+        expect(oldAddress).toEqual(jasmine.any(Address));
+
+        // traverse two levels
+        const { mostFamousInhabitant } = oldAddress;
+        expect(mostFamousInhabitant).toEqual(jasmine.any(Person));
+        expect(mostFamousInhabitant.id).toEqual('person2');
+        expect(mostFamousInhabitant.type).toEqual('people');
+        expect(mostFamousInhabitant.firstName).toEqual('Bruce');
+        expect(mostFamousInhabitant.surname).toEqual('Wayne');
+
+        // traverse three levels
+        expect(mostFamousInhabitant.address).toEqual(jasmine.any(Address));
+        const { address } = mostFamousInhabitant;
+        expect(address.houseNumber).toEqual(1007);
+        expect(address.street).toEqual("Mountain Drive");
+        expect(address.city).toEqual("Gotham City");
+      });
+    });
+
+    describe('JSON API top-level datum deserialisation', () => {
+      const { deserialised, referents } = fromJsonApiTopLevel(FAKE_MULTIPLE_RESPONSE)
+      const PEOPLE: Person[] = deserialised;
+
+      it('should deserialise each item in the top-level data from the response', () => {
+        expect(PEOPLE).toEqual(jasmine.any(Array));
+        expect(PEOPLE.length).toEqual(2);
+
+        const [PERSON_1, PERSON_2] = PEOPLE;
+
+        expect(PERSON_1).toEqual(jasmine.any(Person));
+        expect(PERSON_2).toEqual(jasmine.any(Person));
+      });
+
+      it('should deserialise the top-level data from the response, populating object attributes', () => {
+        const [PERSON_1] = PEOPLE;
+
+        const { id, type, firstName, surname } = PERSON_1;
+
+        expect(id).toEqual('person1');
+        expect(type).toEqual('people');
+        expect(firstName).toEqual('Eric');
+        expect(surname).toEqual('Wimp');
+      });
+
+      it('should deserialise related objects, populating their properties', () => {
+        const [PERSON_1] = PEOPLE;
+
+        expect(PERSON_1.address).toEqual(jasmine.any(Address));
+        const { houseNumber, street, city } = PERSON_1.address;
+        expect(houseNumber).toEqual(29);
+        expect(street).toEqual("Acacia Road");
+        expect(city).toEqual("Nuttytown");
+      });
+
+      it('should deserialise related objects with the same type but different name, populating their properties', () => {
+        const [PERSON_1] = PEOPLE;
+
+        expect(PERSON_1.oldAddresses).toBeDefined();
+        expect(PERSON_1.oldAddresses.length).toEqual(1);
+        const [oldAddress] = PERSON_1.oldAddresses;
+        expect(oldAddress).toEqual(jasmine.any(Address));
+
+        expect(oldAddress.houseNumber).toEqual(1007);
+        expect(oldAddress.street).toEqual("Mountain Drive");
+        expect(oldAddress.city).toEqual("Gotham City");
+      });
+
+      it('should recursively deserialise related objects, populating their properties', () => {
+        const [PERSON_1] = PEOPLE;
+
+        // traverse one level
+        expect(PERSON_1.oldAddresses).toBeDefined();
+        expect(PERSON_1.oldAddresses.length).toEqual(1);
+        const [oldAddress] = PERSON_1.oldAddresses;
+        expect(oldAddress).toEqual(jasmine.any(Address));
 
         // traverse two levels
         const { mostFamousInhabitant } = oldAddress;

@@ -53,7 +53,16 @@ export function fromJsonApiTopLevel(topLevel: TopLevel, resourceObjects: Resourc
   const { data, included } = topLevel;
 
   // create a lookup table of all available resource objects
-  const allResourceObjects: ResourceObject[] = (resourceObjects || []).concat(included || []);
+  let primaryResourceObjects: ResourceObject[] = undefined;
+  if (Array.isArray(data)) {
+    primaryResourceObjects = data;
+  } else if (data) {
+    primaryResourceObjects = [data];
+  }
+
+  const includedResourceObjects: ResourceObject[] = (resourceObjects || []).concat(included || []);
+
+  const allResourceObjects = primaryResourceObjects.concat(includedResourceObjects);
 
   const resourceObjectsByTypeAndId: IncludedLookup = keyBy(allResourceObjects, byTypeAndId);
 
