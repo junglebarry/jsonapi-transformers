@@ -54,7 +54,7 @@ describe('deserialisers', () => {
 
         // traverse two levels
         const { mostFamousInhabitant } = oldAddress;
-        expect(mostFamousInhabitant).toEqual(jasmine.any(Address));
+        expect(mostFamousInhabitant).toEqual(jasmine.any(Person));
         expect(mostFamousInhabitant.id).toEqual('person2');
         expect(mostFamousInhabitant.type).toEqual('people');
         expect(mostFamousInhabitant.firstName).toEqual('Bruce');

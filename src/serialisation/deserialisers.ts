@@ -36,6 +36,12 @@ export function byTypeAndId(obj: ResourceObject): string {
 type IncludedLookup = { [typeAndId: string]: ResourceObject };
 
 /**
+ * Deserialised objects, keyed by type-and-id
+ * @type { { [string]: any } }
+ */
+type DeserialisedLookup = { [typeAndId: string]: any };
+
+/**
  * Deserialise an entity or entities from JSON:API.
  *
  * @param  {TopLevel} topLevel - a JSON:API top-level
@@ -51,12 +57,17 @@ export function fromJsonApiTopLevel(topLevel: TopLevel, resourceObjects: Resourc
 
   const resourceObjectsByTypeAndId: IncludedLookup = keyBy(allResourceObjects, byTypeAndId);
 
-  let deserialised;
-  if (Array.isArray(data)) {
-    deserialised = data.map(datum => fromJsonApiResourceObject(datum, resourceObjectsByTypeAndId));
-  } else if (data) {
-    deserialised = fromJsonApiResourceObject(data, resourceObjectsByTypeAndId);
-  }
+  const deserialiseObjectOrArray = (data) => {
+    const deserialisedObjectsByTypeAndId: DeserialisedLookup = {};
+    if (Array.isArray(data)) {
+      return data.map(datum => fromJsonApiResourceObject(datum, resourceObjectsByTypeAndId, deserialisedObjectsByTypeAndId));
+    } else if (data) {
+      return fromJsonApiResourceObject(data, resourceObjectsByTypeAndId, deserialisedObjectsByTypeAndId);
+    }
+    return undefined;
+  };
+
+  const deserialised = deserialiseObjectOrArray(data);
 
   return {
     deserialised,
@@ -71,7 +82,7 @@ export function fromJsonApiTopLevel(topLevel: TopLevel, resourceObjects: Resourc
  * @param  {IncludedLookup} resourceObjectsByTypeAndId - known resources, keyed by type-and-ID
  * @return {any} - a resource object, deserialised from JSON:API
  */
-export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resourceObjectsByTypeAndId: IncludedLookup): any {
+export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resourceObjectsByTypeAndId: IncludedLookup, deserialisedObjects: DeserialisedLookup = {}): any {
 
   // deconstruct primary data and remap into an instance of the chosen type
   const {
@@ -94,6 +105,12 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
   instance.id = id;
   instance.type = type;
 
+  // add to the list of deserialised objects, so recursive lookup works
+  const typeAndId = byTypeAndId(instance);
+  const deserialised = Object.assign(deserialisedObjects, {
+    [typeAndId]: instance,
+  });
+
   // transfer attributes from JSON API to target
   Object.keys(attributeMetadata).forEach(attribute => {
     const metadata = attributeMetadata[attribute];
@@ -108,6 +125,7 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
     extractResourceObjectOrObjectsFromRelationship(
       linkage,
       resourceObjectsByTypeAndId,
+      deserialisedObjects,
       whenNoIncludeRetainIdentifier
     );
 
@@ -133,15 +151,24 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
  * @param {boolean} allowUnresolvedIdentifiers - when `true`, identifiers are substituted for unresolved objects
  * @return {any}
  */
-function extractResourceObjectFromRelationship(relationIdentifier: ResourceIdentifier, resourceObjectsByTypeAndId: IncludedLookup, allowUnresolvedIdentifiers: boolean): any {
+function extractResourceObjectFromRelationship(relationIdentifier: ResourceIdentifier, resourceObjectsByTypeAndId: IncludedLookup, deserialisedObjects: DeserialisedLookup, allowUnresolvedIdentifiers: boolean): any {
   const relationId = byTypeAndId(relationIdentifier);
+
+  // already deserialised and cached
+  const deserialisedObject = relationId ? deserialisedObjects[relationId] : undefined;
+  if (deserialisedObject) {
+    return deserialisedObject;
+  }
+
+  // already deserialised and cached
   const includedForRelationId = relationId ? resourceObjectsByTypeAndId[relationId] : undefined;
 
   if (!includedForRelationId) {
     return allowUnresolvedIdentifiers ? unresolvedIdentifier(relationIdentifier) : undefined;
   }
 
-  return fromJsonApiResourceObject(includedForRelationId, resourceObjectsByTypeAndId);
+  // not yet deserialised, so deserialise and cache
+  return fromJsonApiResourceObject(includedForRelationId, resourceObjectsByTypeAndId, deserialisedObjects);
 }
 
 /**
@@ -154,10 +181,11 @@ function extractResourceObjectFromRelationship(relationIdentifier: ResourceIdent
  * @param {boolean} allowUnresolvedIdentifiers - when `true`, identifiers are substituted for unresolved objects
  * @return {any} -
  */
-function extractResourceObjectOrObjectsFromRelationship(resourceLinkage: ResourceLinkage, resourceObjectsByTypeAndId: IncludedLookup, allowUnresolvedIdentifiers: boolean): any {
+function extractResourceObjectOrObjectsFromRelationship(resourceLinkage: ResourceLinkage, resourceObjectsByTypeAndId: IncludedLookup, deserialisedObjects: DeserialisedLookup, allowUnresolvedIdentifiers: boolean): any {
   const extractResourceObject = (linkage) => extractResourceObjectFromRelationship(
     linkage,
     resourceObjectsByTypeAndId,
+    deserialisedObjects,
     allowUnresolvedIdentifiers
   );
 

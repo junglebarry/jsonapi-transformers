@@ -56,6 +56,14 @@ export const FAKE_SINGLE_RESPONSE = {
       "attributes": {
         "firstName": "Bruce",
         "surname": "Wayne"
+      },
+      "relationships": {
+        "address": {
+          "data": {
+            "id": "address2",
+            "type": "addresses"
+          }
+        }
       }
     }
   ]
