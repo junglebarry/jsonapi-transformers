@@ -42,6 +42,16 @@ export class JsonApiDeserialiser {
     this.includes = referents;
     return deserialised as T[];
   }
+
+  deserialise<T extends ResourceIdentifier>(topLevel: TopLevel): T | T[] {
+    if (topLevel && topLevel.data && Array.isArray(topLevel.data)) {
+      return this.deserialiseMany<T>(topLevel);
+    } else if (topLevel && topLevel.data) {
+      return this.deserialiseOne<T>(topLevel);
+    }
+
+    throw new Error('No primary data to deserialise');
+  }
 }
 
 /**

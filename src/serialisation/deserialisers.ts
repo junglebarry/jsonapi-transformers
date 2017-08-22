@@ -66,17 +66,14 @@ export function fromJsonApiTopLevel(topLevel: TopLevel, resourceObjects: Resourc
 
   const resourceObjectsByTypeAndId: IncludedLookup = keyBy(allResourceObjects, byTypeAndId);
 
-  const deserialiseObjectOrArray = (data) => {
-    const deserialisedObjectsByTypeAndId: DeserialisedLookup = {};
-    if (Array.isArray(data)) {
-      return data.map(datum => fromJsonApiResourceObject(datum, resourceObjectsByTypeAndId, deserialisedObjectsByTypeAndId));
-    } else if (data) {
-      return fromJsonApiResourceObject(data, resourceObjectsByTypeAndId, deserialisedObjectsByTypeAndId);
-    }
-    return undefined;
-  };
+  const deserialisedObjectsByTypeAndId: DeserialisedLookup = {};
 
-  const deserialised = deserialiseObjectOrArray(data);
+  let deserialised = undefined;
+  if (Array.isArray(data)) {
+    deserialised = data.map(datum => fromJsonApiResourceObject(datum, resourceObjectsByTypeAndId, deserialisedObjectsByTypeAndId));
+  } else if (data) {
+    deserialised = fromJsonApiResourceObject(data, resourceObjectsByTypeAndId, deserialisedObjectsByTypeAndId);
+  }
 
   return {
     deserialised,
@@ -103,7 +100,14 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
 
   // fetch the Typescript class responsible for deserialisation
   const targetType = getClassForJsonapiType(type);
+  if (!targetType) {
+    throw new Error(`No target entity type for type: ${type}`);
+  }
+
   const targetConstructor = getConstructorForJsonapiType(type);
+  if (!targetConstructor) {
+    throw new Error(`No target entity constructor for type: ${type}`);
+  }
 
   // fetch type-specific data
   const attributeMetadata = getAttributeMetadata(targetConstructor);
