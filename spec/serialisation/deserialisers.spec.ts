@@ -37,25 +37,32 @@ describe('deserialisers', () => {
         expect(city).toEqual("Nuttytown");
       });
 
-      it('should deserialise related objects with the same type but different name, populating their properties', () => {
+      it('should deserialise related object arrays with the same type but different name, populating their properties', () => {
         expect(PERSON_1.oldAddresses).toBeDefined();
-        expect(PERSON_1.oldAddresses.length).toEqual(1);
-        const [oldAddress] = PERSON_1.oldAddresses;
-        expect(oldAddress).toEqual(jasmine.any(Address));
-        expect(oldAddress.houseNumber).toEqual(1007);
-        expect(oldAddress.street).toEqual("Mountain Drive");
-        expect(oldAddress.city).toEqual("Gotham City");
+        expect(PERSON_1.oldAddresses.length).toEqual(2);
+
+        const [oldAddress1, oldAddress2] = PERSON_1.oldAddresses;
+        expect(oldAddress1).toEqual(jasmine.any(Address));
+        expect(oldAddress1.houseNumber).toEqual(1007);
+        expect(oldAddress1.street).toEqual("Mountain Drive");
+        expect(oldAddress1.city).toEqual("Gotham City");
+
+        expect(oldAddress2).toEqual(jasmine.any(Address));
+        expect(oldAddress2.houseNumber).toEqual(29);
+        expect(oldAddress2.street).toEqual("Acacia Road");
+        expect(oldAddress2.city).toEqual("Nuttytown");
       });
 
       it('should recursively deserialise related objects, populating their properties', () => {
         // traverse one level
         expect(PERSON_1.oldAddresses).toBeDefined();
-        expect(PERSON_1.oldAddresses.length).toEqual(1);
-        const [oldAddress] = PERSON_1.oldAddresses;
-        expect(oldAddress).toEqual(jasmine.any(Address));
+        expect(PERSON_1.oldAddresses.length).toEqual(2);
+        const [oldAddress1, oldAddress2] = PERSON_1.oldAddresses;
+        expect(oldAddress1).toEqual(jasmine.any(Address));
+        expect(oldAddress2).toEqual(jasmine.any(Address));
 
         // traverse two levels
-        const { mostFamousInhabitant } = oldAddress;
+        const { mostFamousInhabitant } = oldAddress1;
         expect(mostFamousInhabitant).toEqual(jasmine.any(Person));
         expect(mostFamousInhabitant.id).toEqual('person2');
         expect(mostFamousInhabitant.type).toEqual('people');
@@ -110,13 +117,18 @@ describe('deserialisers', () => {
         const [PERSON_1] = PEOPLE;
 
         expect(PERSON_1.oldAddresses).toBeDefined();
-        expect(PERSON_1.oldAddresses.length).toEqual(1);
-        const [oldAddress] = PERSON_1.oldAddresses;
-        expect(oldAddress).toEqual(jasmine.any(Address));
+        expect(PERSON_1.oldAddresses.length).toEqual(2);
 
-        expect(oldAddress.houseNumber).toEqual(1007);
-        expect(oldAddress.street).toEqual("Mountain Drive");
-        expect(oldAddress.city).toEqual("Gotham City");
+        const [oldAddress1, oldAddress2] = PERSON_1.oldAddresses;
+        expect(oldAddress1).toEqual(jasmine.any(Address));
+        expect(oldAddress1.houseNumber).toEqual(1007);
+        expect(oldAddress1.street).toEqual("Mountain Drive");
+        expect(oldAddress1.city).toEqual("Gotham City");
+
+        expect(oldAddress2).toEqual(jasmine.any(Address));
+        expect(oldAddress2.houseNumber).toEqual(29);
+        expect(oldAddress2.street).toEqual("Acacia Road");
+        expect(oldAddress2.city).toEqual("Nuttytown");
       });
 
       it('should recursively deserialise related objects, populating their properties', () => {
@@ -124,12 +136,13 @@ describe('deserialisers', () => {
 
         // traverse one level
         expect(PERSON_1.oldAddresses).toBeDefined();
-        expect(PERSON_1.oldAddresses.length).toEqual(1);
-        const [oldAddress] = PERSON_1.oldAddresses;
-        expect(oldAddress).toEqual(jasmine.any(Address));
+        expect(PERSON_1.oldAddresses.length).toEqual(2);
+        const [oldAddress1, oldAddress2] = PERSON_1.oldAddresses;
+        expect(oldAddress1).toEqual(jasmine.any(Address));
+        expect(oldAddress2).toEqual(jasmine.any(Address));
 
         // traverse two levels
-        const { mostFamousInhabitant } = oldAddress;
+        const { mostFamousInhabitant } = oldAddress1;
         expect(mostFamousInhabitant).toEqual(jasmine.any(Person));
         expect(mostFamousInhabitant.id).toEqual('person2');
         expect(mostFamousInhabitant.type).toEqual('people');

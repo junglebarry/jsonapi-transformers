@@ -19,6 +19,10 @@ export const FAKE_MULTIPLE_RESPONSE = {
             {
               "id": "address2",
               "type": "addresses"
+            },
+            {
+              "id": "address1",
+              "type": "addresses"
             }
           ]
         }

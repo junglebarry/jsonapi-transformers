@@ -18,6 +18,10 @@ export const FAKE_SINGLE_RESPONSE = {
           {
             "id": "address2",
             "type": "addresses"
+          },
+          {
+            "id": "address1",
+            "type": "addresses"
           }
         ]
       }
@@ -63,6 +67,9 @@ export const FAKE_SINGLE_RESPONSE = {
             "id": "address2",
             "type": "addresses"
           }
+        },
+        "old_addresses": {
+          "data": []
         }
       }
     }

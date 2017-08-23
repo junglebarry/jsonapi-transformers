@@ -120,7 +120,7 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
 
   // add to the list of deserialised objects, so recursive lookup works
   const typeAndId = byTypeAndId(instance);
-  const deserialised = Object.assign(deserialisedObjects, {
+  Object.assign(deserialisedObjects, {
     [typeAndId]: instance,
   });
 
@@ -146,7 +146,9 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
     const { allowUnresolvedIdentifiers, name } = relationshipMetadata[relationshipName];
     const relationshipIdentifierData = relationships[name];
     const { data = undefined } = relationshipIdentifierData || {};
-    if (data) {
+    if (data && Array.isArray(data)) {
+      instance[relationshipName] = data.map(datum => extractResourceObject(datum, allowUnresolvedIdentifiers)).filter(x => x);
+    } else if (data) {
       instance[relationshipName] = extractResourceObject(data, allowUnresolvedIdentifiers);
     }
   });
