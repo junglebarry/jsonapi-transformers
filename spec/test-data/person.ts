@@ -1,6 +1,8 @@
 import {
   attribute,
   entity,
+  link,
+  meta,
   relationship,
   JsonapiEntity,
   OneUnresolvedIdentifierOr,
@@ -29,4 +31,9 @@ export class Person extends JsonapiEntity {
   work_address: OneUnresolvedIdentifierOr<Address>;
   @relationship({ allowUnresolvedIdentifiers: true })
   old_work_addresses: ManyUnresolvedIdentifiersOr<Address>;
+
+  @link() self: string;
+  @link({ name: 'alt' }) alternative: string;
+
+  @meta({ name: 'alter_ego' }) alterEgo: string;
 }

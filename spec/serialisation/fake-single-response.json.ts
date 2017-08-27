@@ -6,6 +6,13 @@ export const FAKE_SINGLE_RESPONSE = {
       "firstName": "Eric",
       "surname": "Wimp"
     },
+    "links": {
+      "self": "http://example.com/people/person1",
+      "alt": "http://alt.example.com/people/person1",
+    },
+    "meta": {
+      "alter_ego": "BANANAMAN"
+    },
     "relationships": {
       "address": {
         "data": {

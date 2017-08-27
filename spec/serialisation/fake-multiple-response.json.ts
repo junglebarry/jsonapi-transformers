@@ -7,6 +7,13 @@ export const FAKE_MULTIPLE_RESPONSE = {
         "firstName": "Eric",
         "surname": "Wimp"
       },
+      "links": {
+        "self": "http://example.com/people/person1",
+        "alt": "http://alt.example.com/people/person1",
+      },
+      "meta": {
+        "alter_ego": "BANANAMAN"
+      },
       "relationships": {
         "address": {
           "data": {
@@ -34,6 +41,13 @@ export const FAKE_MULTIPLE_RESPONSE = {
       "attributes": {
         "firstName": "Bruce",
         "surname": "Wayne"
+      },
+      "links": {
+        "self": "http://example.com/people/person2",
+        "alt": "http://alt.example.com/people/person2",
+      },
+      "meta": {
+        "alter_ego": "BATMAN"
       },
       "relationships": {
         "address": {

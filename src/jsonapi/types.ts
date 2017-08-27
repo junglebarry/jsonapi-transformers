@@ -13,6 +13,18 @@ export interface ResourceIdentifier {
 export type AttributesObject = { [attributeName: string]: any };
 
 /**
+ * JSON:API links objects
+ * @type { { [string]: any } }
+ */
+export type LinksObject = { [linkName: string]: any };
+
+/**
+ * JSON:API meta information objects
+ * @type { { [string]: any } }
+ */
+export type MetaObject = { [metaName: string]: any };
+
+/**
  * JSON:API resource linkage - to-one, to-many, and nullable identifiers
  */
 export type ResourceLinkage = null | ResourceIdentifier | ResourceIdentifier[];
@@ -29,6 +41,8 @@ export interface RelationshipsObject {
  */
 export interface ResourceObject extends ResourceIdentifier {
   attributes?: AttributesObject;
+  links?: LinksObject;
+  meta?: MetaObject;
   relationships?: { [relationshipName: string]: RelationshipsObject };
 }
 

@@ -29,6 +29,19 @@ describe('deserialisers', () => {
         expect(surname).toEqual('Wimp');
       });
 
+      it('should deserialise decorated object links', () => {
+        expect(PERSON_1).toEqual(jasmine.any(Person));
+        const { self, alternative } = PERSON_1;
+        expect(self).toEqual('http://example.com/people/person1');
+        expect(alternative).toEqual('http://alt.example.com/people/person1');
+      });
+
+      it('should deserialise decorated object meta information', () => {
+        expect(PERSON_1).toEqual(jasmine.any(Person));
+        const { alterEgo } = PERSON_1;
+        expect(alterEgo).toEqual('BANANAMAN');
+      });
+
       it('should deserialise related objects, populating their properties', () => {
         expect(PERSON_1.address).toEqual(jasmine.any(Address));
         const { houseNumber, street, city } = PERSON_1.address;
@@ -101,6 +114,23 @@ describe('deserialisers', () => {
         expect(type).toEqual('people');
         expect(firstName).toEqual('Eric');
         expect(surname).toEqual('Wimp');
+      });
+
+      it('should deserialise decorated object links', () => {
+        const [PERSON_1] = PEOPLE;
+        expect(PERSON_1).toEqual(jasmine.any(Person));
+
+        const { self, alternative } = PERSON_1;
+        expect(self).toEqual('http://example.com/people/person1');
+        expect(alternative).toEqual('http://alt.example.com/people/person1');
+      });
+
+      it('should deserialise decorated object meta information', () => {
+        const [PERSON_1] = PEOPLE;
+        expect(PERSON_1).toEqual(jasmine.any(Person));
+
+        const { alterEgo } = PERSON_1;
+        expect(alterEgo).toEqual('BANANAMAN');
       });
 
       it('should deserialise related objects, populating their properties', () => {

@@ -2,6 +2,8 @@ import {
   getAttributeMetadata,
   getClassForJsonapiType,
   getConstructorForJsonapiType,
+  getLinkMetadata,
+  getMetaMetadata,
   getRelationshipMetadata,
 } from '../decorators';
 
@@ -95,6 +97,8 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
     id,
     type,
     attributes = {},
+    links = {},
+    meta = {},
     relationships = {},
   } = jsonapiResource;
 
@@ -111,6 +115,8 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
 
   // fetch type-specific data
   const attributeMetadata = getAttributeMetadata(targetConstructor);
+  const linkMetadata = getLinkMetadata(targetConstructor);
+  const metaMetadata = getMetaMetadata(targetConstructor);
   const relationshipMetadata = getRelationshipMetadata(targetConstructor);
 
   // construct a basic instance with only ID and type specified
@@ -131,6 +137,26 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
     const sourceAttribute = attributes[jsonapiName];
     if (isDefined(sourceAttribute)) {
       instance[attribute] = attributes[jsonapiName];
+    }
+  });
+
+  // transfer links from JSON API to target
+  Object.keys(linkMetadata).forEach(link => {
+    const metadata = linkMetadata[link];
+    const jsonapiName = metadata.name;
+    const sourceAttribute = links[jsonapiName];
+    if (isDefined(sourceAttribute)) {
+      instance[link] = links[jsonapiName];
+    }
+  });
+
+  // transfer meta properties from JSON API to target
+  Object.keys(metaMetadata).forEach(metaInfo => {
+    const metadata = metaMetadata[metaInfo];
+    const jsonapiName = metadata.name;
+    const sourceAttribute = meta[jsonapiName];
+    if (isDefined(sourceAttribute)) {
+      instance[metaInfo] = meta[jsonapiName];
     }
   });
 
