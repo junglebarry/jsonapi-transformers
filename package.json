@@ -1,0 +1,38 @@
+{
+  "name": "jsonapi-transformers",
+  "version": "1.0.0",
+  "description": "Typescript-based JSON API serialisation/deserialisation",
+  "main": "./index.ts",
+  "types": "./index.d.ts",
+  "scripts": {
+    "build": "gulp clean && gulp build",
+    "test": "gulp test",
+    "test:watch": "gulp test:watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/junglebarry/jsonapi-transformers.git"
+  },
+  "keywords": [
+    "Typescript",
+    "JSON",
+    "API",
+    "serialisation"
+  ],
+  "author": "David James Brooks",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/junglebarry/jsonapi-transformers/issues"
+  },
+  "homepage": "https://github.com/junglebarry/jsonapi-transformers#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/jasmine": "^2.5.46",
+    "@types/node": "^7.0.8",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-jasmine": "^2.4.2",
+    "gulp-typescript": "^3.1.6",
+    "typescript": "^2.2.1"
+  }
+}
