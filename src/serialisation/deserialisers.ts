@@ -119,10 +119,9 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
   const metaMetadata = getMetaMetadata(targetConstructor);
   const relationshipMetadata = getRelationshipMetadata(targetConstructor);
 
-  // construct a basic instance with only ID and type specified
+  // construct a basic instance with only ID and type (by means of entity) specified
   const instance = new targetType();
   instance.id = id;
-  instance.type = type;
 
   // add to the list of deserialised objects, so recursive lookup works
   const typeAndId = byTypeAndId(instance);
