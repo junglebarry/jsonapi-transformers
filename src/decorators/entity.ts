@@ -45,13 +45,31 @@ export function entity(options: EntityOptions): ClassDecorator {
   const { type } = options;
 
   return (constructor: ResourceIdentifierConstructor) => {
-    // add the type to all instances by prototypical inheritance
-    constructor.prototype.type = type;
+    const original = constructor;
+
+    // a utility function to generate instances of a class
+    const construct = (constructorFunc: ResourceIdentifierConstructor, args) => {
+      const constructorClosure : any = function () {
+        return constructorFunc.apply(this, args);
+      }
+      constructorClosure.prototype = constructorFunc.prototype;
+
+      // construct an instance and bind "type" correctly
+      const instance = new constructorClosure();
+      instance.type = type;
+      return instance;
+    };
+
+    // the new constructor behaviour
+    const wrappedConstructor : any = (...args) => construct(original, args);
+
+    // copy prototype so intanceof operator still works
+    wrappedConstructor.prototype = original.prototype;
 
     // add the type to the reverse lookup for deserialisation
-    ENTITIES_MAP.set(type, constructor);
+    ENTITIES_MAP.set(type, wrappedConstructor);
 
     // return new constructor (will override original)
-    return constructor;
+    return wrappedConstructor;
   }
 }
