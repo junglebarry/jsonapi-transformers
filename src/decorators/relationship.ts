@@ -2,6 +2,8 @@ import {
   MetadataMap,
 } from './metadata-map';
 
+import { getEntityPrototypeChain } from './utils';
+
 const RELATIONSHIPS_MAP = new MetadataMap<RelationshipOptions>();
 
 export interface RelationshipOptions {
@@ -25,5 +27,8 @@ export function relationship(options?: RelationshipOptions): PropertyDecorator {
 export type RelationshipMetadata = { [name: string]: RelationshipOptions };
 
 export function getRelationshipMetadata(target: any): RelationshipMetadata {
-  return RELATIONSHIPS_MAP.getMetadataByType(target.name);
+  return getEntityPrototypeChain(target).reduce(
+    (soFar, prototype) => Object.assign(soFar, RELATIONSHIPS_MAP.getMetadataByType(prototype.name)),
+    {}
+  );
 }

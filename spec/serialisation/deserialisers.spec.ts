@@ -8,16 +8,20 @@ import {
 
 import {
   Address,
+  Animal,
+  Cat,
+  Mouse,
   Person,
 } from '../test-data';
 
 import { FAKE_SINGLE_RESPONSE } from './fake-single-response.json';
+import { FAKE_SINGLE_SUBTYPE_RESPONSE } from './fake-single-subtype-response.json';
 import { FAKE_MULTIPLE_RESPONSE } from './fake-multiple-response.json';
 
 describe('deserialisers', () => {
   describe('fromJsonApiTopLevel', () => {
     describe('JSON API top-level datum deserialisation', () => {
-      const { deserialised, referents } = fromJsonApiTopLevel(FAKE_SINGLE_RESPONSE)
+      const { deserialised, referents } = fromJsonApiTopLevel(FAKE_SINGLE_RESPONSE);
       const PERSON_1: Person = deserialised;
 
       it('should deserialise the top-level datum from the response, populating object attributes', () => {
@@ -91,8 +95,8 @@ describe('deserialisers', () => {
       });
     });
 
-    describe('JSON API top-level datum deserialisation', () => {
-      const { deserialised, referents } = fromJsonApiTopLevel(FAKE_MULTIPLE_RESPONSE)
+    describe('JSON API top-level data deserialisation', () => {
+      const { deserialised, referents } = fromJsonApiTopLevel(FAKE_MULTIPLE_RESPONSE);
       const PEOPLE: Person[] = deserialised;
 
       it('should deserialise each item in the top-level data from the response', () => {
@@ -185,6 +189,48 @@ describe('deserialisers', () => {
         expect(address.houseNumber).toEqual(1007);
         expect(address.street).toEqual("Mountain Drive");
         expect(address.city).toEqual("Gotham City");
+      });
+    });
+
+    describe('JSON API top-level datum deserialisation of a subtype of an unregistered entity', () => {
+      const { deserialised, referents } = fromJsonApiTopLevel(FAKE_SINGLE_SUBTYPE_RESPONSE);
+      const CAT_1: Cat = deserialised;
+
+      it('should deserialise the top-level datum from the response, populating object attributes', () => {
+        expect(CAT_1).toEqual(jasmine.any(Cat));
+        const { id, type, name, livesLeft } = CAT_1;
+        expect(id).toEqual('mog');
+        expect(type).toEqual('cats');
+        expect(livesLeft).toEqual(8);
+        // supertype properties
+        expect(name).toEqual('Mog');
+      });
+
+      it('should deserialise decorated object links', () => {
+        expect(CAT_1).toEqual(jasmine.any(Cat));
+        const { self, alternative } = CAT_1;
+        expect(alternative).toEqual('http://alt.example.com/cats/mog');
+        // supertype properties
+        expect(self).toEqual('http://example.com/cats/mog');
+      });
+
+      it('should deserialise decorated object meta information', () => {
+        expect(CAT_1).toEqual(jasmine.any(Cat));
+        const { alterEgo, isGoodPet } = CAT_1;
+        expect(alterEgo).toEqual('FEROCIOUS TIGER');
+        // supertype properties
+        expect(isGoodPet).toEqual(true);
+      });
+
+      it('should deserialise related objects, populating their properties', () => {
+        expect(CAT_1.petOwner).toEqual(jasmine.any(Person));
+        const { fullName } = CAT_1.petOwner;
+        expect(fullName).toEqual('Meg da Witch');
+
+        // supertype properties
+        expect(CAT_1.chases).toEqual(jasmine.any(Animal));
+        const { name } = CAT_1.chases;
+        expect(name).toEqual('Miss Mouse');
       });
     });
   });

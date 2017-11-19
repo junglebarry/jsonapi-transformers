@@ -2,6 +2,8 @@ import {
   MetadataMap,
 } from './metadata-map';
 
+import { getEntityPrototypeChain } from './utils';
+
 const LINKS_MAP = new MetadataMap<LinkOptions>();
 
 export interface LinkOptions {
@@ -20,5 +22,8 @@ export function link(options?: LinkOptions): PropertyDecorator {
 export type LinkMetadata = { [name: string]: LinkOptions };
 
 export function getLinkMetadata(target: any): LinkMetadata {
-  return LINKS_MAP.getMetadataByType(target.name);
+  return getEntityPrototypeChain(target).reduce(
+    (soFar, prototype) => Object.assign(soFar, LINKS_MAP.getMetadataByType(prototype.name)),
+    {}
+  );
 }
