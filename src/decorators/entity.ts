@@ -41,7 +41,7 @@ interface EntityOptions {
  * to be serialisable to and deserialisable from appropriate JSON:API data.
  *
  */
-export function entity(options: EntityOptions): ClassDecorator {
+export function entity(options: EntityOptions) {
   const { type } = options;
 
   return (constructor: ResourceIdentifierConstructor) => {
