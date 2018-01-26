@@ -4,10 +4,7 @@
  * @param  {any} obj - a candidate object to check
  * @return {boolean} - `true` if an empty Object; `false` otherwose
  */
-export function isEmptyObject(obj: any): boolean {
-  return (Object.keys(obj).length === 0) && (obj.constructor === Object)
-}
-
+export declare function isEmptyObject(obj: any): boolean;
 /**
  * Is this value defined?
  *
@@ -18,12 +15,8 @@ export function isEmptyObject(obj: any): boolean {
  * @param  {any} value - a candidate value
  * @return {boolean} - `true` if the value is defined (including null); `false` otherwise.
  */
-export function isDefined(value: any): boolean {
-  return typeof value !== 'undefined';
-}
-
-export type KeyingFunction<T> = (T) => string;
-
+export declare function isDefined(value: any): boolean;
+export declare type KeyingFunction<T> = (T) => string;
 /**
  * Convert an array into a keyed object for constant-time lookup.
  *
@@ -31,9 +24,6 @@ export type KeyingFunction<T> = (T) => string;
  * @param {KeyingFunction<T>} keyFunc - a function converting array elements to keys
  * @type {T} - the type of elements appareaing as values in the resultant object.
  */
-export function keyBy<T>(array: T[], keyFunc: KeyingFunction<T>): { [key: string]: T } {
-  const reducer = (soFar, element) => Object.assign(soFar, {
-    [keyFunc(element)]: element,
-  });
-  return array.reduce(reducer, {});
-}
+export declare function keyBy<T>(array: T[], keyFunc: KeyingFunction<T>): {
+    [key: string]: T;
+};
