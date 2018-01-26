@@ -22,7 +22,7 @@ export function isDefined(value: any): boolean {
   return typeof value !== 'undefined';
 }
 
-type KeyingFunction<T> = (T) => string;
+export type KeyingFunction<T> = (T) => string;
 
 /**
  * Convert an array into a keyed object for constant-time lookup.

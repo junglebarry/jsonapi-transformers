@@ -35,13 +35,13 @@ export function byTypeAndId(obj: ResourceObject): string {
  * Resource objects, keyed by type-and-id
  * @type { { [string]: ResourceObject } }
  */
-type IncludedLookup = { [typeAndId: string]: ResourceObject };
+export type IncludedLookup = { [typeAndId: string]: ResourceObject };
 
 /**
  * Deserialised objects, keyed by type-and-id
  * @type { { [string]: any } }
  */
-type DeserialisedLookup = { [typeAndId: string]: any };
+export type DeserialisedLookup = { [typeAndId: string]: any };
 
 /**
  * Deserialise an entity or entities from JSON:API.

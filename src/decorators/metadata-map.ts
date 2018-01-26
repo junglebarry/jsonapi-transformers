@@ -1,5 +1,5 @@
-type MetadataByPropertyName<T> = { [attributeName: string]: T };
-type PropertyTypesForType<T> = { [typeName: string]: MetadataByPropertyName<T> };
+export type MetadataByPropertyName<T> = { [attributeName: string]: T };
+export type PropertyTypesForType<T> = { [typeName: string]: MetadataByPropertyName<T> };
 
 export class MetadataMap<T> {
   private metadataByType: PropertyTypesForType<T> = {};

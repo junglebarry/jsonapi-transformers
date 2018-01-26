@@ -2,11 +2,11 @@ import {
   ResourceIdentifier,
 } from '../jsonapi';
 
-interface ResourceIdentifierConstructor {
+export interface ResourceIdentifierConstructor {
   new (): ResourceIdentifier
 }
 
-class TypeMap {
+export class TypeMap {
   private constructorsByJsonapiType: { [typeName: string]: ResourceIdentifierConstructor } = {};
 
   get(typeName: string): ResourceIdentifierConstructor {
@@ -29,7 +29,7 @@ export function getConstructorForJsonapiType(type: string): Function {
   return clazz && clazz.prototype && clazz.prototype.constructor;
 }
 
-interface EntityOptions {
+export interface EntityOptions {
   type: string
 }
 
@@ -41,7 +41,7 @@ interface EntityOptions {
  * to be serialisable to and deserialisable from appropriate JSON:API data.
  *
  */
-export function entity(options: EntityOptions): ClassDecorator {
+export function entity(options: EntityOptions) {
   const { type } = options;
 
   return (constructor: ResourceIdentifierConstructor) => {
