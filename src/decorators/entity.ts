@@ -42,29 +42,16 @@ export interface EntityOptions {}
 export function entity(options: EntityOptions = {}) {
   return (constructor: JsonapiEntityConstructor) => {
     const exemplar = new constructor();
-    const original = constructor;
 
-    // a utility function to generate instances of a class
-    const construct = (constructorFunc: JsonapiEntityConstructor, args) => {
-      const constructorClosure : any = function () {
-        return constructorFunc.apply(this, args);
-      }
-      constructorClosure.prototype = constructorFunc.prototype;
+    // wrap in a new constructor to override original constructor behaviour,
+    // sharing the original prototype so the `instanceof` operator still works
+    const wrappedConstructor : any = (...args) => new constructor(...args);
+    wrappedConstructor.prototype = constructor.prototype;
 
-      // construct an instance and bind "type" correctly
-      return new constructorClosure()
-    };
-
-    // the new constructor behaviour
-    const wrappedConstructor : any = (...args) => construct(original, args);
-
-    // copy prototype so intanceof operator still works
-    wrappedConstructor.prototype = original.prototype;
 
     // add the type to the reverse lookup for deserialisation
     ENTITIES_MAP.set(exemplar.type, wrappedConstructor);
 
-    // return new constructor (will override original)
     return wrappedConstructor;
   }
 }
