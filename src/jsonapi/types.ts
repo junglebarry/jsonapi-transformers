@@ -51,7 +51,7 @@ export interface ResourceObject extends ResourceIdentifier {
  */
 export class JsonapiEntity implements ResourceIdentifier {
   id: string;
-  type: string;
+  readonly type: string;
 }
 
 /**

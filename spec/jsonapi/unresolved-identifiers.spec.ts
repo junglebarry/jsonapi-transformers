@@ -9,8 +9,8 @@ import {
 describe('unresolved-identifiers', () => {
 
   class FakeJsonapiEntity extends JsonapiEntity {
+    readonly type = 'things';
     id = 'foo';
-    type = 'things';
   }
 
   describe('isUnresolvedIdentifier', () => {

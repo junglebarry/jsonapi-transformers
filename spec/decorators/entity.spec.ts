@@ -11,22 +11,12 @@ import {
   Person,
 } from '../test-data';
 
-
 const address1: Address = new Address();
 address1.id = 'address1';
 address1.houseNumber = 8;
 address1.street = 'Acacia Road';
 address1.city = 'Nuttytown';
 address1.county = 'West Nutshire';
-
-const address1WithExplicitType: Address = new Address();
-address1WithExplicitType.id = 'address1';
-address1WithExplicitType.type = 'addresses';
-address1WithExplicitType.houseNumber = 8;
-address1WithExplicitType.street = 'Acacia Road';
-address1WithExplicitType.city = 'Nuttytown';
-address1WithExplicitType.county = 'West Nutshire';
-
 
 const address2: Address = new Address();
 address2.id = 'address2';
@@ -53,12 +43,8 @@ describe('entity', () => {
     expect(person1.type).toEqual('people');
   });
 
-  it('should respect equality, even when type is manually specified', () => {
-    expect(address1).toEqual(address1WithExplicitType);
-  });
-
   it('should permit a natural JSON interpretation', () => {
-    expect(address1).toEqual(jasmine.objectContaining({
+    expect(address1).toEqual(jasmine.objectContaining<Address>({
       id: 'address1',
       type: 'addresses',
       street: 'Acacia Road',

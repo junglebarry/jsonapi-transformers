@@ -1,26 +1,26 @@
 import {
-  ResourceIdentifier,
+  JsonapiEntity,
 } from '../jsonapi';
 
-export interface ResourceIdentifierConstructor {
-  new (): ResourceIdentifier
+export interface JsonapiEntityConstructor {
+  new (): JsonapiEntity
 }
 
 export class TypeMap {
-  private constructorsByJsonapiType: { [typeName: string]: ResourceIdentifierConstructor } = {};
+  private constructorsByJsonapiType: { [typeName: string]: JsonapiEntityConstructor } = {};
 
-  get(typeName: string): ResourceIdentifierConstructor {
+  get(typeName: string): JsonapiEntityConstructor {
     return this.constructorsByJsonapiType[typeName];
   }
 
-  set(typeName: string, constructorType: ResourceIdentifierConstructor): void {
+  set(typeName: string, constructorType: JsonapiEntityConstructor): void {
     this.constructorsByJsonapiType[typeName] = constructorType;
   }
 }
 
 export const ENTITIES_MAP = new TypeMap();
 
-export function getClassForJsonapiType(type: string): ResourceIdentifierConstructor {
+export function getClassForJsonapiType(type: string): JsonapiEntityConstructor {
   return ENTITIES_MAP.get(type);
 }
 
@@ -29,9 +29,7 @@ export function getConstructorForJsonapiType(type: string): Function {
   return clazz && clazz.prototype && clazz.prototype.constructor;
 }
 
-export interface EntityOptions {
-  type: string
-}
+export interface EntityOptions {}
 
 /**
  * Annotates a class to indicate that it is a JSON:API entity definition.
@@ -41,23 +39,20 @@ export interface EntityOptions {
  * to be serialisable to and deserialisable from appropriate JSON:API data.
  *
  */
-export function entity(options: EntityOptions) {
-  const { type } = options;
-
-  return (constructor: ResourceIdentifierConstructor) => {
+export function entity(options: EntityOptions = {}) {
+  return (constructor: JsonapiEntityConstructor) => {
+    const exemplar = new constructor();
     const original = constructor;
 
     // a utility function to generate instances of a class
-    const construct = (constructorFunc: ResourceIdentifierConstructor, args) => {
+    const construct = (constructorFunc: JsonapiEntityConstructor, args) => {
       const constructorClosure : any = function () {
         return constructorFunc.apply(this, args);
       }
       constructorClosure.prototype = constructorFunc.prototype;
 
       // construct an instance and bind "type" correctly
-      const instance = new constructorClosure();
-      instance.type = type;
-      return instance;
+      return new constructorClosure()
     };
 
     // the new constructor behaviour
@@ -67,7 +62,7 @@ export function entity(options: EntityOptions) {
     wrappedConstructor.prototype = original.prototype;
 
     // add the type to the reverse lookup for deserialisation
-    ENTITIES_MAP.set(type, wrappedConstructor);
+    ENTITIES_MAP.set(exemplar.type, wrappedConstructor);
 
     // return new constructor (will override original)
     return wrappedConstructor;

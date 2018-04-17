@@ -7,8 +7,10 @@ import {
 
 import { Person } from './person';
 
-@entity({ type: 'addresses' })
+@entity()
 export class Address extends JsonapiEntity {
+  readonly type = 'addresses';
+
   @attribute() houseNumber?: number;
   @attribute() street: string;
   @attribute() city: string;

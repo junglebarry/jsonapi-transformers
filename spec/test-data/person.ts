@@ -11,8 +11,10 @@ import {
 
 import { Address } from './address';
 
-@entity({ type: 'people' })
+@entity()
 export class Person extends JsonapiEntity {
+  readonly type = 'people';
+
   @attribute() firstName: string;
   @attribute() surname: string;
 
