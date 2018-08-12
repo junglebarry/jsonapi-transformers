@@ -1,0 +1,66 @@
+defaults: &defaults
+  working_directory: ~/jsonapi-transformers
+  docker:
+    - image: circleci/node:8.11.3-stretch
+
+restore_cache_node_modules: &restore_cache_node_modules
+  name: Restore cached node_modules/
+  keys:
+    - v1-dependencies-{{ checksum "package-lock.json" }}
+    - v1-dependencies- # fallback to using the latest cache if no exact match is found
+
+version: 2
+jobs:
+  install:
+    <<: *defaults
+    steps:
+      - run:
+          name: "Show npm and node versions"
+          command: |
+            node --version
+            npm --version
+      - checkout
+      - restore_cache:
+          <<: *restore_cache_node_modules
+      - run:
+          name: "Installing dependencies"
+          command: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package-lock.json" }}
+
+  test:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          <<: *restore_cache_node_modules
+      - run:
+          name: Run unit tests
+          command: npm run test
+
+  check_no_uncommitted_changes:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          <<: *restore_cache_node_modules
+      - run:
+          name: Rebuild the release directory (lib/)
+          command: npm run build
+      - run:
+          name: Check that there are no uncommitted changes
+          command: if output=$(git status --porcelain) && [ -z "$output" ]; then exit 0; else exit 1; fi;
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - install
+      - test:
+          requires:
+            - install
+      - check_no_uncommitted_changes:
+          requires:
+            - install

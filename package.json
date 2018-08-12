@@ -1,6 +1,6 @@
 {
   "name": "jsonapi-transformers",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Typescript-based JSON API serialisation/deserialisation",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
