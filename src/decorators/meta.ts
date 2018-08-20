@@ -2,6 +2,8 @@ import {
   MetadataMap,
 } from './metadata-map';
 
+import { getEntityPrototypeChain } from './utils';
+
 const META_PROPERTIES_MAP = new MetadataMap<MetaOptions>();
 
 export interface MetaOptions {
@@ -20,5 +22,8 @@ export function meta(options?: MetaOptions): PropertyDecorator {
 export type MetaMetadata = { [name: string]: MetaOptions };
 
 export function getMetaMetadata(target: any): MetaMetadata {
-  return META_PROPERTIES_MAP.getMetadataByType(target.name);
+  return getEntityPrototypeChain(target).reduce(
+    (soFar, prototype) => Object.assign(soFar, META_PROPERTIES_MAP.getMetadataByType(prototype.name)),
+    {}
+  );
 }
