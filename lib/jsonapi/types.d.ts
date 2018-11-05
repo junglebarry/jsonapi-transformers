@@ -19,6 +19,13 @@ export declare type AttributesObject = {
 export declare type LinksObject = {
     [linkName: string]: any;
 };
+export interface PaginationLinksObject extends LinksObject {
+    first?: string;
+    last?: string;
+    next?: string;
+    prev?: string;
+    self: string;
+}
 /**
  * JSON:API meta information objects
  * @type { { [string]: any } }
@@ -76,7 +83,27 @@ export declare type PrimaryData = ResourceObject | ResourceObject[];
  * JSON:API top-level document permutations
  */
 export interface TopLevelData {
-    data: PrimaryData;
+    data: ResourceObject[];
     included?: ResourceObject[];
+    links?: LinksObject;
+    meta?: MetaObject;
 }
-export declare type TopLevel = TopLevelData;
+/**
+ * JSON:API top-level document permutations
+ */
+export interface TopLevelDatum {
+    data: ResourceObject;
+    included?: ResourceObject[];
+    links?: LinksObject;
+    meta?: MetaObject;
+}
+/**
+ * response with pagination
+ */
+export interface PagedTopLevelData {
+    data: ResourceObject[];
+    included?: ResourceObject[];
+    links?: PaginationLinksObject;
+    meta?: MetaObject;
+}
+export declare type TopLevel = PagedTopLevelData | TopLevelData | TopLevelDatum;
