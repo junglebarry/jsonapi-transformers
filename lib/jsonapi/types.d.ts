@@ -24,7 +24,6 @@ export interface PaginationLinksObject extends LinksObject {
     last?: string;
     next?: string;
     prev?: string;
-    self: string;
 }
 /**
  * JSON:API meta information objects
