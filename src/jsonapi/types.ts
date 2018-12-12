@@ -1,7 +1,7 @@
 /**
- * Base type for JSON:API resource identifiers
+ * Base type for JSON:API identifiers
  */
-export interface ResourceIdentifier {
+export interface JsonapiIdentifier {
   id: string;
   type: string;
 }
@@ -33,6 +33,13 @@ export interface PaginationLinksObject extends LinksObject {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type MetaObject = { [metaName: string]: any };
+
+/**
+ * Base type for JSON:API resource identifiers
+ */
+export interface ResourceIdentifier extends JsonapiIdentifier {
+  meta?: MetaObject;
+}
 
 /**
  * JSON:API resource linkage - to-one, to-many, and nullable identifiers
@@ -69,6 +76,19 @@ export class JsonapiEntity implements ResourceIdentifier {
  *
  * @param  {ResourceIdentifier} target - an instance of a subtype of identifier
  * @return {ResourceIdentifier} an identifier (not a subtype thereof)
+ */
+export function resourceIdentifier(
+  target: ResourceIdentifier
+): ResourceIdentifier {
+  const { id, meta = undefined, type } = target;
+  return { id, ...(meta ? { meta } : {}), type };
+}
+
+/**
+ * Convert a subtype of identifier into an identifier alone.
+ *
+ * @param  {JsonapiIdentifier} target - an instance of a subtype of identifier
+ * @return {JsonapiIdentifier} an identifier (not a subtype thereof)
  */
 export function jsonapiIdentifier(
   target: ResourceIdentifier
