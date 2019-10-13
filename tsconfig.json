@@ -4,12 +4,12 @@
     "outDir": "./lib",
     "sourceMap": true,
     "declaration": true,
-    "module": "commonjs",
+    "module": "esnext",
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "lib": ["es2016"],
-    "target": "es5"
+    "target": "esnext"
   },
   "exclude": ["node_modules"]
 }

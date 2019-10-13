@@ -34,7 +34,7 @@ gulp.task('test', ['build_src', 'build_tests'], () => {
 
 gulp.task('build_src', () => {
   return gulp.src('./src/**/*.ts')
-    .pipe(tsProject())
+    .pipe(ts(tsSpec))
     .pipe(gulp.dest('./.tmp/src'));
 });
 
