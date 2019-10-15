@@ -3,7 +3,7 @@ import {
 } from '../jsonapi';
 
 export interface ResourceIdentifierConstructor {
-  new (): ResourceIdentifier
+  new (...args: any[]): ResourceIdentifier
 }
 
 export class TypeMap {
@@ -44,18 +44,16 @@ export interface EntityOptions {
 export function entity(options: EntityOptions) {
   const { type } = options;
 
-  return (constructor: ResourceIdentifierConstructor) => {
-    const original = constructor;
-
+  return (original: ResourceIdentifierConstructor) => {
     // a utility function to generate instances of a class
     const construct = (constructorFunc: ResourceIdentifierConstructor, args) => {
-      const constructorClosure : any = function () {
-        return constructorFunc.apply(this, args);
+      const CustomJsonapiEntity : any = function () {
+        return new constructorFunc(...args);
       }
-      constructorClosure.prototype = constructorFunc.prototype;
+      CustomJsonapiEntity.prototype = constructorFunc.prototype;
 
       // construct an instance and bind "type" correctly
-      const instance = new constructorClosure();
+      const instance = new CustomJsonapiEntity();
       instance.type = type;
       return instance;
     };
