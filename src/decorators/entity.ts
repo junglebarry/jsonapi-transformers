@@ -45,12 +45,6 @@ export function entity<E extends ResourceIdentifierConstructor>(options: EntityO
   const { type } = options;
 
   return (constructor: ResourceIdentifierConstructor) => {
-    // get the type if already registered
-    const existingClassForType = ENTITIES_MAP.get(type);
-    if (existingClassForType) {
-      return existingClassForType;
-    }
-
     // if unregisted, create the entity type, register, and return
     const clazz = class CustomJsonapiEntity extends constructor {
       type = type;
