@@ -1,6 +1,6 @@
 import { ResourceIdentifier } from '../jsonapi';
 export interface ResourceIdentifierConstructor {
-    new (): ResourceIdentifier;
+    new (...args: any[]): ResourceIdentifier;
 }
 export declare class TypeMap {
     private constructorsByJsonapiType;
@@ -21,4 +21,4 @@ export interface EntityOptions {
  * to be serialisable to and deserialisable from appropriate JSON:API data.
  *
  */
-export declare function entity(options: EntityOptions): (constructor: ResourceIdentifierConstructor) => any;
+export declare function entity(options: EntityOptions): (original: ResourceIdentifierConstructor) => any;

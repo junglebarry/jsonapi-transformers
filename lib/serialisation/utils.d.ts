@@ -16,7 +16,7 @@ export declare function isEmptyObject(obj: any): boolean;
  * @return {boolean} - `true` if the value is defined (including null); `false` otherwise.
  */
 export declare function isDefined(value: any): boolean;
-export declare type KeyingFunction<T> = (T) => string;
+export declare type KeyingFunction<T> = (t: T) => string;
 /**
  * Convert an array into a keyed object for constant-time lookup.
  *
