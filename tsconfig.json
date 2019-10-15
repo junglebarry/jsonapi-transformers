@@ -9,7 +9,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "lib": ["es2016"],
-    "target": "esnext"
+    "target": "es2015"
   },
   "exclude": ["node_modules"]
 }

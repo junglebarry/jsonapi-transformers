@@ -21,4 +21,4 @@ export interface EntityOptions {
  * to be serialisable to and deserialisable from appropriate JSON:API data.
  *
  */
-export declare function entity<E extends ResourceIdentifierConstructor>(options: EntityOptions): (E) => typeof E;
+export declare function entity<E extends ResourceIdentifierConstructor>(options: EntityOptions): (e: E) => typeof e;

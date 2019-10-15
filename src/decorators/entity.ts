@@ -41,10 +41,10 @@ export interface EntityOptions {
  * to be serialisable to and deserialisable from appropriate JSON:API data.
  *
  */
-export function entity<E extends ResourceIdentifierConstructor>(options: EntityOptions): (E) => typeof E {
+export function entity<E extends ResourceIdentifierConstructor>(options: EntityOptions): (e: E) => typeof e {
   const { type } = options;
 
-  return (constructor: ResourceIdentifierConstructor) => {
+  return (constructor: E) => {
     // if unregisted, create the entity type, register, and return
     const clazz = class CustomJsonapiEntity extends constructor {
       type = type;
