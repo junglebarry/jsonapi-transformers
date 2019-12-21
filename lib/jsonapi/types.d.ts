@@ -1,7 +1,7 @@
 /**
  * Base type for JSON:API resource identifiers
  */
-export interface ResourceIdentifier {
+export interface JsonapiIdentifier {
     id: string;
     type: string;
 }
@@ -32,6 +32,12 @@ export interface PaginationLinksObject extends LinksObject {
 export declare type MetaObject = {
     [metaName: string]: any;
 };
+/**
+ * Base type for JSON:API resource identifiers
+ */
+export interface ResourceIdentifier extends JsonapiIdentifier {
+    meta?: MetaObject;
+}
 /**
  * JSON:API resource linkage - to-one, to-many, and nullable identifiers
  */
@@ -66,7 +72,14 @@ export declare class JsonapiEntity implements ResourceIdentifier {
  * @param  {ResourceIdentifier} target - an instance of a subtype of identifier
  * @return {ResourceIdentifier} an identifier (not a subtype thereof)
  */
-export declare function jsonapiIdentifier(target: ResourceIdentifier): ResourceIdentifier;
+export declare function resourceIdentifier(target: ResourceIdentifier): ResourceIdentifier;
+/**
+ * Convert a subtype of identifier into an identifier alone.
+ *
+ * @param  {JsonapiIdentifier} target - an instance of a subtype of identifier
+ * @return {JsonapiIdentifier} an identifier (not a subtype thereof)
+ */
+export declare function jsonapiIdentifier(target: JsonapiIdentifier): JsonapiIdentifier;
 /**
  * Convert a linkage to pure identifiers.
  *
