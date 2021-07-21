@@ -1,7 +1,7 @@
 defaults: &defaults
   working_directory: ~/jsonapi-transformers
   docker:
-    - image: circleci/node:8.11.3-stretch
+    - image: circleci/node:10.16.3-stretch
 
 restore_cache_node_modules: &restore_cache_node_modules
   name: Restore cached node_modules/
