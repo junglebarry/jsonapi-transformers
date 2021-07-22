@@ -1,51 +1,26 @@
-defaults: &defaults
-  working_directory: ~/jsonapi-transformers
-  docker:
-    - image: circleci/node:12.22.3-stretch
+version: 2.1
 
-restore_cache_node_modules: &restore_cache_node_modules
-  name: Restore cached node_modules/
-  keys:
-    - v1-dependencies-{{ checksum "package-lock.json" }}
-    - v1-dependencies- # fallback to using the latest cache if no exact match is found
+orbs:
+  node: circleci/node@4.5.1
 
-version: 2
+executors:
+  default_executor:
+    working_directory: ~/jsonapi-transformers
+    docker:
+      - image: cimg/node:12.22.3
+        auth:
+          username: $DOCKER_USERNAME
+          password: $DOCKER_PASSWORD
+
 jobs:
-  install:
-    <<: *defaults
-    steps:
-      - run:
-          name: "Show npm and node versions"
-          command: |
-            node --version
-            npm --version
-      - checkout
-      - restore_cache:
-          <<: *restore_cache_node_modules
-      - run:
-          name: "Installing dependencies"
-          command: npm install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package-lock.json" }}
-
-  test:
-    <<: *defaults
+  build_and_test:
+    executor: default_executor
     steps:
       - checkout
-      - restore_cache:
-          <<: *restore_cache_node_modules
+      - node/install-packages
       - run:
           name: Run unit tests
           command: npm run test
-
-  check_no_uncommitted_changes:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache:
-          <<: *restore_cache_node_modules
       - run:
           name: Rebuild the release directory (lib/)
           command: npm run build
@@ -54,13 +29,6 @@ jobs:
           command: if output=$(git status --porcelain) && [ -z "$output" ]; then exit 0; else exit 1; fi;
 
 workflows:
-  version: 2
   test:
     jobs:
-      - install
-      - test:
-          requires:
-            - install
-      - check_no_uncommitted_changes:
-          requires:
-            - install
+      - build_and_test
