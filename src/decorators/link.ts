@@ -13,7 +13,7 @@ export interface LinkOptions {
 export function link(options?: LinkOptions): PropertyDecorator {
   const opts = options || {};
   return (target: any, key: string) => {
-    LINKS_MAP.setMetadataByType(target.constructor.name, key, Object.assign({
+    LINKS_MAP.setMetadataByType(target.constructor, key, Object.assign({
       name: key,
     }, opts));
   }
@@ -23,7 +23,7 @@ export type LinkMetadata = { [name: string]: LinkOptions };
 
 export function getLinkMetadata(target: any): LinkMetadata {
   return getEntityPrototypeChain(target).reduce(
-    (soFar, prototype) => Object.assign(soFar, LINKS_MAP.getMetadataByType(prototype.name)),
+    (soFar, prototype) => Object.assign(soFar, LINKS_MAP.getMetadataByType(prototype)),
     {}
   );
 }
