@@ -24,19 +24,19 @@ gulp.task('build_tests', () => {
     .pipe(gulp.dest('./.tmp/spec'));
 });
 
-gulp.task('test', ['build_src', 'build_tests'], () => {
-  return gulp.src(['./.tmp/**/*.spec.js'])
-    .pipe(jasmine({
-      verbose: false,
-      includeStackTrace: true,
-    }));
-});
-
 gulp.task('build_src', () => {
   return gulp.src('./src/**/*.ts')
     .pipe(tsProject())
     .pipe(gulp.dest('./.tmp/src'));
 });
+
+gulp.task('test', gulp.series('build_src', 'build_tests', () => {
+  return gulp.src(['./.tmp/**/*.spec.js'])
+    .pipe(jasmine({
+      verbose: false,
+      includeStackTrace: true,
+    }));
+}));
 
 gulp.task('build_release', () => {
   return gulp.src('./src/**/*.ts')
@@ -44,7 +44,7 @@ gulp.task('build_release', () => {
     .pipe(gulp.dest('./lib'));
 });
 
-gulp.task('test:watch', [], () => {
+gulp.task('test:watch', () => {
   gulp.watch('src/**/*.ts', ['test']);
   gulp.watch('spec/**/*.ts', ['test']);
 });
