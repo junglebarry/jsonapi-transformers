@@ -1,4 +1,4 @@
-import { ResourceIdentifier, ResourceObject } from '../jsonapi';
+import { ResourceIdentifier, ResourceObject } from "../jsonapi";
 /**
  * Convert a target JSON:API entity into a JSON:API representation.
  *

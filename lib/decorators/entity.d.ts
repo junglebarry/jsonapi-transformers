@@ -1,4 +1,4 @@
-import { ResourceIdentifier } from '../jsonapi';
+import { ResourceIdentifier } from "../jsonapi";
 export interface ResourceIdentifierConstructor {
     new (...args: any[]): ResourceIdentifier;
 }

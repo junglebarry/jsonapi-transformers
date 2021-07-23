@@ -1,4 +1,4 @@
-import { ResourceObject, TopLevel } from '../jsonapi';
+import { ResourceObject, TopLevel } from "../jsonapi";
 /**
  * Key a resource object by type and ID.
  *
