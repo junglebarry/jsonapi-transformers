@@ -3,7 +3,6 @@ import {
   entity,
   link,
   meta,
-  JsonapiEntity,
   relationship,
 } from '../../src';
 

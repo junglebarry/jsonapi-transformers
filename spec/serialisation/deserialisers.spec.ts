@@ -1,17 +1,12 @@
 import { describe, expect, it } from '@jest/globals';
 import {
-  attribute,
-  entity,
   fromJsonApiTopLevel,
-  relationship,
-  JsonapiEntity,
 } from '../../src';
 
 import {
   Address,
   Animal,
   Cat,
-  Mouse,
   Person,
 } from '../test-data';
 
@@ -22,7 +17,7 @@ import { FAKE_MULTIPLE_RESPONSE } from './fake-multiple-response.json';
 describe('deserialisers', () => {
   describe('fromJsonApiTopLevel', () => {
     describe('JSON API top-level datum deserialisation', () => {
-      const { deserialised, referents } = fromJsonApiTopLevel(FAKE_SINGLE_RESPONSE);
+      const { deserialised } = fromJsonApiTopLevel(FAKE_SINGLE_RESPONSE);
       const PERSON_1: Person = deserialised;
 
       it('should deserialise the top-level datum from the response, populating object attributes', () => {
@@ -97,7 +92,7 @@ describe('deserialisers', () => {
     });
 
     describe('JSON API top-level data deserialisation', () => {
-      const { deserialised, referents } = fromJsonApiTopLevel(FAKE_MULTIPLE_RESPONSE);
+      const { deserialised } = fromJsonApiTopLevel(FAKE_MULTIPLE_RESPONSE);
       const PEOPLE: Person[] = deserialised;
 
       it('should deserialise each item in the top-level data from the response', () => {
@@ -194,7 +189,7 @@ describe('deserialisers', () => {
     });
 
     describe('JSON API top-level datum deserialisation of a subtype of an unregistered entity', () => {
-      const { deserialised, referents } = fromJsonApiTopLevel(FAKE_SINGLE_SUBTYPE_RESPONSE);
+      const { deserialised } = fromJsonApiTopLevel(FAKE_SINGLE_SUBTYPE_RESPONSE);
       const CAT_1: Cat = deserialised;
 
       it('should deserialise the top-level datum from the response, populating object attributes', () => {
