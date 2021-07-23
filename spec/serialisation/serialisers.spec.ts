@@ -2,7 +2,6 @@ import { describe, expect, it } from '@jest/globals';
 import {
   byTypeAndId,
   fromJsonApiResourceObject,
-  jsonapiIdentifier,
   toJsonApi,
   unresolvedIdentifier,
 } from '../../src';

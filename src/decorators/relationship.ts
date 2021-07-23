@@ -14,6 +14,7 @@ const DefaultRelationshipOptions: RelationshipOptions = {
 
 export function relationship(options?: RelationshipOptions): PropertyDecorator {
   const opts = Object.assign({}, DefaultRelationshipOptions, options || {});
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (target : any, key: string) => {
     RELATIONSHIPS_MAP.setMetadataByType(target.constructor, key, Object.assign({
       name: key,
@@ -23,6 +24,7 @@ export function relationship(options?: RelationshipOptions): PropertyDecorator {
 
 export type RelationshipMetadata = { [name: string]: RelationshipOptions };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
 export function getRelationshipMetadata(target: any): RelationshipMetadata {
   return getEntityPrototypeChain(target).reduce(
     (soFar, prototype) => Object.assign(soFar, RELATIONSHIPS_MAP.getMetadataByType(prototype)),

@@ -10,12 +10,14 @@ export interface ResourceIdentifier {
  * JSON:API attributes objects
  * @type { { [string]: any } }
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AttributesObject = { [attributeName: string]: any };
 
 /**
  * JSON:API links objects
  * @type { { [string]: any } }
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type LinksObject = { [linkName: string]: any };
 
 export interface PaginationLinksObject extends LinksObject {
@@ -29,6 +31,7 @@ export interface PaginationLinksObject extends LinksObject {
  * JSON:API meta information objects
  * @type { { [string]: any } }
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type MetaObject = { [metaName: string]: any };
 
 /**

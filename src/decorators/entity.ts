@@ -3,6 +3,7 @@ import {
 } from '../jsonapi';
 
 export interface ResourceIdentifierConstructor {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   new (...args: any[]): ResourceIdentifier
 }
 
@@ -23,7 +24,7 @@ export const ENTITIES_MAP = new TypeMap();
 export function getClassForJsonapiType(type: string): ResourceIdentifierConstructor {
   return ENTITIES_MAP.get(type);
 }
-
+// eslint-disable-next-line @typescript-eslint/ban-types
 export function getConstructorForJsonapiType(type: string): Function {
   const clazz = getClassForJsonapiType(type);
   return clazz && clazz.prototype && clazz.prototype.constructor;
@@ -41,12 +42,14 @@ export interface EntityOptions {
  * to be serialisable to and deserialisable from appropriate JSON:API data.
  *
  */
-export function entity(options: EntityOptions) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function entity(options: EntityOptions): (ResourceIdentifierConstructor) => any {
   const { type } = options;
 
   return (original: ResourceIdentifierConstructor) => {
     // a utility function to generate instances of a class
     const construct = (constructorFunc: ResourceIdentifierConstructor, args) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const CustomJsonapiEntity : any = function () {
         return new constructorFunc(...args);
       }
@@ -59,7 +62,8 @@ export function entity(options: EntityOptions) {
     };
 
     // the new constructor behaviour
-    const wrappedConstructor : any = (...args) => construct(original, args);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const wrappedConstructor: any = (...args) => construct(original, args);
 
     // copy prototype so intanceof operator still works
     wrappedConstructor.prototype = original.prototype;

@@ -1,9 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 import {
   isUnresolvedIdentifier,
-  unresolvedIdentifier,
   JsonapiEntity,
-  ResourceIdentifier,
   UnresolvedResourceIdentifier,
 } from '../../src';
 

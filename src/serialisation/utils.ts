@@ -4,6 +4,7 @@
  * @param  {any} obj - a candidate object to check
  * @return {boolean} - `true` if an empty Object; `false` otherwose
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
 export function isEmptyObject(obj: any): boolean {
   return (Object.keys(obj).length === 0) && (obj.constructor === Object)
 }
@@ -18,6 +19,7 @@ export function isEmptyObject(obj: any): boolean {
  * @param  {any} value - a candidate value
  * @return {boolean} - `true` if the value is defined (including null); `false` otherwise.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
 export function isDefined(value: any): boolean {
   return typeof value !== 'undefined';
 }
