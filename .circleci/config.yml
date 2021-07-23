@@ -19,6 +19,9 @@ jobs:
       - checkout
       - node/install-packages
       - run:
+          name: Run linters
+          command: npm run lint
+      - run:
           name: Run unit tests
           command: npm run test
       - run:
