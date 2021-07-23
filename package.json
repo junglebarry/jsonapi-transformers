@@ -2,6 +2,10 @@
   "name": "jsonapi-transformers",
   "version": "0.8.0",
   "description": "Typescript-based JSON API serialisation/deserialisation",
+  "files": [
+    "lib/**/*.d.ts",
+    "lib/**/*.js"
+  ],
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -11,6 +15,7 @@
     "lint:eslint": "eslint ./src ./spec",
     "lint:prettier": "prettier --check .",
     "lint": "npm run lint:eslint && npm run lint:prettier",
+    "prepare": "npm run build",
     "test": "jest"
   },
   "repository": {
