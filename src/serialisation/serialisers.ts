@@ -1,18 +1,8 @@
-import {
-  getAttributeMetadata,
-  getRelationshipMetadata,
-} from '../decorators';
+import { getAttributeMetadata, getRelationshipMetadata } from "../decorators";
 
-import {
-  jsonapiLinkage,
-  ResourceIdentifier,
-  ResourceObject,
-} from '../jsonapi';
+import { jsonapiLinkage, ResourceIdentifier, ResourceObject } from "../jsonapi";
 
-import {
-  isEmptyObject,
-  isDefined,
-} from './utils';
+import { isEmptyObject, isDefined } from "./utils";
 
 /**
  * Convert a target JSON:API entity into a JSON:API representation.
@@ -26,11 +16,16 @@ export function toJsonApi(target: ResourceIdentifier): ResourceObject {
   const attributeReducer = (soFar, attr) => {
     const metadata = attributeMetadata[attr];
     const targetAttribute = target[attr];
-    return !isDefined(targetAttribute) ? soFar : Object.assign(soFar, {
-      [metadata.name]: targetAttribute,
-    });
-  }
-  const attributes = Object.keys(attributeMetadata).reduce(attributeReducer, {});
+    return !isDefined(targetAttribute)
+      ? soFar
+      : Object.assign(soFar, {
+          [metadata.name]: targetAttribute,
+        });
+  };
+  const attributes = Object.keys(attributeMetadata).reduce(
+    attributeReducer,
+    {}
+  );
 
   // convert relationships
   const relationshipMetadata = getRelationshipMetadata(target.constructor);
@@ -38,12 +33,17 @@ export function toJsonApi(target: ResourceIdentifier): ResourceObject {
   const relationshipReducer = (soFar, relationshipName) => {
     const metadata = relationshipMetadata[relationshipName];
     const linkage = jsonapiLinkage(target[relationshipName]);
-    return !isDefined(linkage) ? soFar : Object.assign(soFar, {
-      [metadata.name]: { data: linkage },
-    });
-  }
+    return !isDefined(linkage)
+      ? soFar
+      : Object.assign(soFar, {
+          [metadata.name]: { data: linkage },
+        });
+  };
 
-  const relationships = Object.keys(relationshipMetadata).reduce(relationshipReducer, {});
+  const relationships = Object.keys(relationshipMetadata).reduce(
+    relationshipReducer,
+    {}
+  );
 
   // compose the object and return
   const entityWithAttributes = {
@@ -52,7 +52,9 @@ export function toJsonApi(target: ResourceIdentifier): ResourceObject {
     attributes,
   };
 
-  return isEmptyObject(relationships) ? entityWithAttributes : Object.assign(entityWithAttributes, {
-    relationships,
-  });
+  return isEmptyObject(relationships)
+    ? entityWithAttributes
+    : Object.assign(entityWithAttributes, {
+        relationships,
+      });
 }

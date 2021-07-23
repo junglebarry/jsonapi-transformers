@@ -1,14 +1,14 @@
-import {
-  ResourceIdentifier,
-} from '../jsonapi';
+import { ResourceIdentifier } from "../jsonapi";
 
 export interface ResourceIdentifierConstructor {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  new (...args: any[]): ResourceIdentifier
+  new (...args: any[]): ResourceIdentifier;
 }
 
 export class TypeMap {
-  private constructorsByJsonapiType: { [typeName: string]: ResourceIdentifierConstructor } = {};
+  private constructorsByJsonapiType: {
+    [typeName: string]: ResourceIdentifierConstructor;
+  } = {};
 
   get(typeName: string): ResourceIdentifierConstructor {
     return this.constructorsByJsonapiType[typeName];
@@ -21,7 +21,9 @@ export class TypeMap {
 
 export const ENTITIES_MAP = new TypeMap();
 
-export function getClassForJsonapiType(type: string): ResourceIdentifierConstructor {
+export function getClassForJsonapiType(
+  type: string
+): ResourceIdentifierConstructor {
   return ENTITIES_MAP.get(type);
 }
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -31,7 +33,7 @@ export function getConstructorForJsonapiType(type: string): Function {
 }
 
 export interface EntityOptions {
-  type: string
+  type: string;
 }
 
 /**
@@ -43,16 +45,21 @@ export interface EntityOptions {
  *
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function entity(options: EntityOptions): (ResourceIdentifierConstructor) => any {
+export function entity(
+  options: EntityOptions
+): (ResourceIdentifierConstructor) => any {
   const { type } = options;
 
   return (original: ResourceIdentifierConstructor) => {
     // a utility function to generate instances of a class
-    const construct = (constructorFunc: ResourceIdentifierConstructor, args) => {
+    const construct = (
+      constructorFunc: ResourceIdentifierConstructor,
+      args
+    ) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const CustomJsonapiEntity : any = function () {
+      const CustomJsonapiEntity: any = function () {
         return new constructorFunc(...args);
-      }
+      };
       CustomJsonapiEntity.prototype = constructorFunc.prototype;
 
       // construct an instance and bind "type" correctly
@@ -73,5 +80,5 @@ export function entity(options: EntityOptions): (ResourceIdentifierConstructor) 
 
     // return new constructor (will override original)
     return wrappedConstructor;
-  }
+  };
 }

@@ -5,7 +5,7 @@ import {
   getLinkMetadata,
   getMetaMetadata,
   getRelationshipMetadata,
-} from '../decorators';
+} from "../decorators";
 
 import {
   jsonapiIdentifier,
@@ -14,12 +14,9 @@ import {
   ResourceLinkage,
   ResourceObject,
   TopLevel,
-} from '../jsonapi';
+} from "../jsonapi";
 
-import {
-  isDefined,
-  keyBy,
-} from './utils';
+import { isDefined, keyBy } from "./utils";
 
 /**
  * Key a resource object by type and ID.
@@ -52,7 +49,10 @@ export type DeserialisedLookup = { [typeAndId: string]: any };
  * @return {any} - an entity or entities representing the top-level
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function fromJsonApiTopLevel(topLevel: TopLevel, resourceObjects: ResourceObject[] = []): any {
+export function fromJsonApiTopLevel(
+  topLevel: TopLevel,
+  resourceObjects: ResourceObject[] = []
+): any {
   // extract primary data and included resources
   const { data, included } = topLevel;
 
@@ -64,19 +64,36 @@ export function fromJsonApiTopLevel(topLevel: TopLevel, resourceObjects: Resourc
     primaryResourceObjects = [data];
   }
 
-  const includedResourceObjects: ResourceObject[] = (resourceObjects || []).concat(included || []);
+  const includedResourceObjects: ResourceObject[] = (
+    resourceObjects || []
+  ).concat(included || []);
 
-  const allResourceObjects = primaryResourceObjects.concat(includedResourceObjects);
+  const allResourceObjects = primaryResourceObjects.concat(
+    includedResourceObjects
+  );
 
-  const resourceObjectsByTypeAndId: IncludedLookup = keyBy(allResourceObjects, byTypeAndId);
+  const resourceObjectsByTypeAndId: IncludedLookup = keyBy(
+    allResourceObjects,
+    byTypeAndId
+  );
 
   const deserialisedObjectsByTypeAndId: DeserialisedLookup = {};
 
   let deserialised = undefined;
   if (Array.isArray(data)) {
-    deserialised = data.map(datum => fromJsonApiResourceObject(datum, resourceObjectsByTypeAndId, deserialisedObjectsByTypeAndId));
+    deserialised = data.map((datum) =>
+      fromJsonApiResourceObject(
+        datum,
+        resourceObjectsByTypeAndId,
+        deserialisedObjectsByTypeAndId
+      )
+    );
   } else if (data) {
-    deserialised = fromJsonApiResourceObject(data, resourceObjectsByTypeAndId, deserialisedObjectsByTypeAndId);
+    deserialised = fromJsonApiResourceObject(
+      data,
+      resourceObjectsByTypeAndId,
+      deserialisedObjectsByTypeAndId
+    );
   }
 
   return {
@@ -93,8 +110,11 @@ export function fromJsonApiTopLevel(topLevel: TopLevel, resourceObjects: Resourc
  * @return {any} - a resource object, deserialised from JSON:API
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resourceObjectsByTypeAndId: IncludedLookup, deserialisedObjects: DeserialisedLookup = {}): any {
-
+export function fromJsonApiResourceObject(
+  jsonapiResource: ResourceObject,
+  resourceObjectsByTypeAndId: IncludedLookup,
+  deserialisedObjects: DeserialisedLookup = {}
+): any {
   // deconstruct primary data and remap into an instance of the chosen type
   const {
     id,
@@ -134,7 +154,7 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
   });
 
   // transfer attributes from JSON API to target
-  Object.keys(attributeMetadata).forEach(attribute => {
+  Object.keys(attributeMetadata).forEach((attribute) => {
     const metadata = attributeMetadata[attribute];
     const jsonapiName = metadata.name;
     const sourceAttribute = attributes[jsonapiName];
@@ -144,7 +164,7 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
   });
 
   // transfer links from JSON API to target
-  Object.keys(linkMetadata).forEach(link => {
+  Object.keys(linkMetadata).forEach((link) => {
     const metadata = linkMetadata[link];
     const jsonapiName = metadata.name;
     const sourceAttribute = links[jsonapiName];
@@ -154,7 +174,7 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
   });
 
   // transfer meta properties from JSON API to target
-  Object.keys(metaMetadata).forEach(metaInfo => {
+  Object.keys(metaMetadata).forEach((metaInfo) => {
     const metadata = metaMetadata[metaInfo];
     const jsonapiName = metadata.name;
     const sourceAttribute = meta[jsonapiName];
@@ -163,7 +183,10 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
     }
   });
 
-  const extractResourceObject = (linkage: ResourceLinkage, whenNoIncludeRetainIdentifier: boolean) =>
+  const extractResourceObject = (
+    linkage: ResourceLinkage,
+    whenNoIncludeRetainIdentifier: boolean
+  ) =>
     extractResourceObjectOrObjectsFromRelationship(
       linkage,
       resourceObjectsByTypeAndId,
@@ -171,14 +194,22 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
       whenNoIncludeRetainIdentifier
     );
 
-  Object.keys(relationshipMetadata).forEach(relationshipName => {
-    const { allowUnresolvedIdentifiers, name } = relationshipMetadata[relationshipName];
+  Object.keys(relationshipMetadata).forEach((relationshipName) => {
+    const { allowUnresolvedIdentifiers, name } =
+      relationshipMetadata[relationshipName];
     const relationshipIdentifierData = relationships[name];
     const { data = undefined } = relationshipIdentifierData || {};
     if (data && Array.isArray(data)) {
-      instance[relationshipName] = data.map(datum => extractResourceObject(datum, allowUnresolvedIdentifiers)).filter(x => x);
+      instance[relationshipName] = data
+        .map((datum) =>
+          extractResourceObject(datum, allowUnresolvedIdentifiers)
+        )
+        .filter((x) => x);
     } else if (data) {
-      instance[relationshipName] = extractResourceObject(data, allowUnresolvedIdentifiers);
+      instance[relationshipName] = extractResourceObject(
+        data,
+        allowUnresolvedIdentifiers
+      );
     }
   });
 
@@ -196,24 +227,39 @@ export function fromJsonApiResourceObject(jsonapiResource: ResourceObject, resou
  * @return {any}
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function extractResourceObjectFromRelationship(relationIdentifier: ResourceIdentifier, resourceObjectsByTypeAndId: IncludedLookup, deserialisedObjects: DeserialisedLookup, allowUnresolvedIdentifiers: boolean): any {
+function extractResourceObjectFromRelationship(
+  relationIdentifier: ResourceIdentifier,
+  resourceObjectsByTypeAndId: IncludedLookup,
+  deserialisedObjects: DeserialisedLookup,
+  allowUnresolvedIdentifiers: boolean
+): any {
   const relationId = byTypeAndId(relationIdentifier);
 
   // already deserialised and cached
-  const deserialisedObject = relationId ? deserialisedObjects[relationId] : undefined;
+  const deserialisedObject = relationId
+    ? deserialisedObjects[relationId]
+    : undefined;
   if (deserialisedObject) {
     return deserialisedObject;
   }
 
   // already deserialised and cached
-  const includedForRelationId = relationId ? resourceObjectsByTypeAndId[relationId] : undefined;
+  const includedForRelationId = relationId
+    ? resourceObjectsByTypeAndId[relationId]
+    : undefined;
 
   if (!includedForRelationId) {
-    return allowUnresolvedIdentifiers ? unresolvedIdentifier(relationIdentifier) : undefined;
+    return allowUnresolvedIdentifiers
+      ? unresolvedIdentifier(relationIdentifier)
+      : undefined;
   }
 
   // not yet deserialised, so deserialise and cache
-  return fromJsonApiResourceObject(includedForRelationId, resourceObjectsByTypeAndId, deserialisedObjects);
+  return fromJsonApiResourceObject(
+    includedForRelationId,
+    resourceObjectsByTypeAndId,
+    deserialisedObjects
+  );
 }
 
 /**
@@ -227,13 +273,19 @@ function extractResourceObjectFromRelationship(relationIdentifier: ResourceIdent
  * @return {any} -
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function extractResourceObjectOrObjectsFromRelationship(resourceLinkage: ResourceLinkage, resourceObjectsByTypeAndId: IncludedLookup, deserialisedObjects: DeserialisedLookup, allowUnresolvedIdentifiers: boolean): any {
-  const extractResourceObject = (linkage) => extractResourceObjectFromRelationship(
-    linkage,
-    resourceObjectsByTypeAndId,
-    deserialisedObjects,
-    allowUnresolvedIdentifiers
-  );
+function extractResourceObjectOrObjectsFromRelationship(
+  resourceLinkage: ResourceLinkage,
+  resourceObjectsByTypeAndId: IncludedLookup,
+  deserialisedObjects: DeserialisedLookup,
+  allowUnresolvedIdentifiers: boolean
+): any {
+  const extractResourceObject = (linkage) =>
+    extractResourceObjectFromRelationship(
+      linkage,
+      resourceObjectsByTypeAndId,
+      deserialisedObjects,
+      allowUnresolvedIdentifiers
+    );
 
   if (Array.isArray(resourceLinkage)) {
     // relationship to-many

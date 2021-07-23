@@ -1,6 +1,4 @@
-import {
-  ResourceIdentifier,
-} from './types';
+import { ResourceIdentifier } from "./types";
 
 /**
  * A class representing unresolved resource identifiers.
@@ -11,10 +9,7 @@ import {
  * documents without being able to fully resolve references to all entities.
  */
 export class UnresolvedResourceIdentifier implements ResourceIdentifier {
-  constructor(
-    public id: string,
-    public type: string
-  ) {}
+  constructor(public id: string, public type: string) {}
 }
 
 /**
@@ -23,7 +18,9 @@ export class UnresolvedResourceIdentifier implements ResourceIdentifier {
  * @param  {ResourceIdentifier} target - an instance of a subtype of identifier
  * @return {UnresolvedResourceIdentifier} an identifier (not a subtype thereof)
  */
-export function unresolvedIdentifier(target: ResourceIdentifier): UnresolvedResourceIdentifier {
+export function unresolvedIdentifier(
+  target: ResourceIdentifier
+): UnresolvedResourceIdentifier {
   const { id, type } = target;
   return new UnresolvedResourceIdentifier(id, type);
 }
@@ -34,10 +31,11 @@ export function unresolvedIdentifier(target: ResourceIdentifier): UnresolvedReso
  * @param  {ResourceIdentifier} target - an instance of a subtype of identifier
  * @return {boolean} whether the provided identifier is unresolved
  */
-export function isUnresolvedIdentifier(identifier: ResourceIdentifier): boolean {
-  return (identifier instanceof UnresolvedResourceIdentifier);
+export function isUnresolvedIdentifier(
+  identifier: ResourceIdentifier
+): boolean {
+  return identifier instanceof UnresolvedResourceIdentifier;
 }
-
 
 /**
  * A to-one relationship that permits replacement with an unresolved identifier.
@@ -47,4 +45,7 @@ export type OneUnresolvedIdentifierOr<T> = UnresolvedResourceIdentifier | T;
 /**
  * A to-many relationship that permits replacement with unresolved identifiers.
  */
-export type ManyUnresolvedIdentifiersOr<T> = (UnresolvedResourceIdentifier | T)[];
+export type ManyUnresolvedIdentifiersOr<T> = (
+  | UnresolvedResourceIdentifier
+  | T
+)[];

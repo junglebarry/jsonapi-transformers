@@ -1,48 +1,41 @@
-import { describe, expect, it } from '@jest/globals';
-import {
-  fromJsonApiTopLevel,
-} from '../../src';
+import { describe, expect, it } from "@jest/globals";
+import { fromJsonApiTopLevel } from "../../src";
 
-import {
-  Address,
-  Animal,
-  Cat,
-  Person,
-} from '../test-data';
+import { Address, Animal, Cat, Person } from "../test-data";
 
-import { FAKE_SINGLE_RESPONSE } from './fake-single-response.json';
-import { FAKE_SINGLE_SUBTYPE_RESPONSE } from './fake-single-subtype-response.json';
-import { FAKE_MULTIPLE_RESPONSE } from './fake-multiple-response.json';
+import { FAKE_SINGLE_RESPONSE } from "./fake-single-response.json";
+import { FAKE_SINGLE_SUBTYPE_RESPONSE } from "./fake-single-subtype-response.json";
+import { FAKE_MULTIPLE_RESPONSE } from "./fake-multiple-response.json";
 
-describe('deserialisers', () => {
-  describe('fromJsonApiTopLevel', () => {
-    describe('JSON API top-level datum deserialisation', () => {
+describe("deserialisers", () => {
+  describe("fromJsonApiTopLevel", () => {
+    describe("JSON API top-level datum deserialisation", () => {
       const { deserialised } = fromJsonApiTopLevel(FAKE_SINGLE_RESPONSE);
       const PERSON_1: Person = deserialised;
 
-      it('should deserialise the top-level datum from the response, populating object attributes', () => {
+      it("should deserialise the top-level datum from the response, populating object attributes", () => {
         expect(PERSON_1).toEqual(expect.any(Person));
         const { id, type, firstName, surname } = PERSON_1;
-        expect(id).toEqual('person1');
-        expect(type).toEqual('people');
-        expect(firstName).toEqual('Eric');
-        expect(surname).toEqual('Wimp');
+        expect(id).toEqual("person1");
+        expect(type).toEqual("people");
+        expect(firstName).toEqual("Eric");
+        expect(surname).toEqual("Wimp");
       });
 
-      it('should deserialise decorated object links', () => {
+      it("should deserialise decorated object links", () => {
         expect(PERSON_1).toEqual(expect.any(Person));
         const { self, alternative } = PERSON_1;
-        expect(self).toEqual('http://example.com/people/person1');
-        expect(alternative).toEqual('http://alt.example.com/people/person1');
+        expect(self).toEqual("http://example.com/people/person1");
+        expect(alternative).toEqual("http://alt.example.com/people/person1");
       });
 
-      it('should deserialise decorated object meta information', () => {
+      it("should deserialise decorated object meta information", () => {
         expect(PERSON_1).toEqual(expect.any(Person));
         const { alterEgo } = PERSON_1;
-        expect(alterEgo).toEqual('BANANAMAN');
+        expect(alterEgo).toEqual("BANANAMAN");
       });
 
-      it('should deserialise related objects, populating their properties', () => {
+      it("should deserialise related objects, populating their properties", () => {
         expect(PERSON_1.address).toEqual(expect.any(Address));
         const { houseNumber, street, city } = PERSON_1.address;
         expect(houseNumber).toEqual(29);
@@ -50,7 +43,7 @@ describe('deserialisers', () => {
         expect(city).toEqual("Nuttytown");
       });
 
-      it('should deserialise related object arrays with the same type but different name, populating their properties', () => {
+      it("should deserialise related object arrays with the same type but different name, populating their properties", () => {
         expect(PERSON_1.oldAddresses).toBeDefined();
         expect(PERSON_1.oldAddresses.length).toEqual(2);
 
@@ -66,7 +59,7 @@ describe('deserialisers', () => {
         expect(oldAddress2.city).toEqual("Nuttytown");
       });
 
-      it('should recursively deserialise related objects, populating their properties', () => {
+      it("should recursively deserialise related objects, populating their properties", () => {
         // traverse one level
         expect(PERSON_1.oldAddresses).toBeDefined();
         expect(PERSON_1.oldAddresses.length).toEqual(2);
@@ -77,10 +70,10 @@ describe('deserialisers', () => {
         // traverse two levels
         const { mostFamousInhabitant } = oldAddress1;
         expect(mostFamousInhabitant).toEqual(expect.any(Person));
-        expect(mostFamousInhabitant.id).toEqual('person2');
-        expect(mostFamousInhabitant.type).toEqual('people');
-        expect(mostFamousInhabitant.firstName).toEqual('Bruce');
-        expect(mostFamousInhabitant.surname).toEqual('Wayne');
+        expect(mostFamousInhabitant.id).toEqual("person2");
+        expect(mostFamousInhabitant.type).toEqual("people");
+        expect(mostFamousInhabitant.firstName).toEqual("Bruce");
+        expect(mostFamousInhabitant.surname).toEqual("Wayne");
 
         // traverse three levels
         expect(mostFamousInhabitant.address).toEqual(expect.any(Address));
@@ -91,11 +84,11 @@ describe('deserialisers', () => {
       });
     });
 
-    describe('JSON API top-level data deserialisation', () => {
+    describe("JSON API top-level data deserialisation", () => {
       const { deserialised } = fromJsonApiTopLevel(FAKE_MULTIPLE_RESPONSE);
       const PEOPLE: Person[] = deserialised;
 
-      it('should deserialise each item in the top-level data from the response', () => {
+      it("should deserialise each item in the top-level data from the response", () => {
         expect(PEOPLE).toEqual(expect.any(Array));
         expect(PEOPLE.length).toEqual(2);
 
@@ -105,35 +98,35 @@ describe('deserialisers', () => {
         expect(PERSON_2).toEqual(expect.any(Person));
       });
 
-      it('should deserialise the top-level data from the response, populating object attributes', () => {
+      it("should deserialise the top-level data from the response, populating object attributes", () => {
         const [PERSON_1] = PEOPLE;
 
         const { id, type, firstName, surname } = PERSON_1;
 
-        expect(id).toEqual('person1');
-        expect(type).toEqual('people');
-        expect(firstName).toEqual('Eric');
-        expect(surname).toEqual('Wimp');
+        expect(id).toEqual("person1");
+        expect(type).toEqual("people");
+        expect(firstName).toEqual("Eric");
+        expect(surname).toEqual("Wimp");
       });
 
-      it('should deserialise decorated object links', () => {
+      it("should deserialise decorated object links", () => {
         const [PERSON_1] = PEOPLE;
         expect(PERSON_1).toEqual(expect.any(Person));
 
         const { self, alternative } = PERSON_1;
-        expect(self).toEqual('http://example.com/people/person1');
-        expect(alternative).toEqual('http://alt.example.com/people/person1');
+        expect(self).toEqual("http://example.com/people/person1");
+        expect(alternative).toEqual("http://alt.example.com/people/person1");
       });
 
-      it('should deserialise decorated object meta information', () => {
+      it("should deserialise decorated object meta information", () => {
         const [PERSON_1] = PEOPLE;
         expect(PERSON_1).toEqual(expect.any(Person));
 
         const { alterEgo } = PERSON_1;
-        expect(alterEgo).toEqual('BANANAMAN');
+        expect(alterEgo).toEqual("BANANAMAN");
       });
 
-      it('should deserialise related objects, populating their properties', () => {
+      it("should deserialise related objects, populating their properties", () => {
         const [PERSON_1] = PEOPLE;
 
         expect(PERSON_1.address).toEqual(expect.any(Address));
@@ -143,7 +136,7 @@ describe('deserialisers', () => {
         expect(city).toEqual("Nuttytown");
       });
 
-      it('should deserialise related objects with the same type but different name, populating their properties', () => {
+      it("should deserialise related objects with the same type but different name, populating their properties", () => {
         const [PERSON_1] = PEOPLE;
 
         expect(PERSON_1.oldAddresses).toBeDefined();
@@ -161,7 +154,7 @@ describe('deserialisers', () => {
         expect(oldAddress2.city).toEqual("Nuttytown");
       });
 
-      it('should recursively deserialise related objects, populating their properties', () => {
+      it("should recursively deserialise related objects, populating their properties", () => {
         const [PERSON_1] = PEOPLE;
 
         // traverse one level
@@ -174,10 +167,10 @@ describe('deserialisers', () => {
         // traverse two levels
         const { mostFamousInhabitant } = oldAddress1;
         expect(mostFamousInhabitant).toEqual(expect.any(Person));
-        expect(mostFamousInhabitant.id).toEqual('person2');
-        expect(mostFamousInhabitant.type).toEqual('people');
-        expect(mostFamousInhabitant.firstName).toEqual('Bruce');
-        expect(mostFamousInhabitant.surname).toEqual('Wayne');
+        expect(mostFamousInhabitant.id).toEqual("person2");
+        expect(mostFamousInhabitant.type).toEqual("people");
+        expect(mostFamousInhabitant.firstName).toEqual("Bruce");
+        expect(mostFamousInhabitant.surname).toEqual("Wayne");
 
         // traverse three levels
         expect(mostFamousInhabitant.address).toEqual(expect.any(Address));
@@ -188,45 +181,47 @@ describe('deserialisers', () => {
       });
     });
 
-    describe('JSON API top-level datum deserialisation of a subtype of an unregistered entity', () => {
-      const { deserialised } = fromJsonApiTopLevel(FAKE_SINGLE_SUBTYPE_RESPONSE);
+    describe("JSON API top-level datum deserialisation of a subtype of an unregistered entity", () => {
+      const { deserialised } = fromJsonApiTopLevel(
+        FAKE_SINGLE_SUBTYPE_RESPONSE
+      );
       const CAT_1: Cat = deserialised;
 
-      it('should deserialise the top-level datum from the response, populating object attributes', () => {
+      it("should deserialise the top-level datum from the response, populating object attributes", () => {
         expect(CAT_1).toEqual(expect.any(Cat));
         const { id, type, name, livesLeft } = CAT_1;
-        expect(id).toEqual('mog');
-        expect(type).toEqual('cats');
+        expect(id).toEqual("mog");
+        expect(type).toEqual("cats");
         expect(livesLeft).toEqual(8);
         // supertype properties
-        expect(name).toEqual('Mog');
+        expect(name).toEqual("Mog");
       });
 
-      it('should deserialise decorated object links', () => {
+      it("should deserialise decorated object links", () => {
         expect(CAT_1).toEqual(expect.any(Cat));
         const { self, alternative } = CAT_1;
-        expect(alternative).toEqual('http://alt.example.com/cats/mog');
+        expect(alternative).toEqual("http://alt.example.com/cats/mog");
         // supertype properties
-        expect(self).toEqual('http://example.com/cats/mog');
+        expect(self).toEqual("http://example.com/cats/mog");
       });
 
-      it('should deserialise decorated object meta information', () => {
+      it("should deserialise decorated object meta information", () => {
         expect(CAT_1).toEqual(expect.any(Cat));
         const { alterEgo, isGoodPet } = CAT_1;
-        expect(alterEgo).toEqual('FEROCIOUS TIGER');
+        expect(alterEgo).toEqual("FEROCIOUS TIGER");
         // supertype properties
         expect(isGoodPet).toEqual(true);
       });
 
-      it('should deserialise related objects, populating their properties', () => {
+      it("should deserialise related objects, populating their properties", () => {
         expect(CAT_1.petOwner).toEqual(expect.any(Person));
         const { fullName } = CAT_1.petOwner;
-        expect(fullName).toEqual('Meg da Witch');
+        expect(fullName).toEqual("Meg da Witch");
 
         // supertype properties
         expect(CAT_1.chases).toEqual(expect.any(Animal));
         const { name } = CAT_1.chases;
-        expect(name).toEqual('Miss Mouse');
+        expect(name).toEqual("Miss Mouse");
       });
     });
   });

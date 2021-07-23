@@ -7,11 +7,11 @@ import {
   JsonapiEntity,
   OneUnresolvedIdentifierOr,
   ManyUnresolvedIdentifiersOr,
-} from '../../src';
+} from "../../src";
 
-import { Address } from './address';
+import { Address } from "./address";
 
-@entity({ type: 'people' })
+@entity({ type: "people" })
 export class Person extends JsonapiEntity {
   @attribute() firstName: string;
   @attribute() surname: string;
@@ -23,7 +23,7 @@ export class Person extends JsonapiEntity {
   // relationships that are resolved to specific types
   @relationship()
   address?: Address;
-  @relationship({ name: 'old_addresses' })
+  @relationship({ name: "old_addresses" })
   oldAddresses?: Address[];
 
   // relationships that can be resolved to identifiers or specific types
@@ -33,7 +33,7 @@ export class Person extends JsonapiEntity {
   old_work_addresses?: ManyUnresolvedIdentifiersOr<Address>;
 
   @link() self: string;
-  @link({ name: 'alt' }) alternative: string;
+  @link({ name: "alt" }) alternative: string;
 
-  @meta({ name: 'alter_ego' }) alterEgo?: string;
+  @meta({ name: "alter_ego" }) alterEgo?: string;
 }

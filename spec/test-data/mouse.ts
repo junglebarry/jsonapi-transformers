@@ -1,9 +1,6 @@
-import {
-  entity,
-} from '../../src';
+import { entity } from "../../src";
 
-import { Animal } from './animal';
+import { Animal } from "./animal";
 
-@entity({ type: 'mice' })
-export class Mouse extends Animal {
-}
+@entity({ type: "mice" })
+export class Mouse extends Animal {}
