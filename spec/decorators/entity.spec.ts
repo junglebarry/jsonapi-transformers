@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import {
   attribute,
   entity,
@@ -42,9 +43,9 @@ person1.oldAddresses = [address2];
 
 describe('entity', () => {
   it('should respect instanceof', () => {
-    expect(address1).toEqual(jasmine.any(Address));
-    expect(address2).toEqual(jasmine.any(Address));
-    expect(person1).toEqual(jasmine.any(Person));
+    expect(address1).toEqual(expect.any(Address));
+    expect(address2).toEqual(expect.any(Address));
+    expect(person1).toEqual(expect.any(Person));
   });
 
   it('should add a type property from the decorator definition', () => {
@@ -58,7 +59,7 @@ describe('entity', () => {
   });
 
   it('should permit a natural JSON interpretation', () => {
-    expect(address1).toEqual(jasmine.objectContaining({
+    expect(address1).toEqual(expect.objectContaining({
       id: 'address1',
       type: 'addresses',
       street: 'Acacia Road',
