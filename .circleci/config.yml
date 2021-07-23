@@ -16,6 +16,9 @@ jobs:
   build_and_test:
     executor: default_executor
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "8d:a8:fa:bc:ae:5f:5c:51:f0:df:41:ed:3a:8f:c7:12" # 'deploykey_junglebarry_jsonapitransformers_ed25519'
       - checkout
       - node/install-packages
       - run:
@@ -36,8 +39,8 @@ jobs:
           name: Rebuild the release directory (lib/)
           command: npm run build
       - run:
-          name: Check that there are no uncommitted changes
-          command: if output=$(git status --porcelain) && [ -z "$output" ]; then exit 0; else exit 1; fi;
+          name: Semantic Release
+          command: npx semantic-release
 
 workflows:
   test:
