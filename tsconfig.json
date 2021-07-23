@@ -9,12 +9,8 @@
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "lib": [
-      "es2016"
-    ],
+    "lib": ["es2016"],
     "target": "es5"
   },
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

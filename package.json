@@ -6,7 +6,11 @@
   "types": "./lib/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "lint": "eslint ./src ./spec",
+    "format:prettier": "prettier --write .",
+    "format": "npm run format:prettier",
+    "lint:eslint": "eslint ./src ./spec",
+    "lint:prettier": "prettier --check .",
+    "lint": "npm run lint:eslint && npm run lint:prettier",
     "test": "jest"
   },
   "repository": {
@@ -32,7 +36,9 @@
     "@typescript-eslint/eslint-plugin": "^4.28.4",
     "@typescript-eslint/parser": "^4.28.4",
     "eslint": "^7.31.0",
+    "eslint-config-prettier": "^8.3.0",
     "jest": "^27.0.6",
+    "prettier": "^2.3.2",
     "ts-jest": "^27.0.4",
     "typescript": "^4.0.8"
   }

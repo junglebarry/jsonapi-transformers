@@ -6,7 +6,7 @@
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
 export function isEmptyObject(obj: any): boolean {
-  return (Object.keys(obj).length === 0) && (obj.constructor === Object)
+  return Object.keys(obj).length === 0 && obj.constructor === Object;
 }
 
 /**
@@ -21,7 +21,7 @@ export function isEmptyObject(obj: any): boolean {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
 export function isDefined(value: any): boolean {
-  return typeof value !== 'undefined';
+  return typeof value !== "undefined";
 }
 
 export type KeyingFunction<T> = (t: T) => string;
@@ -33,9 +33,13 @@ export type KeyingFunction<T> = (t: T) => string;
  * @param {KeyingFunction<T>} keyFunc - a function converting array elements to keys
  * @type {T} - the type of elements appareaing as values in the resultant object.
  */
-export function keyBy<T>(array: T[], keyFunc: KeyingFunction<T>): { [key: string]: T } {
-  const reducer = (soFar, element) => Object.assign(soFar, {
-    [keyFunc(element)]: element,
-  });
+export function keyBy<T>(
+  array: T[],
+  keyFunc: KeyingFunction<T>
+): { [key: string]: T } {
+  const reducer = (soFar, element) =>
+    Object.assign(soFar, {
+      [keyFunc(element)]: element,
+    });
   return array.reduce(reducer, {});
 }

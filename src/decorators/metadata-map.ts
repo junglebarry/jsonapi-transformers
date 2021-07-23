@@ -15,7 +15,9 @@ export class MetadataMap<T> {
   setMetadataByType(classType: any, keyName: string, metadata: T): void {
     this.metadataByType.set(
       classType,
-      Object.assign({}, this.getMetadataByType(classType), { [keyName]: metadata })
+      Object.assign({}, this.getMetadataByType(classType), {
+        [keyName]: metadata,
+      })
     );
   }
 }

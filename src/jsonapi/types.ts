@@ -21,10 +21,10 @@ export type AttributesObject = { [attributeName: string]: any };
 export type LinksObject = { [linkName: string]: any };
 
 export interface PaginationLinksObject extends LinksObject {
-  first?: string,
-  last?: string,
-  next?: string,
-  prev?: string,
+  first?: string;
+  last?: string;
+  next?: string;
+  prev?: string;
 }
 
 /**
@@ -70,7 +70,9 @@ export class JsonapiEntity implements ResourceIdentifier {
  * @param  {ResourceIdentifier} target - an instance of a subtype of identifier
  * @return {ResourceIdentifier} an identifier (not a subtype thereof)
  */
-export function jsonapiIdentifier(target: ResourceIdentifier): ResourceIdentifier {
+export function jsonapiIdentifier(
+  target: ResourceIdentifier
+): ResourceIdentifier {
   const { id, type } = target;
   return { id, type };
 }

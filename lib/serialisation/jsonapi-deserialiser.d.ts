@@ -1,4 +1,4 @@
-import { ResourceIdentifier, ResourceObject, TopLevel } from '../jsonapi';
+import { ResourceIdentifier, ResourceObject, TopLevel } from "../jsonapi";
 /**
  * A class that encapsulates all traversed and included ResourceObject instances
  * as it deserialises JSON:API responses.
