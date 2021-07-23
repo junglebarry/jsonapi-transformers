@@ -1,11 +1,9 @@
 export declare type MetadataByPropertyName<T> = {
     [attributeName: string]: T;
 };
-export declare type PropertyTypesForType<T> = {
-    [typeName: string]: MetadataByPropertyName<T>;
-};
+export declare type PropertyTypesForType<T> = Map<any, MetadataByPropertyName<T>>;
 export declare class MetadataMap<T> {
     private metadataByType;
-    getMetadataByType(typeName: string): MetadataByPropertyName<T>;
-    setMetadataByType(typeName: string, keyName: string, metadata: T): void;
+    getMetadataByType(classType: any): MetadataByPropertyName<T>;
+    setMetadataByType(classType: any, keyName: string, metadata: T): void;
 }

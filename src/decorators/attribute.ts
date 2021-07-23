@@ -13,7 +13,7 @@ export interface AttributeOptions {
 export function attribute(options?: AttributeOptions): PropertyDecorator {
   const opts = options || {};
   return (target: any, key: string) => {
-    ATTRIBUTES_MAP.setMetadataByType(target.constructor.name, key, Object.assign({
+    ATTRIBUTES_MAP.setMetadataByType(target.constructor, key, Object.assign({
       name: key,
     }, opts));
   }
@@ -23,7 +23,7 @@ export type AttributeMetadata = { [name: string]: AttributeOptions };
 
 export function getAttributeMetadata(target: any): AttributeMetadata {
   return getEntityPrototypeChain(target).reduce(
-    (soFar, prototype) => Object.assign(soFar, ATTRIBUTES_MAP.getMetadataByType(prototype.name)),
+    (soFar, prototype) => Object.assign(soFar, ATTRIBUTES_MAP.getMetadataByType(prototype)),
     {}
   );
 }

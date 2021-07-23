@@ -1,16 +1,17 @@
 export type MetadataByPropertyName<T> = { [attributeName: string]: T };
-export type PropertyTypesForType<T> = { [typeName: string]: MetadataByPropertyName<T> };
+export type PropertyTypesForType<T> = Map<any, MetadataByPropertyName<T>>;
 
 export class MetadataMap<T> {
-  private metadataByType: PropertyTypesForType<T> = {};
+  private metadataByType = new Map<any, MetadataByPropertyName<T>>();
 
-  getMetadataByType(typeName: string): MetadataByPropertyName<T> {
-    return this.metadataByType[typeName] || {};
+  getMetadataByType(classType: any): MetadataByPropertyName<T> {
+    return this.metadataByType.get(classType) || {};
   }
 
-  setMetadataByType(typeName: string, keyName: string, metadata: T): void {
-    this.metadataByType[typeName] = Object.assign({}, this.getMetadataByType(typeName), {
-      [keyName]: metadata,
-    });
+  setMetadataByType(classType: any, keyName: string, metadata: T): void {
+    this.metadataByType.set(
+      classType,
+      Object.assign({}, this.getMetadataByType(classType), { [keyName]: metadata })
+    );
   }
 }
