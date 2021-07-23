@@ -1,8 +1,9 @@
 {
   "compileOnSave": true,
+  "include": ["src/**/*"],
   "compilerOptions": {
     "outDir": "./lib",
-    "sourceMap": true,
+    "sourceMap": false,
     "declaration": true,
     "module": "commonjs",
     "moduleResolution": "node",

@@ -5,8 +5,7 @@
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
-    "build": "gulp clean && gulp build_release",
-    "clean": "gulp clean",
+    "build": "tsc",
     "test": "jest"
   },
   "repository": {
