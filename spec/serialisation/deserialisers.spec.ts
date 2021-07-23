@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import {
   attribute,
   entity,
@@ -25,7 +26,7 @@ describe('deserialisers', () => {
       const PERSON_1: Person = deserialised;
 
       it('should deserialise the top-level datum from the response, populating object attributes', () => {
-        expect(PERSON_1).toEqual(jasmine.any(Person));
+        expect(PERSON_1).toEqual(expect.any(Person));
         const { id, type, firstName, surname } = PERSON_1;
         expect(id).toEqual('person1');
         expect(type).toEqual('people');
@@ -34,20 +35,20 @@ describe('deserialisers', () => {
       });
 
       it('should deserialise decorated object links', () => {
-        expect(PERSON_1).toEqual(jasmine.any(Person));
+        expect(PERSON_1).toEqual(expect.any(Person));
         const { self, alternative } = PERSON_1;
         expect(self).toEqual('http://example.com/people/person1');
         expect(alternative).toEqual('http://alt.example.com/people/person1');
       });
 
       it('should deserialise decorated object meta information', () => {
-        expect(PERSON_1).toEqual(jasmine.any(Person));
+        expect(PERSON_1).toEqual(expect.any(Person));
         const { alterEgo } = PERSON_1;
         expect(alterEgo).toEqual('BANANAMAN');
       });
 
       it('should deserialise related objects, populating their properties', () => {
-        expect(PERSON_1.address).toEqual(jasmine.any(Address));
+        expect(PERSON_1.address).toEqual(expect.any(Address));
         const { houseNumber, street, city } = PERSON_1.address;
         expect(houseNumber).toEqual(29);
         expect(street).toEqual("Acacia Road");
@@ -59,12 +60,12 @@ describe('deserialisers', () => {
         expect(PERSON_1.oldAddresses.length).toEqual(2);
 
         const [oldAddress1, oldAddress2] = PERSON_1.oldAddresses;
-        expect(oldAddress1).toEqual(jasmine.any(Address));
+        expect(oldAddress1).toEqual(expect.any(Address));
         expect(oldAddress1.houseNumber).toEqual(1007);
         expect(oldAddress1.street).toEqual("Mountain Drive");
         expect(oldAddress1.city).toEqual("Gotham City");
 
-        expect(oldAddress2).toEqual(jasmine.any(Address));
+        expect(oldAddress2).toEqual(expect.any(Address));
         expect(oldAddress2.houseNumber).toEqual(29);
         expect(oldAddress2.street).toEqual("Acacia Road");
         expect(oldAddress2.city).toEqual("Nuttytown");
@@ -75,19 +76,19 @@ describe('deserialisers', () => {
         expect(PERSON_1.oldAddresses).toBeDefined();
         expect(PERSON_1.oldAddresses.length).toEqual(2);
         const [oldAddress1, oldAddress2] = PERSON_1.oldAddresses;
-        expect(oldAddress1).toEqual(jasmine.any(Address));
-        expect(oldAddress2).toEqual(jasmine.any(Address));
+        expect(oldAddress1).toEqual(expect.any(Address));
+        expect(oldAddress2).toEqual(expect.any(Address));
 
         // traverse two levels
         const { mostFamousInhabitant } = oldAddress1;
-        expect(mostFamousInhabitant).toEqual(jasmine.any(Person));
+        expect(mostFamousInhabitant).toEqual(expect.any(Person));
         expect(mostFamousInhabitant.id).toEqual('person2');
         expect(mostFamousInhabitant.type).toEqual('people');
         expect(mostFamousInhabitant.firstName).toEqual('Bruce');
         expect(mostFamousInhabitant.surname).toEqual('Wayne');
 
         // traverse three levels
-        expect(mostFamousInhabitant.address).toEqual(jasmine.any(Address));
+        expect(mostFamousInhabitant.address).toEqual(expect.any(Address));
         const { address } = mostFamousInhabitant;
         expect(address.houseNumber).toEqual(1007);
         expect(address.street).toEqual("Mountain Drive");
@@ -100,13 +101,13 @@ describe('deserialisers', () => {
       const PEOPLE: Person[] = deserialised;
 
       it('should deserialise each item in the top-level data from the response', () => {
-        expect(PEOPLE).toEqual(jasmine.any(Array));
+        expect(PEOPLE).toEqual(expect.any(Array));
         expect(PEOPLE.length).toEqual(2);
 
         const [PERSON_1, PERSON_2] = PEOPLE;
 
-        expect(PERSON_1).toEqual(jasmine.any(Person));
-        expect(PERSON_2).toEqual(jasmine.any(Person));
+        expect(PERSON_1).toEqual(expect.any(Person));
+        expect(PERSON_2).toEqual(expect.any(Person));
       });
 
       it('should deserialise the top-level data from the response, populating object attributes', () => {
@@ -122,7 +123,7 @@ describe('deserialisers', () => {
 
       it('should deserialise decorated object links', () => {
         const [PERSON_1] = PEOPLE;
-        expect(PERSON_1).toEqual(jasmine.any(Person));
+        expect(PERSON_1).toEqual(expect.any(Person));
 
         const { self, alternative } = PERSON_1;
         expect(self).toEqual('http://example.com/people/person1');
@@ -131,7 +132,7 @@ describe('deserialisers', () => {
 
       it('should deserialise decorated object meta information', () => {
         const [PERSON_1] = PEOPLE;
-        expect(PERSON_1).toEqual(jasmine.any(Person));
+        expect(PERSON_1).toEqual(expect.any(Person));
 
         const { alterEgo } = PERSON_1;
         expect(alterEgo).toEqual('BANANAMAN');
@@ -140,7 +141,7 @@ describe('deserialisers', () => {
       it('should deserialise related objects, populating their properties', () => {
         const [PERSON_1] = PEOPLE;
 
-        expect(PERSON_1.address).toEqual(jasmine.any(Address));
+        expect(PERSON_1.address).toEqual(expect.any(Address));
         const { houseNumber, street, city } = PERSON_1.address;
         expect(houseNumber).toEqual(29);
         expect(street).toEqual("Acacia Road");
@@ -154,12 +155,12 @@ describe('deserialisers', () => {
         expect(PERSON_1.oldAddresses.length).toEqual(2);
 
         const [oldAddress1, oldAddress2] = PERSON_1.oldAddresses;
-        expect(oldAddress1).toEqual(jasmine.any(Address));
+        expect(oldAddress1).toEqual(expect.any(Address));
         expect(oldAddress1.houseNumber).toEqual(1007);
         expect(oldAddress1.street).toEqual("Mountain Drive");
         expect(oldAddress1.city).toEqual("Gotham City");
 
-        expect(oldAddress2).toEqual(jasmine.any(Address));
+        expect(oldAddress2).toEqual(expect.any(Address));
         expect(oldAddress2.houseNumber).toEqual(29);
         expect(oldAddress2.street).toEqual("Acacia Road");
         expect(oldAddress2.city).toEqual("Nuttytown");
@@ -172,19 +173,19 @@ describe('deserialisers', () => {
         expect(PERSON_1.oldAddresses).toBeDefined();
         expect(PERSON_1.oldAddresses.length).toEqual(2);
         const [oldAddress1, oldAddress2] = PERSON_1.oldAddresses;
-        expect(oldAddress1).toEqual(jasmine.any(Address));
-        expect(oldAddress2).toEqual(jasmine.any(Address));
+        expect(oldAddress1).toEqual(expect.any(Address));
+        expect(oldAddress2).toEqual(expect.any(Address));
 
         // traverse two levels
         const { mostFamousInhabitant } = oldAddress1;
-        expect(mostFamousInhabitant).toEqual(jasmine.any(Person));
+        expect(mostFamousInhabitant).toEqual(expect.any(Person));
         expect(mostFamousInhabitant.id).toEqual('person2');
         expect(mostFamousInhabitant.type).toEqual('people');
         expect(mostFamousInhabitant.firstName).toEqual('Bruce');
         expect(mostFamousInhabitant.surname).toEqual('Wayne');
 
         // traverse three levels
-        expect(mostFamousInhabitant.address).toEqual(jasmine.any(Address));
+        expect(mostFamousInhabitant.address).toEqual(expect.any(Address));
         const { address } = mostFamousInhabitant;
         expect(address.houseNumber).toEqual(1007);
         expect(address.street).toEqual("Mountain Drive");
@@ -197,7 +198,7 @@ describe('deserialisers', () => {
       const CAT_1: Cat = deserialised;
 
       it('should deserialise the top-level datum from the response, populating object attributes', () => {
-        expect(CAT_1).toEqual(jasmine.any(Cat));
+        expect(CAT_1).toEqual(expect.any(Cat));
         const { id, type, name, livesLeft } = CAT_1;
         expect(id).toEqual('mog');
         expect(type).toEqual('cats');
@@ -207,7 +208,7 @@ describe('deserialisers', () => {
       });
 
       it('should deserialise decorated object links', () => {
-        expect(CAT_1).toEqual(jasmine.any(Cat));
+        expect(CAT_1).toEqual(expect.any(Cat));
         const { self, alternative } = CAT_1;
         expect(alternative).toEqual('http://alt.example.com/cats/mog');
         // supertype properties
@@ -215,7 +216,7 @@ describe('deserialisers', () => {
       });
 
       it('should deserialise decorated object meta information', () => {
-        expect(CAT_1).toEqual(jasmine.any(Cat));
+        expect(CAT_1).toEqual(expect.any(Cat));
         const { alterEgo, isGoodPet } = CAT_1;
         expect(alterEgo).toEqual('FEROCIOUS TIGER');
         // supertype properties
@@ -223,12 +224,12 @@ describe('deserialisers', () => {
       });
 
       it('should deserialise related objects, populating their properties', () => {
-        expect(CAT_1.petOwner).toEqual(jasmine.any(Person));
+        expect(CAT_1.petOwner).toEqual(expect.any(Person));
         const { fullName } = CAT_1.petOwner;
         expect(fullName).toEqual('Meg da Witch');
 
         // supertype properties
-        expect(CAT_1.chases).toEqual(jasmine.any(Animal));
+        expect(CAT_1.chases).toEqual(expect.any(Animal));
         const { name } = CAT_1.chases;
         expect(name).toEqual('Miss Mouse');
       });

@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import {
   byTypeAndId,
   fromJsonApiResourceObject,
@@ -99,13 +100,13 @@ describe('serialisers', () => {
 
     it('should deserialise an object without relationships', () => {
       const address1FromJsonapi: Address = fromJsonApiResourceObject(address1Jsonapi, {});
-      expect(address1FromJsonapi).toEqual(jasmine.any(Address));
+      expect(address1FromJsonapi).toEqual(expect.any(Address));
       expect(address1FromJsonapi).toEqual(address1);
     });
 
     it('should deserialise an object with unresolved relationships omitted', () => {
       const person1FromJsonapi: Person = fromJsonApiResourceObject(person1Jsonapi, {});
-      expect(person1FromJsonapi).toEqual(jasmine.any(Person));
+      expect(person1FromJsonapi).toEqual(expect.any(Person));
       expect(person1FromJsonapi.id).toEqual('person1');
       expect(person1FromJsonapi.firstName).toEqual('Eric');
       expect(person1FromJsonapi.surname).toEqual('Wimp');
@@ -117,7 +118,7 @@ describe('serialisers', () => {
 
     it('should deserialise an object with unresolved relationships left as identifiers', () => {
       const person2FromJsonapi: Person = fromJsonApiResourceObject(person2Jsonapi, {});
-      expect(person2FromJsonapi).toEqual(jasmine.any(Person));
+      expect(person2FromJsonapi).toEqual(expect.any(Person));
       expect(person2FromJsonapi.id).toEqual('person2');
       expect(person2FromJsonapi.firstName).toEqual('Bruce');
       expect(person2FromJsonapi.surname).toEqual('Wayne');
@@ -134,7 +135,7 @@ describe('serialisers', () => {
       };
 
       const person1FromJsonapi: Person = fromJsonApiResourceObject(person1Jsonapi, INCLUDED);
-      expect(person1FromJsonapi).toEqual(jasmine.any(Person));
+      expect(person1FromJsonapi).toEqual(expect.any(Person));
       expect(person1FromJsonapi.id).toEqual('person1');
       expect(person1FromJsonapi.firstName).toEqual('Eric');
       expect(person1FromJsonapi.surname).toEqual('Wimp');
