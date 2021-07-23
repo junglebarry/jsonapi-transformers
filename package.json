@@ -1,6 +1,6 @@
 {
   "name": "jsonapi-transformers",
-  "version": "0.8.0",
+  "version": "0.0.0",
   "description": "Typescript-based JSON API serialisation/deserialisation",
   "files": [
     "lib/**/*.d.ts",
