@@ -36,8 +36,8 @@ jobs:
           name: Rebuild the release directory (lib/)
           command: npm run build
       - run:
-          name: Check that there are no uncommitted changes
-          command: if output=$(git status --porcelain) && [ -z "$output" ]; then exit 0; else exit 1; fi;
+          name: Semantic Release
+          command: npx semantic-release
 
 workflows:
   test:
