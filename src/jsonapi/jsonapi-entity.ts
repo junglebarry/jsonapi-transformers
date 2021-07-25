@@ -1,4 +1,4 @@
-import { ResourceIdentifier } from "./types";
+import { ResourceIdentifier } from "./jsonapi-types";
 
 /**
  * JSON:API base class providing `id` and `type` for resources.

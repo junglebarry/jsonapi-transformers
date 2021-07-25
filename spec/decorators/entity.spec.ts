@@ -53,6 +53,15 @@ describe("entity", () => {
       })
     );
   });
+
+  it("should throw an error", () => {
+    const nonJsonapiEntity = () =>
+      entity({ type: "foo" })(class extends Object {});
+
+    expect(nonJsonapiEntity).toThrow(
+      "`@entity` must only be applied to `JsonapiEntity` subtypes"
+    );
+  });
 });
 
 describe("registerEntityConstructorForType", () => {

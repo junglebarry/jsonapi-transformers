@@ -1,6 +1,5 @@
 import {
   getAttributeMetadata,
-  getClassForJsonapiType,
   getConstructorForJsonapiType,
   getLinkMetadata,
   getMetaMetadata,
@@ -13,11 +12,24 @@ import {
   ResourceIdentifier,
   ResourceLinkage,
   ResourceObject,
-  TopLevel,
   newEntity,
+  JsonapiEntity,
+  TopLevelResourcesData,
+  TopLevelResourceDatum,
+  UnresolvedResourceIdentifier,
 } from "../jsonapi";
 
 import { isDefined, keyBy } from "./utils";
+
+type DeserialisedManyResources<T extends JsonapiEntity<T>> = {
+  deserialised: T[];
+  referents: ResourceObject[];
+};
+
+type DeserialisedOneResource<T extends JsonapiEntity<T>> = {
+  deserialised: T;
+  referents: ResourceObject[];
+};
 
 /**
  * Key a resource object by type and ID.
@@ -31,43 +43,27 @@ export function byTypeAndId(obj: ResourceObject): string {
 
 /**
  * Resource objects, keyed by type-and-id
- * @type { { [string]: ResourceObject } }
  */
 export type IncludedLookup = { [typeAndId: string]: ResourceObject };
 
 /**
  * Deserialised objects, keyed by type-and-id
- * @type { { [string]: any } }
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type DeserialisedLookup = { [typeAndId: string]: any };
+export type DeserialisedLookup = { [typeAndId: string]: JsonapiEntity<any> };
 
-/**
- * Deserialise an entity or entities from JSON:API.
- *
- * @param  {TopLevel} topLevel - a JSON:API top-level
- * @param  {ResourceObject[]} resourceObjects - known resource objects, for resolution
- * @return {any} - an entity or entities representing the top-level
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function fromJsonApiTopLevel(
-  topLevel: TopLevel,
+export function fromJsonApiTopLevelResourceDatum<T extends JsonapiEntity<T>>(
+  topLevel: TopLevelResourceDatum,
   resourceObjects: ResourceObject[] = []
-): any {
+): DeserialisedOneResource<T> {
   // extract primary data and included resources
-  const { data, included } = topLevel;
+  const { data, included = [] } = topLevel;
 
   // create a lookup table of all available resource objects
-  let primaryResourceObjects: ResourceObject[] = undefined;
-  if (Array.isArray(data)) {
-    primaryResourceObjects = data;
-  } else if (data) {
-    primaryResourceObjects = [data];
-  }
+  const primaryResourceObjects: ResourceObject[] = [data];
 
-  const includedResourceObjects: ResourceObject[] = (
-    resourceObjects || []
-  ).concat(included || []);
+  const includedResourceObjects: ResourceObject[] =
+    resourceObjects.concat(included);
 
   const allResourceObjects = primaryResourceObjects.concat(
     includedResourceObjects
@@ -80,22 +76,55 @@ export function fromJsonApiTopLevel(
 
   const deserialisedObjectsByTypeAndId: DeserialisedLookup = {};
 
-  let deserialised = undefined;
-  if (Array.isArray(data)) {
-    deserialised = data.map((datum) =>
-      fromJsonApiResourceObject(
-        datum,
-        resourceObjectsByTypeAndId,
-        deserialisedObjectsByTypeAndId
-      )
-    );
-  } else if (data) {
-    deserialised = fromJsonApiResourceObject(
-      data,
+  const deserialised = fromJsonApiResourceObject<T>(
+    data,
+    resourceObjectsByTypeAndId,
+    deserialisedObjectsByTypeAndId
+  );
+
+  return {
+    deserialised,
+    referents: allResourceObjects,
+  };
+}
+
+/**
+ *
+ * @param topLevel A top-level "resource collection" response
+ * @param resourceObjects Any JSON:API resource objects already resolved
+ * @returns Deserialised
+ */
+export function fromJsonApiTopLevelResourcesData<T extends JsonapiEntity<T>>(
+  topLevel: TopLevelResourcesData,
+  resourceObjects: ResourceObject[] = []
+): DeserialisedManyResources<T> {
+  // extract primary data and included resources
+  const { data, included = [] } = topLevel;
+
+  // create a lookup table of all available resource objects
+  const primaryResourceObjects: ResourceObject[] = data;
+
+  const includedResourceObjects: ResourceObject[] =
+    resourceObjects.concat(included);
+
+  const allResourceObjects = primaryResourceObjects.concat(
+    includedResourceObjects
+  );
+
+  const resourceObjectsByTypeAndId: IncludedLookup = keyBy(
+    allResourceObjects,
+    byTypeAndId
+  );
+
+  const deserialisedObjectsByTypeAndId: DeserialisedLookup = {};
+
+  const deserialised = data.map((datum) =>
+    fromJsonApiResourceObject<T>(
+      datum,
       resourceObjectsByTypeAndId,
       deserialisedObjectsByTypeAndId
-    );
-  }
+    )
+  );
 
   return {
     deserialised,
@@ -110,12 +139,11 @@ export function fromJsonApiTopLevel(
  * @param  {IncludedLookup} resourceObjectsByTypeAndId - known resources, keyed by type-and-ID
  * @return {any} - a resource object, deserialised from JSON:API
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function fromJsonApiResourceObject(
+export function fromJsonApiResourceObject<T extends JsonapiEntity<T>>(
   jsonapiResource: ResourceObject,
   resourceObjectsByTypeAndId: IncludedLookup,
   deserialisedObjects: DeserialisedLookup = {}
-): any {
+): T {
   // deconstruct primary data and remap into an instance of the chosen type
   const {
     id,
@@ -126,27 +154,23 @@ export function fromJsonApiResourceObject(
     relationships = {},
   } = jsonapiResource;
 
-  // fetch the Typescript class responsible for deserialisation
-  const targetType = getClassForJsonapiType(type);
+  // fetch the Typescript class constructor responsible for deserialisation
+  const targetType = getConstructorForJsonapiType(type);
   if (!targetType) {
     throw new Error(`No target entity type for type: ${type}`);
   }
-
-  const targetConstructor = getConstructorForJsonapiType(type);
-  if (!targetConstructor) {
-    throw new Error(`No target entity constructor for type: ${type}`);
-  }
-  targetConstructor.prototype.type = type;
+  targetType.prototype.type = type;
 
   // fetch type-specific data
-  const attributeMetadata = getAttributeMetadata(targetConstructor);
-  const linkMetadata = getLinkMetadata(targetConstructor);
-  const metaMetadata = getMetaMetadata(targetConstructor);
-  const relationshipMetadata = getRelationshipMetadata(targetConstructor);
+  const attributeMetadata = getAttributeMetadata(targetType);
+  const linkMetadata = getLinkMetadata(targetType);
+  const metaMetadata = getMetaMetadata(targetType);
+  const relationshipMetadata = getRelationshipMetadata(targetType);
 
   // construct a basic instance with only ID and type (by means of entity) specified
-  const instance = newEntity(targetType, { id });
+  const instance = newEntity(targetType, { id }) as T;
 
+  // SIDE-EFFECT: `deserialisedObjects`
   // add to the list of deserialised objects, so recursive lookup works
   const typeAndId = byTypeAndId(instance);
   Object.assign(deserialisedObjects, {
@@ -199,13 +223,7 @@ export function fromJsonApiResourceObject(
       relationshipMetadata[relationshipName];
     const relationshipIdentifierData = relationships[name];
     const { data = undefined } = relationshipIdentifierData || {};
-    if (data && Array.isArray(data)) {
-      instance[relationshipName] = data
-        .map((datum) =>
-          extractResourceObject(datum, allowUnresolvedIdentifiers)
-        )
-        .filter((x) => x);
-    } else if (data) {
+    if (data) {
       instance[relationshipName] = extractResourceObject(
         data,
         allowUnresolvedIdentifiers
@@ -226,13 +244,12 @@ export function fromJsonApiResourceObject(
  * @param {boolean} allowUnresolvedIdentifiers - when `true`, identifiers are substituted for unresolved objects
  * @return {any}
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function extractResourceObjectFromRelationship(
+function extractResourceObjectFromRelationship<T extends JsonapiEntity<T>>(
   relationIdentifier: ResourceIdentifier,
   resourceObjectsByTypeAndId: IncludedLookup,
   deserialisedObjects: DeserialisedLookup,
   allowUnresolvedIdentifiers: boolean
-): any {
+): T | UnresolvedResourceIdentifier | undefined {
   const relationId = byTypeAndId(relationIdentifier);
 
   // already deserialised and cached
@@ -243,7 +260,8 @@ function extractResourceObjectFromRelationship(
     return deserialisedObject;
   }
 
-  // already deserialised and cached
+  // look in the `included` data, and if absent return undefined
+  // or an UnresolvedResourceIdentifier, depending on config
   const includedForRelationId = relationId
     ? resourceObjectsByTypeAndId[relationId]
     : undefined;
@@ -254,8 +272,8 @@ function extractResourceObjectFromRelationship(
       : undefined;
   }
 
-  // not yet deserialised, so deserialise and cache
-  return fromJsonApiResourceObject(
+  // present, but not yet deserialised, so deserialise and cache
+  return fromJsonApiResourceObject<T>(
     includedForRelationId,
     resourceObjectsByTypeAndId,
     deserialisedObjects
@@ -270,33 +288,36 @@ function extractResourceObjectFromRelationship(
  * @param {ResourceLinkage} resourceLinkage -  a resource linkage datum
  * @param {IncludedLookup} resourceObjectsByTypeAndId - resolved objects keyed by type-and-ID
  * @param {boolean} allowUnresolvedIdentifiers - when `true`, identifiers are substituted for unresolved objects
- * @return {any} -
+ * @return {JsonapiEntity | JsonapiEntity[] | null} - related JsonapiEntity instances
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function extractResourceObjectOrObjectsFromRelationship(
+function extractResourceObjectOrObjectsFromRelationship<
+  T extends JsonapiEntity<T>
+>(
   resourceLinkage: ResourceLinkage,
   resourceObjectsByTypeAndId: IncludedLookup,
   deserialisedObjects: DeserialisedLookup,
   allowUnresolvedIdentifiers: boolean
-): any {
+):
+  | (UnresolvedResourceIdentifier | T)
+  | (UnresolvedResourceIdentifier | T)[]
+  | null {
+  if (resourceLinkage === null) {
+    // relationship removal
+    return null;
+  }
+
   const extractResourceObject = (linkage) =>
-    extractResourceObjectFromRelationship(
+    extractResourceObjectFromRelationship<T>(
       linkage,
       resourceObjectsByTypeAndId,
       deserialisedObjects,
       allowUnresolvedIdentifiers
     );
 
+  // relationship to-many
   if (Array.isArray(resourceLinkage)) {
-    // relationship to-many
     return resourceLinkage.map(extractResourceObject).filter(isDefined);
-  } else if (resourceLinkage) {
-    // relationship to-one
-    return extractResourceObject(resourceLinkage);
-  } else if (resourceLinkage === null) {
-    // relationship removal
-    return null;
   }
-
-  return undefined;
+  // relationship to-one
+  return extractResourceObject(resourceLinkage);
 }

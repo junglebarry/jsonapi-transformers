@@ -1,5 +1,10 @@
+import { JsonapiEntity } from "../jsonapi";
 import { MetadataMap } from "./metadata-map";
-import { getEntityPrototypeChain } from "./utils";
+import {
+  JsonapiEntityConstructorType,
+  entityConstructor,
+  getEntityPrototypeChain,
+} from "./utils";
 
 const RELATIONSHIPS_MAP = new MetadataMap<RelationshipOptions>();
 
@@ -12,27 +17,29 @@ const DefaultRelationshipOptions: RelationshipOptions = {
   allowUnresolvedIdentifiers: false,
 };
 
-export function relationship(options?: RelationshipOptions): PropertyDecorator {
+export function relationship<T extends JsonapiEntity<T>>(
+  options?: RelationshipOptions
+): PropertyDecorator {
   const opts = Object.assign({}, DefaultRelationshipOptions, options || {});
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (target: any, key: string) => {
+  return (target: JsonapiEntity<T>, key: string) => {
+    if (!(target instanceof JsonapiEntity)) {
+      throw new Error(
+        "`@relationship` must only be applied to properties of `JsonapiEntity` subtypes"
+      );
+    }
     RELATIONSHIPS_MAP.setMetadataByType(
-      target.constructor,
+      entityConstructor(target),
       key,
-      Object.assign(
-        {
-          name: key,
-        },
-        opts
-      )
+      Object.assign({ name: key }, opts)
     );
   };
 }
 
 export type RelationshipMetadata = { [name: string]: RelationshipOptions };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
-export function getRelationshipMetadata(target: any): RelationshipMetadata {
+export function getRelationshipMetadata<T extends JsonapiEntity<T>>(
+  target: JsonapiEntityConstructorType<T>
+): RelationshipMetadata {
   return getEntityPrototypeChain(target).reduce(
     (soFar, prototype) =>
       Object.assign(soFar, RELATIONSHIPS_MAP.getMetadataByType(prototype)),

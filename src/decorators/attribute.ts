@@ -1,6 +1,10 @@
+import { JsonapiEntity } from "../jsonapi";
 import { MetadataMap } from "./metadata-map";
-
-import { getEntityPrototypeChain } from "./utils";
+import {
+  JsonapiEntityConstructorType,
+  entityConstructor,
+  getEntityPrototypeChain,
+} from "./utils";
 
 const ATTRIBUTES_MAP = new MetadataMap<AttributeOptions>();
 
@@ -8,27 +12,29 @@ export interface AttributeOptions {
   name?: string;
 }
 
-export function attribute(options?: AttributeOptions): PropertyDecorator {
+export function attribute<T extends JsonapiEntity<T>>(
+  options?: AttributeOptions
+): PropertyDecorator {
   const opts = options || {};
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (target: any, key: string) => {
+  return (target: JsonapiEntity<T>, key: string) => {
+    if (!(target instanceof JsonapiEntity)) {
+      throw new Error(
+        "`@attribute` must only be applied to properties of `JsonapiEntity` subtypes"
+      );
+    }
     ATTRIBUTES_MAP.setMetadataByType(
-      target.constructor,
+      entityConstructor(target),
       key,
-      Object.assign(
-        {
-          name: key,
-        },
-        opts
-      )
+      Object.assign({ name: key }, opts)
     );
   };
 }
 
 export type AttributeMetadata = { [name: string]: AttributeOptions };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
-export function getAttributeMetadata(target: any): AttributeMetadata {
+export function getAttributeMetadata<T extends JsonapiEntity<T>>(
+  target: JsonapiEntityConstructorType<T>
+): AttributeMetadata {
   return getEntityPrototypeChain(target).reduce(
     (soFar, prototype) =>
       Object.assign(soFar, ATTRIBUTES_MAP.getMetadataByType(prototype)),

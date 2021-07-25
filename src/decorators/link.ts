@@ -1,6 +1,11 @@
+import { JsonapiEntity } from "../jsonapi";
 import { MetadataMap } from "./metadata-map";
 
-import { getEntityPrototypeChain } from "./utils";
+import {
+  JsonapiEntityConstructorType,
+  entityConstructor,
+  getEntityPrototypeChain,
+} from "./utils";
 
 const LINKS_MAP = new MetadataMap<LinkOptions>();
 
@@ -8,27 +13,29 @@ export interface LinkOptions {
   name?: string;
 }
 
-export function link(options?: LinkOptions): PropertyDecorator {
+export function link<T extends JsonapiEntity<T>>(
+  options?: LinkOptions
+): PropertyDecorator {
   const opts = options || {};
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (target: any, key: string) => {
+  return (target: JsonapiEntity<T>, key: string) => {
+    if (!(target instanceof JsonapiEntity)) {
+      throw new Error(
+        "`@link` must only be applied to properties of `JsonapiEntity` subtypes"
+      );
+    }
     LINKS_MAP.setMetadataByType(
-      target.constructor,
+      entityConstructor(target),
       key,
-      Object.assign(
-        {
-          name: key,
-        },
-        opts
-      )
+      Object.assign({ name: key }, opts)
     );
   };
 }
 
 export type LinkMetadata = { [name: string]: LinkOptions };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
-export function getLinkMetadata(target: any): LinkMetadata {
+export function getLinkMetadata<T extends JsonapiEntity<T>>(
+  target: JsonapiEntityConstructorType<T>
+): LinkMetadata {
   return getEntityPrototypeChain(target).reduce(
     (soFar, prototype) =>
       Object.assign(soFar, LINKS_MAP.getMetadataByType(prototype)),

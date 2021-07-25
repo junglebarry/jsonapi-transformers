@@ -1,6 +1,14 @@
-import { ResourceIdentifier, ResourceObject, TopLevel } from "../jsonapi";
+import {
+  JsonapiEntity,
+  ResourceObject,
+  TopLevelResourceDatum,
+  TopLevelResourcesData,
+} from "../jsonapi";
 
-import { fromJsonApiTopLevel } from "./deserialisers";
+import {
+  fromJsonApiTopLevelResourceDatum,
+  fromJsonApiTopLevelResourcesData,
+} from "./deserialisers";
 
 /**
  * A class that encapsulates all traversed and included ResourceObject instances
@@ -17,42 +25,36 @@ export class JsonApiDeserialiser {
    * Perform deserialisation of a response into a single object instance.
    *
    * @param {TopLevel} topLevel - the JSON:API response, to deserialise
-   * @type {T} t the type of response expected - a `ResourceIdentifier` subtype
+   * @type {T} t the type of response expected - a `JsonapiEntity` subtype
    * @return {T} the deserialised response object
    */
-  deserialiseOne<T extends ResourceIdentifier>(topLevel: TopLevel): T {
-    const { deserialised, referents } = fromJsonApiTopLevel(
+  deserialiseOne<T extends JsonapiEntity<T>>(
+    topLevel: TopLevelResourceDatum
+  ): T {
+    const { deserialised, referents } = fromJsonApiTopLevelResourceDatum<T>(
       topLevel,
       this.includes
     );
     this.includes = referents;
-    return deserialised as T;
+    return deserialised;
   }
 
   /**
    * Perform deserialisation of a response into a list of object instances.
    *
    * @param {TopLevel} topLevel - the JSON:API response, to deserialise
-   * @type {T} t the type of response expected - a `ResourceIdentifier` subtype
+   * @type {T} t the type of response expected - a `JsonapiEntity` subtype
    * @return {T[]} the deserialised response objects, as an array
    */
-  deserialiseMany<T extends ResourceIdentifier>(topLevel: TopLevel): T[] {
-    const { deserialised, referents } = fromJsonApiTopLevel(
+  deserialiseMany<T extends JsonapiEntity<T>>(
+    topLevel: TopLevelResourcesData
+  ): T[] {
+    const { deserialised, referents } = fromJsonApiTopLevelResourcesData<T>(
       topLevel,
       this.includes
     );
     this.includes = referents;
-    return deserialised as T[];
-  }
-
-  deserialise<T extends ResourceIdentifier>(topLevel: TopLevel): T | T[] {
-    if (topLevel && topLevel.data && Array.isArray(topLevel.data)) {
-      return this.deserialiseMany<T>(topLevel);
-    } else if (topLevel && topLevel.data) {
-      return this.deserialiseOne<T>(topLevel);
-    }
-
-    throw new Error("No primary data to deserialise");
+    return deserialised;
   }
 }
 
@@ -60,26 +62,26 @@ export class JsonApiDeserialiser {
  * Perform deserialisation of a response into a single object instance, discarding included ResourceObjects
  *
  * @param {TopLevel} topLevel - the JSON:API response, to deserialise
- * @type {T} t the type of response expected - a `ResourceIdentifier` subtype
+ * @type {T} t the type of response expected - a `JsonapiEntity` subtype
  * @return {T} the deserialised response object
  */
-export function deserialiseOne<T extends ResourceIdentifier>(
-  topLevel: TopLevel
+export function deserialiseOne<T extends JsonapiEntity<T>>(
+  topLevel: TopLevelResourceDatum
 ): T {
-  const { deserialised } = fromJsonApiTopLevel(topLevel);
-  return deserialised as T;
+  const { deserialised } = fromJsonApiTopLevelResourceDatum<T>(topLevel);
+  return deserialised;
 }
 
 /**
  * Perform deserialisation of a response into a list of object instances, discarding included ResourceObjects
  *
  * @param {TopLevel} topLevel - the JSON:API response, to deserialise
- * @type {T} t the type of response expected - a `ResourceIdentifier` subtype
+ * @type {T} t the type of response expected - a `JsonapiEntity` subtype
  * @return {T[]} the deserialised response objects, as an array
  */
-export function deserialiseMany<T extends ResourceIdentifier>(
-  topLevel: TopLevel
+export function deserialiseMany<T extends JsonapiEntity<T>>(
+  topLevel: TopLevelResourcesData
 ): T[] {
-  const { deserialised } = fromJsonApiTopLevel(topLevel);
-  return deserialised as T[];
+  const { deserialised } = fromJsonApiTopLevelResourcesData<T>(topLevel);
+  return deserialised;
 }
