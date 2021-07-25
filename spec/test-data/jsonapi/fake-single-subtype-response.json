@@ -1,0 +1,61 @@
+{
+  "data": {
+    "id": "mog",
+    "type": "cats",
+    "attributes": {
+      "name": "Mog",
+      "lives_left": 8
+    },
+    "links": {
+      "self": "http://example.com/cats/mog",
+      "alt": "http://alt.example.com/cats/mog"
+    },
+    "meta": {
+      "created_date_time": "2021-07-23T11:39:17.353Z"
+    },
+    "relationships": {
+      "chases": {
+        "data": {
+          "id": "miss_mouse",
+          "type": "mice"
+        }
+      },
+      "owner": {
+        "data": {
+          "id": "meg",
+          "type": "people"
+        }
+      }
+    }
+  },
+  "included": [
+    {
+      "id": "meg",
+      "type": "people",
+      "attributes": {
+        "firstName": "Meg",
+        "surname": "da Witch"
+      },
+      "meta": {
+        "created_date_time": "2021-07-21T11:39:17.353Z"
+      },
+      "links": {
+        "self": "http://example.com/people/meg",
+        "alt": "http://alt.example.com/people/meg"
+      }
+    },
+    {
+      "id": "miss_mouse",
+      "type": "mice",
+      "attributes": {
+        "name": "Miss Mouse"
+      },
+      "links": {
+        "self": "http://example.com/mice/miss_mouse"
+      },
+      "meta": {
+        "created_date_time": "2021-07-22T11:39:17.353Z"
+      }
+    }
+  ]
+}

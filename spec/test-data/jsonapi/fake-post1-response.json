@@ -1,0 +1,36 @@
+{
+  "data": {
+    "id": "post1",
+    "type": "blog_posts",
+    "attributes": {
+      "title": "Introducing jsonapi-transformers",
+      "content": "<strong>It lives!</strong>"
+    },
+    "relationships": {
+      "author": {
+        "data": {
+          "id": "david",
+          "type": "authors"
+        }
+      },
+      "tags": {
+        "data": [
+          {
+            "id": "tag1",
+            "type": "tags"
+          },
+          {
+            "id": "tag2",
+            "type": "tags"
+          }
+        ]
+      }
+    },
+    "meta": {
+      "createdDateTime": "2021-06-24T10:00:00.000Z"
+    },
+    "links": {
+      "self": "https://example.com/my-jsonapi/blog_posts/post1"
+    }
+  }
+}
