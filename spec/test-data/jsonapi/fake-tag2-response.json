@@ -1,0 +1,9 @@
+{
+  "data": {
+    "id": "tag2",
+    "type": "tags",
+    "attributes": {
+      "label": "two"
+    }
+  }
+}

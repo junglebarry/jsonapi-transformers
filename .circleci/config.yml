@@ -33,6 +33,9 @@ jobs:
           name: Run linters
           command: npm run lint
       - run:
+          name: Ensure the JSON:API examples are validated against the JSON:API schema
+          command: npm run validate_jsonapi_examples
+      - run:
           name: Run unit tests
           command: npm run test
       - run:

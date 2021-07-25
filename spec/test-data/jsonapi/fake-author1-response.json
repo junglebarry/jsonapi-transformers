@@ -1,0 +1,15 @@
+{
+  "data": {
+    "id": "david",
+    "type": "authors",
+    "attributes": {
+      "name": "David Brooks"
+    },
+    "meta": {
+      "lastLoginDateTime": "2021-06-24T10:00:00.000Z"
+    },
+    "links": {
+      "self": "https://example.com/my-jsonapi/authors/david"
+    }
+  }
+}

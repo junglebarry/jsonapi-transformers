@@ -1,11 +1,24 @@
 import { describe, expect, it } from "@jest/globals";
 import { fromJsonApiTopLevel } from "../../src";
 
-import { Address, Animal, Cat, Person } from "../test-data";
+import {
+  Address,
+  Animal,
+  Author,
+  BlogPost,
+  Cat,
+  Person,
+  Tag,
+} from "../test-data";
 
-import { FAKE_SINGLE_RESPONSE } from "./fake-single-response.json";
-import { FAKE_SINGLE_SUBTYPE_RESPONSE } from "./fake-single-subtype-response.json";
-import { FAKE_MULTIPLE_RESPONSE } from "./fake-multiple-response.json";
+import * as FAKE_SINGLE_RESPONSE from "../test-data/jsonapi/fake-single-response.json";
+import * as FAKE_SINGLE_SUBTYPE_RESPONSE from "../test-data/jsonapi/fake-single-subtype-response.json";
+import * as FAKE_MULTIPLE_RESPONSE from "../test-data/jsonapi/fake-multiple-response.json";
+import * as FAKE_README_AUTHOR_ONLY from "../test-data/jsonapi/fake-author1-response.json";
+import * as FAKE_README_BLOG_ONLY from "../test-data/jsonapi/fake-post1-response.json";
+import * as FAKE_README_TAG1_ONLY from "../test-data/jsonapi/fake-tag1-response.json";
+import * as FAKE_README_TAG2_ONLY from "../test-data/jsonapi/fake-tag2-response.json";
+import * as FAKE_README_BLOG_EXAMPLE_WITH_INCLUDES from "../test-data/jsonapi/fake-post1-include-all-response.json";
 
 describe("deserialisers", () => {
   describe("fromJsonApiTopLevel", () => {
@@ -207,10 +220,8 @@ describe("deserialisers", () => {
 
       it("should deserialise decorated object meta information", () => {
         expect(CAT_1).toEqual(expect.any(Cat));
-        const { alterEgo, isGoodPet } = CAT_1;
-        expect(alterEgo).toEqual("FEROCIOUS TIGER");
-        // supertype properties
-        expect(isGoodPet).toEqual(true);
+        const { createdDateTime } = CAT_1;
+        expect(createdDateTime).toEqual("2021-07-23T11:39:17.353Z");
       });
 
       it("should deserialise related objects, populating their properties", () => {
@@ -222,6 +233,124 @@ describe("deserialisers", () => {
         expect(CAT_1.chases).toEqual(expect.any(Animal));
         const { name } = CAT_1.chases;
         expect(name).toEqual("Miss Mouse");
+      });
+    });
+  });
+
+  describe("README examples", () => {
+    describe("author only", () => {
+      const { deserialised } = fromJsonApiTopLevel(FAKE_README_AUTHOR_ONLY);
+      const AUTHOR_1: Author = deserialised;
+
+      it("should deserialise the primary datum from the response", () => {
+        expect(AUTHOR_1).toEqual(expect.any(Author));
+      });
+
+      it("should deserialise attributes from the primary datum", () => {
+        expect(AUTHOR_1.name).toEqual("David Brooks");
+      });
+
+      it("should deserialise meta from the primary datum", () => {
+        expect(AUTHOR_1.lastLoginDateTime).toEqual("2021-06-24T10:00:00.000Z");
+      });
+    });
+
+    describe("tag1 only", () => {
+      const { deserialised } = fromJsonApiTopLevel(FAKE_README_TAG1_ONLY);
+      const TAG_1: Tag = deserialised;
+
+      it("should deserialise the primary datum from the response", () => {
+        expect(TAG_1).toEqual(expect.any(Tag));
+      });
+
+      it("should deserialise attributes from the primary datum", () => {
+        expect(TAG_1.label).toEqual("one");
+      });
+    });
+
+    describe("tag2 only", () => {
+      const { deserialised } = fromJsonApiTopLevel(FAKE_README_TAG2_ONLY);
+      const TAG_2: Tag = deserialised;
+
+      it("should deserialise the primary datum from the response", () => {
+        expect(TAG_2).toEqual(expect.any(Tag));
+      });
+
+      it("should deserialise attributes from the primary datum", () => {
+        expect(TAG_2.label).toEqual("two");
+      });
+    });
+
+    describe("blog post only", () => {
+      const { deserialised } = fromJsonApiTopLevel(FAKE_README_BLOG_ONLY);
+      const POST_1: BlogPost = deserialised;
+
+      it("should deserialise the primary datum from the response", () => {
+        expect(POST_1).toEqual(expect.any(BlogPost));
+      });
+
+      it("should deserialise attributes from the primary datum", () => {
+        const { title, content } = POST_1;
+        expect(title).toEqual("Introducing jsonapi-transformers");
+        expect(content).toEqual("<strong>It lives!</strong>");
+      });
+
+      it("should deserialise links from the primary datum", () => {
+        expect(POST_1.self).toEqual(
+          "https://example.com/my-jsonapi/blog_posts/post1"
+        );
+      });
+
+      it("should deserialise meta from the primary datum", () => {
+        expect(POST_1.createdDateTime).toEqual("2021-06-24T10:00:00.000Z");
+      });
+
+      it("should NOT deserialise to-one relationships, leaving them undefined", () => {
+        expect(POST_1.author).toBeUndefined();
+      });
+
+      it("should NOT deserialise to-many relationships, leaving them as an empty array", () => {
+        expect(POST_1.tags).toEqual([]);
+      });
+    });
+
+    describe("full example with includes", () => {
+      const { deserialised } = fromJsonApiTopLevel(
+        FAKE_README_BLOG_EXAMPLE_WITH_INCLUDES
+      );
+      const POST_1: BlogPost = deserialised;
+
+      it("should deserialise the primary datum from the response", () => {
+        expect(POST_1).toEqual(expect.any(BlogPost));
+      });
+
+      it("should deserialise attributes from the primary datum", () => {
+        const { title, content } = POST_1;
+        expect(title).toEqual("Introducing jsonapi-transformers");
+        expect(content).toEqual("<strong>It lives!</strong>");
+      });
+
+      it("should deserialise links from the primary datum", () => {
+        expect(POST_1.self).toEqual(
+          "https://example.com/my-jsonapi/blog_posts/post1"
+        );
+      });
+
+      it("should deserialise meta from the primary datum", () => {
+        expect(POST_1.createdDateTime).toEqual("2021-06-24T10:00:00.000Z");
+      });
+
+      it("should deserialise included objects, populating their properties", () => {
+        expect(POST_1.author).toEqual(expect.any(Author));
+        expect(POST_1.author.name).toEqual("David Brooks");
+
+        const tags = POST_1.tags;
+        expect(tags.length).toEqual(2);
+        const [tag1, tag2] = tags;
+        expect(tag1).toEqual(expect.any(Tag));
+        expect(tag1.label).toEqual("one");
+        expect(tag2).toEqual(expect.any(Tag));
+        expect(tag2.label).toEqual("two");
       });
     });
   });
