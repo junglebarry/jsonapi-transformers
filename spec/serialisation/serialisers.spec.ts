@@ -29,6 +29,7 @@ person1.firstName = 'Eric';
 person1.surname = 'Wimp';
 person1.address = address1;
 person1.oldAddresses = [address2];
+person1.alterEgo = 'Bananaman';
 
 const person2: Person = new Person();
 person2.id = 'person2';
@@ -36,6 +37,7 @@ person2.firstName = 'Bruce';
 person2.surname = 'Wayne';
 person2.work_address = address2;
 person2.old_work_addresses = [address1];
+person2.alterEgo = 'The Dark Knight';
 
 
 describe('serialisers', () => {
@@ -63,13 +65,16 @@ describe('serialisers', () => {
       });
     });
 
-    it('should serialise to JSON API including attributes and relationships', () => {
+    it('should serialise to JSON API including attributes, meta, and relationships', () => {
       expect(toJsonApi(person1)).toEqual({
         id: 'person1',
         type: 'people',
         attributes: {
           firstName: 'Eric',
           surname: 'Wimp',
+        },
+        meta: {
+          alter_ego: 'Bananaman',
         },
         relationships: {
           address: {

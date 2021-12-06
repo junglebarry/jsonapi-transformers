@@ -1,5 +1,6 @@
 import {
   getAttributeMetadata,
+  getMetaMetadata,
   getRelationshipMetadata,
 } from '../decorators';
 
@@ -45,14 +46,23 @@ export function toJsonApi(target: ResourceIdentifier): ResourceObject {
 
   const relationships = Object.keys(relationshipMetadata).reduce(relationshipReducer, {});
 
+  // convert `meta` properties
+  const metaMetadata = getMetaMetadata(target.constructor);
+  const metaReducer = (soFar, metaName) => {
+    const metadata = metaMetadata[metaName];
+    const targetMeta = target[metaName];
+    return !isDefined(targetMeta) ? soFar : Object.assign(soFar, {
+      [metadata.name]: targetMeta,
+    });
+  }
+  const meta = Object.keys(metaMetadata).reduce(metaReducer, {});
+
   // compose the object and return
-  const entityWithAttributes = {
+  return {
     id: target.id,
     type: target.type,
     attributes,
+    ...(!isEmptyObject(meta) ? { meta }: {}),
+    ...(!isEmptyObject(relationships) ? { relationships }: {}),
   };
-
-  return isEmptyObject(relationships) ? entityWithAttributes : Object.assign(entityWithAttributes, {
-    relationships,
-  });
 }
