@@ -26,6 +26,7 @@ person1.firstName = "Eric";
 person1.surname = "Wimp";
 person1.address = address1;
 person1.oldAddresses = [address2];
+person1.createdDateTime = "2021-12-06T18:15:45";
 
 const person2: Person = new Person();
 person2.id = "person2";
@@ -33,6 +34,7 @@ person2.firstName = "Bruce";
 person2.surname = "Wayne";
 person2.work_address = address2;
 person2.old_work_addresses = [address1];
+person2.alterEgo = "2021-12-06T18:31:11";
 
 describe("serialisers", () => {
   describe("toJsonApi", () => {
@@ -58,13 +60,16 @@ describe("serialisers", () => {
       });
     });
 
-    it("should serialise to JSON API including attributes and relationships", () => {
+    it("should serialise to JSON API including attributes, meta, and relationships", () => {
       expect(toJsonApi(person1)).toEqual({
         id: "person1",
         type: "people",
         attributes: {
           firstName: "Eric",
           surname: "Wimp",
+        },
+        meta: {
+          created_date_time: "2021-12-06T18:15:45",
         },
         relationships: {
           address: {

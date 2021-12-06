@@ -1,4 +1,8 @@
-import { getAttributeMetadata, getRelationshipMetadata } from "../decorators";
+import {
+  getAttributeMetadata,
+  getMetaMetadata,
+  getRelationshipMetadata,
+} from "../decorators";
 
 import { jsonapiLinkage, ResourceIdentifier, ResourceObject } from "../jsonapi";
 
@@ -27,6 +31,19 @@ export function toJsonApi(target: ResourceIdentifier): ResourceObject {
     {}
   );
 
+  // convert meta properties
+  const metaMetadata = getMetaMetadata(target.constructor);
+  const metaReducer = (soFar, metaProperty) => {
+    const metadata = metaMetadata[metaProperty];
+    const targetMeta = target[metaProperty];
+    return !isDefined(targetMeta)
+      ? soFar
+      : Object.assign(soFar, {
+          [metadata.name]: targetMeta,
+        });
+  };
+  const meta = Object.keys(metaMetadata).reduce(metaReducer, {});
+
   // convert relationships
   const relationshipMetadata = getRelationshipMetadata(target.constructor);
 
@@ -46,15 +63,11 @@ export function toJsonApi(target: ResourceIdentifier): ResourceObject {
   );
 
   // compose the object and return
-  const entityWithAttributes = {
+  return {
     id: target.id,
     type: target.type,
     attributes,
+    ...(!isEmptyObject(meta) ? { meta } : {}),
+    ...(!isEmptyObject(relationships) ? { relationships } : {}),
   };
-
-  return isEmptyObject(relationships)
-    ? entityWithAttributes
-    : Object.assign(entityWithAttributes, {
-        relationships,
-      });
 }
