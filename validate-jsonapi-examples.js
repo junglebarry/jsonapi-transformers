@@ -21,18 +21,18 @@ const validate = ajv.compile(jsonapiJsonSchema);
 const validFiles = [];
 const errorsByFilename = {};
 
-const jsonapiResponseFiles = glob
-  .sync("./spec/test-data/jsonapi/**/*.json")
-  .forEach((file) => {
-    const data = require(path.resolve(file));
-    const validData = validate(data);
+const jsonapiResponseFiles = glob.sync("./spec/test-data/jsonapi/**/*.json");
 
-    if (!validData) {
-      errorsByFilename[file] = validate.errors;
-    } else {
-      validFiles.push(file);
-    }
-  });
+jsonapiResponseFiles.forEach((file) => {
+  const data = require(path.resolve(file));
+  const validData = validate(data);
+
+  if (!validData) {
+    errorsByFilename[file] = validate.errors;
+  } else {
+    validFiles.push(file);
+  }
+});
 
 const invalidFilenames = Object.keys(errorsByFilename);
 

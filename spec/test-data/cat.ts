@@ -1,4 +1,4 @@
-import { attribute, entity, link, meta, relationship } from "../../src";
+import { attribute, entity, link, relationship } from "../../src";
 
 import { Animal } from "./animal";
 import { Person } from "./person";
