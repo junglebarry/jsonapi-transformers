@@ -10,7 +10,7 @@ import { Author } from "./author";
 import { Tag } from "./tag";
 
 @entity({ type: "blog_posts" })
-export class BlogPost extends JsonapiEntity {
+export class BlogPost extends JsonapiEntity<BlogPost> {
   @meta() createdDateTime: string;
   @attribute() title: string;
   @attribute() content: string;

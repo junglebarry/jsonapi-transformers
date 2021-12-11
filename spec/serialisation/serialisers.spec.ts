@@ -8,37 +8,51 @@ import {
 
 import { Address, Person } from "../test-data";
 
-const address1: Address = new Address();
-address1.id = "address1";
-address1.houseNumber = 8;
-address1.street = "Acacia Road";
-address1.city = "Nuttytown";
-address1.county = "West Nutshire";
+const address1: Address = new Address({
+  id: "address1",
+  houseNumber: 8,
+  street: "Acacia Road",
+  city: "Nuttytown",
+  county: "West Nutshire",
+});
 
 const address2: Address = new Address();
 address2.id = "address2";
 address2.street = "Mountain Drive";
 address2.city = "Gotham City";
 
-const person1: Person = new Person();
-person1.id = "person1";
-person1.firstName = "Eric";
-person1.surname = "Wimp";
-person1.address = address1;
-person1.oldAddresses = [address2];
-person1.createdDateTime = "2021-12-06T18:15:45";
+const person1: Person = new Person({
+  id: "person1",
+  firstName: "Eric",
+  surname: "Wimp",
+  address: address1,
+  oldAddresses: [address2],
+  createdDateTime: "2021-12-06T18:15:45",
+});
 
-const person2: Person = new Person();
-person2.id = "person2";
-person2.firstName = "Bruce";
-person2.surname = "Wayne";
-person2.work_address = address2;
-person2.old_work_addresses = [address1];
-person2.alterEgo = "2021-12-06T18:31:11";
+const person2: Person = new Person({
+  id: "person2",
+  firstName: "Bruce",
+  surname: "Wayne",
+  work_address: address2,
+  old_work_addresses: [address1],
+  alterEgo: "2021-12-06T18:31:11",
+});
 
 describe("serialisers", () => {
   describe("toJsonApi", () => {
-    it("should serialise to JSON API including attributes", () => {
+    it("should serialise to JSON API including attributes - legacy property assignment", () => {
+      expect(toJsonApi(address2)).toEqual({
+        id: "address2",
+        type: "addresses",
+        attributes: {
+          street: "Mountain Drive",
+          city: "Gotham City",
+        },
+      });
+    });
+
+    it("should serialise to JSON API including attributes - constructor assignment", () => {
       expect(toJsonApi(address1)).toEqual({
         id: "address1",
         type: "addresses",
@@ -47,15 +61,6 @@ describe("serialisers", () => {
           street: "Acacia Road",
           city: "Nuttytown",
           county: "West Nutshire",
-        },
-      });
-
-      expect(toJsonApi(address2)).toEqual({
-        id: "address2",
-        type: "addresses",
-        attributes: {
-          street: "Mountain Drive",
-          city: "Gotham City",
         },
       });
     });
