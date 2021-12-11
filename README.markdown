@@ -45,26 +45,30 @@ export class BlogPost {
 A concrete example using these types might be:
 
 ```typescript
-const david = new Author();
-david.id = "david";
-david.name = "David Brooks";
-david.lastLoginDateTime = "2021-07-24T11:00:00.000Z";
+const david = new Author({
+  id: "david",
+  name: "David Brooks",
+  lastLoginDateTime: "2021-07-24T11:00:00.000Z",
+});
 
-const tag1 = new Tag();
-tag1.id = "tag1";
-tag1.label = "one";
+const tag1 = new Tag({
+  id: "tag1",
+  label: "one",
+});
 
-const tag2 = new Tag();
-tag2.id = "tag2";
-tag2.label = "two";
+const tag2 = new Tag({
+  id: "tag2",
+  label: "two",
+});
 
-const post1 = new BlogPost();
-post1.id = "post1";
-post1.title = "Introducing jsonapi-transformers";
-post1.content = "<strong>It lives!</strong>";
-post1.author = david;
-post1.tags = [tag1, tag2];
-post1.createdDateTime = "2021-06-24T10:00:00.000Z";
+const post1 = new BlogPost({
+  id: "post1",
+  title: "Introducing jsonapi-transformers",
+  content: "<strong>It lives!</strong>",
+  author: david,
+  tags: [tag1, tag2],
+  createdDateTime: "2021-06-24T10:00:00.000Z",
+});
 ```
 
 These might have the following counterpart representations in JSON:API.
@@ -319,3 +323,73 @@ However, we encountered a few specific issues in our use-cases that did not work
 First, Yayson retains a single "store" of entities that it has deserialised (`sync`ed). The main implication of this is that the library encapulates its own state, and this is out of the developer's control. This library follows a functional pattern (pure functions, without internal state), so you can maintain your own state and pass it into serialisation functions as required. You can also implement a single store to sync against, should you prefer that.
 
 Second, if Yayson cannot resolve a relationship to an entity, the information of that relationship (type/ID) is simply discarded. We wanted a little more control of that, where we could make a request for a JSON:API entity and be able to attach it to resources from a follow-up request. This use-case is therefore supported: if you want to keep relationship identifiers around, look for `UnresolvedIdentifiers`.
+
+# Migrations and breaking changes
+
+## From 1.x to 2.x
+
+The 2.x release line includes a breaking change to allow properties to be partially-specified via the constructor parameter.
+
+In practical terms this meant that:
+
+```typescript
+const david = new Author();
+david.id = "david";
+david.name = "David Brooks";
+david.lastLoginDateTime = "2021-07-24T11:00:00.000Z";
+```
+
+could be rewritten as:
+
+```typescript
+const david = new Author({
+  id: "david",
+  name: "David Brooks",
+  lastLoginDateTime: "2021-07-24T11:00:00.000Z",
+});
+```
+
+Though the original format will still work.
+
+However, to facilitate this, the default constructor for `JsonapiEntity` needed access to the type being instantiated:
+
+```typescript
+constructor(properties: Partial<E> = {})
+```
+
+where `E` must be the type in question.
+
+In order to provide this, the `JsonapiEntity` subtype needed to be available to the constructor, and to achieve this, new `JsonapiEntity` subtypes must include the type as they extend that base type. In practice, this means that:
+
+```typescript
+@entity({ type: "authors" })
+export class Author extends JsonapiEntity {
+  @meta() lastLoginDateTime: string;
+  @attribute() name: string;
+}
+```
+
+must be rewritten as:
+
+```typescript
+@entity({ type: "authors" })
+export class Author extends JsonapiEntity<Author> {
+  // note the type parameter on the supertype
+  @meta() lastLoginDateTime: string;
+  @attribute() name: string;
+}
+```
+
+As part of this change, we also moved `JsonapiEntity` into its own file, so imports of the form:
+
+```typescript
+import { JsonapiEntity } from "jsonapi-transformers/src/jsonapi/types";
+```
+
+will not work, and need to be migrated to:
+
+```typescript
+import { JsonapiEntity } from "jsonapi-transformers/src/jsonapi/jsonapi-entity";
+```
+
+However, we recommend importing from `'jsonapi-transformers'` rather than delving into the internal structure.
