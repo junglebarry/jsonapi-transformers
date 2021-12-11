@@ -3,7 +3,7 @@ import { attribute, entity, relationship, JsonapiEntity } from "../../src";
 import { Person } from "./person";
 
 @entity({ type: "addresses" })
-export class Address extends JsonapiEntity<Address> {
+export class Address extends JsonapiEntity {
   @attribute() houseNumber?: number;
   @attribute() street: string;
   @attribute() city: string;

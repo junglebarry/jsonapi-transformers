@@ -3,7 +3,7 @@
  */
 export interface JsonapiIdentifier {
   id: string;
-  readonly type: string;
+  type: string;
 }
 
 /**
@@ -61,6 +61,14 @@ export interface ResourceObject extends ResourceIdentifier {
   links?: LinksObject;
   meta?: MetaObject;
   relationships?: { [relationshipName: string]: RelationshipsObject };
+}
+
+/**
+ * JSON:API base class providing `id` and `type` for resources.
+ */
+export class JsonapiEntity implements ResourceIdentifier {
+  id: string;
+  type: string;
 }
 
 /**
