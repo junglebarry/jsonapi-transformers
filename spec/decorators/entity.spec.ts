@@ -1,27 +1,32 @@
 import { describe, expect, it } from "@jest/globals";
 import { Address, Person } from "../test-data";
 
-const address1: Address = new Address({
-  id: "address1",
-  houseNumber: 8,
-  street: "Acacia Road",
-  city: "Nuttytown",
-  county: "West Nutshire",
-});
+const address1: Address = new Address();
+address1.id = "address1";
+address1.houseNumber = 8;
+address1.street = "Acacia Road";
+address1.city = "Nuttytown";
+address1.county = "West Nutshire";
 
-const address2: Address = new Address({
-  id: "address2",
-  street: "Mountain Drive",
-  city: "Gotham City",
-});
+const address1WithExplicitType: Address = new Address();
+address1WithExplicitType.id = "address1";
+address1WithExplicitType.type = "addresses";
+address1WithExplicitType.houseNumber = 8;
+address1WithExplicitType.street = "Acacia Road";
+address1WithExplicitType.city = "Nuttytown";
+address1WithExplicitType.county = "West Nutshire";
 
-const person1: Person = new Person({
-  id: "person1",
-  firstName: "Eric",
-  surname: "Wimp",
-  address: address1,
-  oldAddresses: [address2],
-});
+const address2: Address = new Address();
+address2.id = "address2";
+address2.street = "Mountain Drive";
+address2.city = "Gotham City";
+
+const person1: Person = new Person();
+person1.id = "person1";
+person1.firstName = "Eric";
+person1.surname = "Wimp";
+person1.address = address1;
+person1.oldAddresses = [address2];
 
 describe("entity", () => {
   it("should respect instanceof", () => {
@@ -34,6 +39,10 @@ describe("entity", () => {
     expect(address1.type).toEqual("addresses");
     expect(address2.type).toEqual("addresses");
     expect(person1.type).toEqual("people");
+  });
+
+  it("should respect equality, even when type is manually specified", () => {
+    expect(address1).toEqual(address1WithExplicitType);
   });
 
   it("should permit a natural JSON interpretation", () => {

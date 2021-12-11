@@ -12,7 +12,7 @@ import {
 import { Address } from "./address";
 
 @entity({ type: "people" })
-export class Person extends JsonapiEntity<Person> {
+export class Person extends JsonapiEntity {
   @meta({ name: "created_date_time" }) createdDateTime: string;
 
   @attribute() firstName: string;
@@ -37,8 +37,4 @@ export class Person extends JsonapiEntity<Person> {
 
   @link() self: string;
   @link({ name: "alt" }) alternative: string;
-
-  constructor(propertyValues: Partial<Person>) {
-    super(propertyValues);
-  }
 }

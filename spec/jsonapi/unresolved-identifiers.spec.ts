@@ -6,7 +6,7 @@ import {
 } from "../../src";
 
 describe("unresolved-identifiers", () => {
-  class FakeJsonapiEntity extends JsonapiEntity<FakeJsonapiEntity> {
+  class FakeJsonapiEntity extends JsonapiEntity {
     id = "foo";
     type = "things";
   }

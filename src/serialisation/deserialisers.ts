@@ -135,7 +135,6 @@ export function fromJsonApiResourceObject(
   if (!targetConstructor) {
     throw new Error(`No target entity constructor for type: ${type}`);
   }
-  targetConstructor.prototype.type = type;
 
   // fetch type-specific data
   const attributeMetadata = getAttributeMetadata(targetConstructor);
@@ -144,7 +143,9 @@ export function fromJsonApiResourceObject(
   const relationshipMetadata = getRelationshipMetadata(targetConstructor);
 
   // construct a basic instance with only ID and type (by means of entity) specified
-  const instance = new targetType({ id });
+  const instance = new targetType();
+  instance.id = id;
+  instance.type = type;
 
   // add to the list of deserialised objects, so recursive lookup works
   const typeAndId = byTypeAndId(instance);
