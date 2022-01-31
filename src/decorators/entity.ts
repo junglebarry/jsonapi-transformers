@@ -17,6 +17,12 @@ export class TypeMap {
   set(typeName: string, constructorType: ResourceIdentifierConstructor): void {
     this.constructorsByJsonapiType[typeName] = constructorType;
   }
+
+  remove(typeName: string, ...typeNames: string[]): void {
+    [typeName, ...typeNames].forEach((someType) => {
+      delete this.constructorsByJsonapiType[someType];
+    });
+  }
 }
 
 export const ENTITIES_MAP = new TypeMap();
@@ -34,6 +40,30 @@ export function getConstructorForJsonapiType(type: string): Function {
 
 export interface EntityOptions {
   type: string;
+}
+
+export function registerEntityConstructorForType(
+  constructor: ResourceIdentifierConstructor,
+  type: string
+): boolean {
+  const existingConstructor = ENTITIES_MAP.get(type);
+  if (!existingConstructor) {
+    ENTITIES_MAP.set(type, constructor);
+    return true;
+  } else if (existingConstructor === constructor) {
+    return false;
+  }
+
+  throw new Error(
+    `Attempt to reregister JSON:API type '${type}' to the entity constructor type: ${constructor.name}`
+  );
+}
+
+export function isEntityConstructorRegistered(
+  constructor: ResourceIdentifierConstructor
+): boolean {
+  const instance = new constructor();
+  return ENTITIES_MAP.get(instance.type) ? true : false;
 }
 
 /**
@@ -76,7 +106,7 @@ export function entity(
     wrappedConstructor.prototype = original.prototype;
 
     // add the type to the reverse lookup for deserialisation
-    ENTITIES_MAP.set(type, wrappedConstructor);
+    registerEntityConstructorForType(wrappedConstructor, type);
 
     // return new constructor (will override original)
     return wrappedConstructor;

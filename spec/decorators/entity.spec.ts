@@ -1,4 +1,11 @@
 import { describe, expect, it } from "@jest/globals";
+import {
+  isEntityConstructorRegistered,
+  ENTITIES_MAP,
+  entity,
+  JsonapiEntity,
+  registerEntityConstructorForType,
+} from "../../src";
 import { Address, Person } from "../test-data";
 
 const address1: Address = new Address({
@@ -45,5 +52,71 @@ describe("entity", () => {
         city: "Nuttytown",
       })
     );
+  });
+});
+
+describe("registerEntityConstructorForType", () => {
+  class TestEntity extends JsonapiEntity<TestEntity> {
+    type: "test_entities";
+  }
+
+  class NotTestEntity extends JsonapiEntity<NotTestEntity> {
+    type: "not_test_entities";
+  }
+
+  const removeTestEntitiesRegistration = () => {
+    ENTITIES_MAP.remove("test_entities", "not_test_entities");
+  };
+
+  beforeAll(removeTestEntitiesRegistration);
+  afterEach(removeTestEntitiesRegistration);
+
+  it("should register a new type/constructor pair", () => {
+    expect(
+      registerEntityConstructorForType(TestEntity, "test_entities")
+    ).toEqual(true);
+  });
+
+  it("should (re)register an existing type/constructor pair", () => {
+    expect(
+      registerEntityConstructorForType(TestEntity, "test_entities")
+    ).toEqual(true);
+    expect(
+      registerEntityConstructorForType(TestEntity, "test_entities")
+    ).toEqual(false);
+  });
+
+  it("should throw an error if attempting to replace an existing type/constructor pair", () => {
+    expect(
+      registerEntityConstructorForType(TestEntity, "test_entities")
+    ).toEqual(true);
+    expect(() =>
+      registerEntityConstructorForType(NotTestEntity, "test_entities")
+    ).toThrowError(
+      "Attempt to reregister JSON:API type 'test_entities' to the entity constructor type: NotTestEntity"
+    );
+  });
+});
+
+describe("isEntityConstructorRegistered", () => {
+  @entity({ type: "registered_entities" })
+  class RegisteredEntity extends JsonapiEntity<RegisteredEntity> {}
+
+  class UnregisteredEntity extends JsonapiEntity<RegisteredEntity> {
+    readonly type = "unregistered_entities";
+  }
+
+  const removeTestEntitiesRegistration = () => {
+    ENTITIES_MAP.remove("registered_entities", "unregistered_entities");
+  };
+
+  afterAll(removeTestEntitiesRegistration);
+
+  it("should return true when an entity has been registered", () => {
+    expect(isEntityConstructorRegistered(RegisteredEntity)).toEqual(true);
+  });
+
+  it("should return false when an entity has not been registered", () => {
+    expect(isEntityConstructorRegistered(UnregisteredEntity)).toEqual(false);
   });
 });
