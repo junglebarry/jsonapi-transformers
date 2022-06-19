@@ -1,0 +1,18 @@
+{
+  "compileOnSave": true,
+  "include": ["src/**/*"],
+  "compilerOptions": {
+    "outDir": "./lib",
+    "sourceMap": false,
+    "declaration": true,
+    "esModuleInterop": true,
+    "module": "ES2015",
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": ["ES2015"],
+    "resolveJsonModule": true,
+    "target": "es5"
+  },
+  "exclude": ["node_modules", "lib"]
+}
