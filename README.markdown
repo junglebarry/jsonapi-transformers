@@ -303,6 +303,21 @@ export interface LinkOptions {
 
 - `name` is optional. If you omit it, the property name within the class must exactly match the property name within the JSON:API representation. However, you can specify `name` to decouple these, and use a more natural name inside your application. This might be useful if your API uses a convention for naming that doesn't fit the application, e.g. snake-case property names: `myLinkProperty` versus `my_link_property`.
 
+## Creating instances of custom entities
+
+The static `.create` method is exposed on any subtype of `JsonapiEntity` as syntactic sugar for property initialisation. Here's how our example classes might be used:
+
+```typescript
+const post = BlogPost.create({
+  id: 'blogpost1',
+  createdDateTime: "2021-06-24T10:00:00.000Z",
+  title: ,
+  content: ,
+  author: Author.create({ id: 'author1' }),
+  tags: [Tag.create({ id: 'tag1' }), Tag.create({ id: 'tag2' })],
+});
+```
+
 # FAQs
 
 ## Why can't I use Typescript `interfaces`?
@@ -312,6 +327,47 @@ Great question! Most Typescript code you write will use interfaces, not classes,
 However, there are sometimes reasons to prefer classes over interfaces. Classes allow you to attach additional behaviours - such as decorators. It's not possible to use decorators with interfaces _because_ they don't exist at runtime.
 
 JSON:API serialisation is also an additional behaviour. If you were to use interfaces for your types, you'd still need to incur the costs of declaring whatever performs the serialisation - this library just takes the approach of binding this serialisation directly to the types, and therefore you need to use classes.
+
+## Why don't the examples use standard class constructors?
+
+Another good one... ES6 class definitions mean the use of `class` to define classes, `extends` to subtype a class, and then construction would use (from our example above) `new BlogPost(...)`.
+
+You are at liberty to use these default constructors with this library, and would do so like this:
+
+```typescript
+const post = new BlogPost();
+post.id = "blogpost1";
+post.createdDateTime = "2021-06-24T10:00:00.000Z";
+post.title = "An introduction to blogging";
+post.content = "If you take nothing else way, remember this one weird trick...";
+
+const author1 = new Author();
+author1.id = "author1";
+post.author = author1;
+
+const tag1 = new Tag();
+tag1.id = "tag1";
+const tag2 = new Tag();
+tag2.id = "tag2";
+post.tags = [tag1, tag2];
+```
+
+However, we have also provided some syntactic sugar to make it easier to construct _and initialise properties_. That looks like this:
+
+```typescript
+const post = BlogPost.create({
+  id: 'blogpost1',
+  createdDateTime: "2021-06-24T10:00:00.000Z",
+  title: ,
+  content: ,
+  author: Author.create({ id: 'author1' }),
+  tags: [Tag.create({ id: 'tag1' }), Tag.create({ id: 'tag2' })],
+});
+```
+
+We will use the second approach throughout the documentation, even though the previous examples with `new` still work.
+
+(We tried to make this work with standard object construction, but due to property-initialisation ordering constraints between classes, we could not achieve this. The `.create` approach was introduced in v3 to replace this.)
 
 ## Why did we need another library?
 
@@ -326,124 +382,4 @@ Second, if Yayson cannot resolve a relationship to an entity, the information of
 
 # Migrations and breaking changes
 
-## From 2.x to 3.x
-
-The 2.x release line includes a breaking change to allow properties to be partially-specified via the constructor parameter. Unfortunately, this did not work in all cases because subclass properties are assigned after supertype constructors are executed, meaning the change did not work properly in all cases.
-
-We have therefore deprecated the use of constructor parameters with v3, meaning this v2 code:
-
-```typescript
-const david = new Author({
-  id: "david",
-  name: "David Brooks",
-  lastLoginDateTime: "2021-07-24T11:00:00.000Z",
-});
-```
-
-must be rewritten as:
-
-```typescript
-const david = Author.create({
-  id: "david",
-  name: "David Brooks",
-  lastLoginDateTime: "2021-07-24T11:00:00.000Z",
-});
-```
-
-or:
-
-```typescript
-const david = newEntity(Author, {
-  id: "david",
-  name: "David Brooks",
-  lastLoginDateTime: "2021-07-24T11:00:00.000Z",
-});
-```
-
-or the original format:
-
-```typescript
-const david = new Author();
-david.id = "david";
-david.name = "David Brooks";
-david.lastLoginDateTime = "2021-07-24T11:00:00.000Z";
-```
-
-The v2 format may still work for you, but you are recommended to avoid it, and consider it deprecated:
-
-```typescript
-// DON'T DO THIS, IT'S DEPRECATED AND THERE IS NO GUARANTEE IT WILL WORK
-const david = new Author({
-  id: "david",
-  name: "David Brooks",
-  lastLoginDateTime: "2021-07-24T11:00:00.000Z",
-});
-```
-
-## From 1.x to 2.x
-
-The 2.x release line includes a breaking change to allow properties to be partially-specified via the constructor parameter.
-
-In practical terms this meant that:
-
-```typescript
-const david = new Author();
-david.id = "david";
-david.name = "David Brooks";
-david.lastLoginDateTime = "2021-07-24T11:00:00.000Z";
-```
-
-could be rewritten as:
-
-```typescript
-const david = new Author({
-  id: "david",
-  name: "David Brooks",
-  lastLoginDateTime: "2021-07-24T11:00:00.000Z",
-});
-```
-
-Though the original format will still work.
-
-However, to facilitate this, the default constructor for `JsonapiEntity` needed access to the type being instantiated:
-
-```typescript
-constructor(properties: Partial<E> = {})
-```
-
-where `E` must be the type in question.
-
-In order to provide this, the `JsonapiEntity` subtype needed to be available to the constructor, and to achieve this, new `JsonapiEntity` subtypes must include the type as they extend that base type. In practice, this means that:
-
-```typescript
-@entity({ type: "authors" })
-export class Author extends JsonapiEntity {
-  @meta() lastLoginDateTime: string;
-  @attribute() name: string;
-}
-```
-
-must be rewritten as:
-
-```typescript
-@entity({ type: "authors" })
-export class Author extends JsonapiEntity<Author> {
-  // note the type parameter on the supertype
-  @meta() lastLoginDateTime: string;
-  @attribute() name: string;
-}
-```
-
-As part of this change, we also moved `JsonapiEntity` into its own file, so imports of the form:
-
-```typescript
-import { JsonapiEntity } from "jsonapi-transformers/src/jsonapi/types";
-```
-
-will not work, and need to be migrated to:
-
-```typescript
-import { JsonapiEntity } from "jsonapi-transformers/src/jsonapi/jsonapi-entity";
-```
-
-However, we recommend importing from `'jsonapi-transformers'` rather than delving into the internal structure.
+Please see the [CHANGELOG](CHANGELOG)
