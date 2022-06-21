@@ -1,8 +1,8 @@
 {
   "extends": "./tsconfig-base.json",
   "compilerOptions": {
-    "module": "es2020",
+    "module": "es2022",
     "outDir": "lib/mjs",
-    "target": "ES2020"
+    "target": "ES2022"
   }
 }
