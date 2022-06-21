@@ -6,11 +6,18 @@ import { ResourceIdentifier } from "./types";
 export class JsonapiEntity<E extends JsonapiEntity<E>>
   implements ResourceIdentifier
 {
-  id: string;
-  readonly type: string;
+  id!: string;
+  readonly type!: string;
 
   constructor(properties: Partial<E> = {}) {
-    Object.assign(this, properties);
+    const { type, ...props } = properties;
+    Object.assign(this, props);
+    const proto = new.target.prototype;
+    if (!this.type && proto && proto.type) {
+      this.type = proto.type;
+    } else if (!this.type && type) {
+      this.type = type;
+    }
   }
 
   static create<E extends JsonapiEntity<E>>(
