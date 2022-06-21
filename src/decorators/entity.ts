@@ -81,34 +81,9 @@ export function entity(
   const { type } = options;
 
   return (original: ResourceIdentifierConstructor) => {
-    // a utility function to generate instances of a class
-    const construct = (
-      constructorFunc: ResourceIdentifierConstructor,
-      args
-    ) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const CustomJsonapiEntity: any = function () {
-        return new constructorFunc(...args);
-      };
-      CustomJsonapiEntity.prototype = constructorFunc.prototype;
-
-      // construct an instance and bind "type" correctly
-      const instance = new CustomJsonapiEntity();
-      instance.type = type;
-      return instance;
-    };
-
-    // the new constructor behaviour
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const wrappedConstructor: any = (...args) => construct(original, args);
-
-    // copy prototype so intanceof operator still works
-    wrappedConstructor.prototype = original.prototype;
-
+    original.prototype.type = type;
     // add the type to the reverse lookup for deserialisation
-    registerEntityConstructorForType(wrappedConstructor, type);
-
-    // return new constructor (will override original)
-    return wrappedConstructor;
+    registerEntityConstructorForType(original, type);
+    return original;
   };
 }
