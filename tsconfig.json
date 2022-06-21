@@ -1,18 +1,8 @@
 {
-  "compileOnSave": true,
-  "include": ["src/**/*"],
+  "extends": "./tsconfig-base.json",
   "compilerOptions": {
-    "outDir": "./lib",
-    "sourceMap": false,
-    "declaration": true,
-    "esModuleInterop": true,
-    "module": "ES2015",
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "lib": ["ES2015"],
-    "resolveJsonModule": true,
-    "target": "es5"
-  },
-  "exclude": ["node_modules"]
+    "module": "es2022",
+    "outDir": "lib/mjs",
+    "target": "ES2022"
+  }
 }

@@ -6,10 +6,17 @@
     "lib/**/*.d.ts",
     "lib/**/*.js"
   ],
-  "main": "./lib/index.js",
-  "types": "./lib/index.d.ts",
+  "types": "./lib/mjs/index.d.ts",
+  "main": "lib/cjs/index.js",
+  "module": "lib/mjs/index.js",
+  "exports": {
+    ".": {
+      "import": "./lib/mjs/index.js",
+      "require": "./lib/cjs/index.js"
+    }
+  },
   "scripts": {
-    "build": "tsc",
+    "build": "rm -fr lib/* && tsc -p tsconfig.json && tsc -p tsconfig-cjs.json && ./scripts/fixup",
     "format:prettier": "prettier --write .",
     "format": "npm run format:prettier",
     "lint:eslint": "eslint ./src ./spec",
@@ -53,6 +60,6 @@
     "prettier": "^2.6.2",
     "semantic-release": "^19.0.2",
     "ts-jest": "^27.1.4",
-    "typescript": "^4.3.5"
+    "typescript": "^4.7.4"
   }
 }

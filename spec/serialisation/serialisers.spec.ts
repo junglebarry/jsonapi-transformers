@@ -16,10 +16,11 @@ const address1: Address = Address.create({
   county: "West Nutshire",
 });
 
-const address2: Address = Address.create();
-address2.id = "address2";
-address2.street = "Mountain Drive";
-address2.city = "Gotham City";
+const address2: Address = Address.create({
+  id: "address2",
+  street: "Mountain Drive",
+  city: "Gotham City",
+});
 
 const person1: Person = Person.create({
   id: "person1",

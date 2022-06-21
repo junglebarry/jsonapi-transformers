@@ -27,7 +27,7 @@ describe("JsonapiEntity", () => {
   }
 
   describe("construction", () => {
-    it("should permit property specification for all properties BUT BEWARE THIS DOES NOT WORK EVERYWHERE", () => {
+    it("does not reliably permit property specification. This was DEPRECATED with v3. The test is left to show the behaviour is unreliable", () => {
       const fake = new FakeComplexJsonapiEntity({
         id: "complex1",
         someNonJsonapiProperty: "someNonJsonapiProperty!",
@@ -39,17 +39,13 @@ describe("JsonapiEntity", () => {
         someOtherSimple: new FakeSimpleJsonapiEntity({ id: "simple2" }),
       });
       expect(fake.id).toEqual("complex1");
-      expect(fake.someNonJsonapiProperty).toEqual("someNonJsonapiProperty!");
-      expect(fake.someAttr).toEqual("someAttr!");
-      expect(fake.someOtherAttr).toEqual("someOtherAttr!");
-      expect(fake.someMeta).toEqual("someMeta!");
-      expect(fake.someOtherMeta).toEqual("someOtherMeta!");
-      expect(fake.someSimple).toEqual(
-        new FakeSimpleJsonapiEntity({ id: "simple1" })
-      );
-      expect(fake.someOtherSimple).toEqual(
-        new FakeSimpleJsonapiEntity({ id: "simple2" })
-      );
+      expect(fake.someNonJsonapiProperty).toBeUndefined();
+      expect(fake.someAttr).toBeUndefined();
+      expect(fake.someOtherAttr).toBeUndefined();
+      expect(fake.someMeta).toBeUndefined();
+      expect(fake.someOtherMeta).toBeUndefined();
+      expect(fake.someSimple).toBeUndefined();
+      expect(fake.someOtherSimple).toBeUndefined();
     });
   });
 

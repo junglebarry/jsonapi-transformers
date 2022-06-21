@@ -57,11 +57,11 @@ describe("entity", () => {
 
 describe("registerEntityConstructorForType", () => {
   class TestEntity extends JsonapiEntity<TestEntity> {
-    type: "test_entities";
+    readonly type = "test_entities";
   }
 
   class NotTestEntity extends JsonapiEntity<NotTestEntity> {
-    type: "not_test_entities";
+    readonly type = "not_test_entities";
   }
 
   const removeTestEntitiesRegistration = () => {
