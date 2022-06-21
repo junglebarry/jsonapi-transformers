@@ -4,6 +4,14 @@ This is a library for transforming between [JSON:API](https://jsonapi.org/) resp
 
 Specifically, it allows you to use natural Typescript classes in your application, and provides a light-touch way to transform to and from JSON:API representations.
 
+# Installing
+
+You need to be using Node 14-18.
+
+```bash
+npm install jsonapi-transformers
+```
+
 # What does the library do?
 
 You can define Typescript classes to represent your REST entities, and add
