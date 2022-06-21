@@ -353,7 +353,7 @@ const david = Author.create({
 or:
 
 ```typescript
-const david = newInstance(Author, {
+const david = newEntity(Author, {
   id: "david",
   name: "David Brooks",
   lastLoginDateTime: "2021-07-24T11:00:00.000Z",

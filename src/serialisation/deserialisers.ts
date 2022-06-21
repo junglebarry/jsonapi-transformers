@@ -14,6 +14,7 @@ import {
   ResourceLinkage,
   ResourceObject,
   TopLevel,
+  newEntity,
 } from "../jsonapi";
 
 import { isDefined, keyBy } from "./utils";
@@ -144,7 +145,7 @@ export function fromJsonApiResourceObject(
   const relationshipMetadata = getRelationshipMetadata(targetConstructor);
 
   // construct a basic instance with only ID and type (by means of entity) specified
-  const instance = new targetType({ id });
+  const instance = newEntity(targetType, { id });
 
   // add to the list of deserialised objects, so recursive lookup works
   const typeAndId = byTypeAndId(instance);

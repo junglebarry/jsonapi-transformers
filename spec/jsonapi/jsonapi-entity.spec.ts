@@ -62,8 +62,8 @@ describe("JsonapiEntity", () => {
         someOtherAttr: "someOtherAttr!",
         someMeta: "someMeta!",
         someOtherMeta: "someOtherMeta!",
-        someSimple: new FakeSimpleJsonapiEntity({ id: "simple1" }),
-        someOtherSimple: new FakeSimpleJsonapiEntity({ id: "simple2" }),
+        someSimple: newEntity(FakeSimpleJsonapiEntity, { id: "simple1" }),
+        someOtherSimple: newEntity(FakeSimpleJsonapiEntity, { id: "simple2" }),
       });
       expect(fake.id).toEqual("complex1");
       expect(fake.someNonJsonapiProperty).toEqual("someNonJsonapiProperty!");
@@ -99,10 +99,10 @@ describe("JsonapiEntity", () => {
       expect(fake.someMeta).toEqual("someMeta!");
       expect(fake.someOtherMeta).toEqual("someOtherMeta!");
       expect(fake.someSimple).toEqual(
-        newEntity(FakeSimpleJsonapiEntity, { id: "simple1" })
+        FakeSimpleJsonapiEntity.create({ id: "simple1" })
       );
       expect(fake.someOtherSimple).toEqual(
-        newEntity(FakeSimpleJsonapiEntity, { id: "simple2" })
+        FakeSimpleJsonapiEntity.create({ id: "simple2" })
       );
     });
   });
