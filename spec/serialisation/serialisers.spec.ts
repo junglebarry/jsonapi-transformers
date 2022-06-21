@@ -8,7 +8,7 @@ import {
 
 import { Address, Person } from "../test-data";
 
-const address1: Address = new Address({
+const address1: Address = Address.create({
   id: "address1",
   houseNumber: 8,
   street: "Acacia Road",
@@ -16,12 +16,12 @@ const address1: Address = new Address({
   county: "West Nutshire",
 });
 
-const address2: Address = new Address();
+const address2: Address = Address.create();
 address2.id = "address2";
 address2.street = "Mountain Drive";
 address2.city = "Gotham City";
 
-const person1: Person = new Person({
+const person1: Person = Person.create({
   id: "person1",
   firstName: "Eric",
   surname: "Wimp",
@@ -30,7 +30,7 @@ const person1: Person = new Person({
   createdDateTime: "2021-12-06T18:15:45",
 });
 
-const person2: Person = new Person({
+const person2: Person = Person.create({
   id: "person2",
   firstName: "Bruce",
   surname: "Wayne",
