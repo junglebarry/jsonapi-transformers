@@ -303,6 +303,21 @@ export interface LinkOptions {
 
 - `name` is optional. If you omit it, the property name within the class must exactly match the property name within the JSON:API representation. However, you can specify `name` to decouple these, and use a more natural name inside your application. This might be useful if your API uses a convention for naming that doesn't fit the application, e.g. snake-case property names: `myLinkProperty` versus `my_link_property`.
 
+## Creating instances of custom entities
+
+The static `.create` method is exposed on any subtype of `JsonapiEntity` as syntactic sugar for property initialisation. Here's how our example classes might be used:
+
+```typescript
+const post = BlogPost.create({
+  id: 'blogpost1',
+  createdDateTime: "2021-06-24T10:00:00.000Z",
+  title: ,
+  content: ,
+  author: Author.create({ id: 'author1' }),
+  tags: [Tag.create({ id: 'tag1' }), Tag.create({ id: 'tag2' })],
+});
+```
+
 # FAQs
 
 ## Why can't I use Typescript `interfaces`?
@@ -312,6 +327,47 @@ Great question! Most Typescript code you write will use interfaces, not classes,
 However, there are sometimes reasons to prefer classes over interfaces. Classes allow you to attach additional behaviours - such as decorators. It's not possible to use decorators with interfaces _because_ they don't exist at runtime.
 
 JSON:API serialisation is also an additional behaviour. If you were to use interfaces for your types, you'd still need to incur the costs of declaring whatever performs the serialisation - this library just takes the approach of binding this serialisation directly to the types, and therefore you need to use classes.
+
+## Why don't the examples use standard class constructors?
+
+Another good one... ES6 class definitions mean the use of `class` to define classes, `extends` to subtype a class, and then construction would use (from our example above) `new BlogPost(...)`.
+
+You are at liberty to use these default constructors with this library, and would do so like this:
+
+```typescript
+const post = new BlogPost();
+post.id = "blogpost1";
+post.createdDateTime = "2021-06-24T10:00:00.000Z";
+post.title = "An introduction to blogging";
+post.content = "If you take nothing else way, remember this one weird trick...";
+
+const author1 = new Author();
+author1.id = "author1";
+post.author = author1;
+
+const tag1 = new Tag();
+tag1.id = "tag1";
+const tag2 = new Tag();
+tag2.id = "tag2";
+post.tags = [tag1, tag2];
+```
+
+However, we have also provided some syntactic sugar to make it easier to construct _and initialise properties_. That looks like this:
+
+```typescript
+const post = BlogPost.create({
+  id: 'blogpost1',
+  createdDateTime: "2021-06-24T10:00:00.000Z",
+  title: ,
+  content: ,
+  author: Author.create({ id: 'author1' }),
+  tags: [Tag.create({ id: 'tag1' }), Tag.create({ id: 'tag2' })],
+});
+```
+
+We will use the second approach throughout the documentation, even though the previous examples with `new` still work.
+
+(We tried to make this work with standard object construction, but due to property-initialisation ordering constraints between classes, we could not achieve this. The `.create` approach was introduced in v3 to replace this.)
 
 ## Why did we need another library?
 
