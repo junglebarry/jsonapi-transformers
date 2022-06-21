@@ -326,6 +326,20 @@ Second, if Yayson cannot resolve a relationship to an entity, the information of
 
 # Migrations and breaking changes
 
+## From 3.x to 4.x
+
+For v4, we are removing support for the deprecated v2 use of constructor parameters for property initialisation. With the change to target MJS and CJS outputs, we now have tests that showcase this behaviour breaking, and therefore are officially removing support.
+
+The recommended format for object initialisation is this:
+
+```typescript
+const david = Author.create({
+  id: "david",
+  name: "David Brooks",
+  lastLoginDateTime: "2021-07-24T11:00:00.000Z",
+});
+```
+
 ## From 2.x to 3.x
 
 The 2.x release line includes a breaking change to allow properties to be partially-specified via the constructor parameter. Unfortunately, this did not work in all cases because subclass properties are assigned after supertype constructors are executed, meaning the change did not work properly in all cases.
@@ -333,6 +347,7 @@ The 2.x release line includes a breaking change to allow properties to be partia
 We have therefore deprecated the use of constructor parameters with v3, meaning this v2 code:
 
 ```typescript
+// DON'T DO THIS, IT'S DEPRECATED AND THERE IS NO GUARANTEE IT WILL WORK
 const david = new Author({
   id: "david",
   name: "David Brooks",
