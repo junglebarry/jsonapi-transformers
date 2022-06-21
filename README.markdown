@@ -326,6 +326,60 @@ Second, if Yayson cannot resolve a relationship to an entity, the information of
 
 # Migrations and breaking changes
 
+## From 2.x to 3.x
+
+The 2.x release line includes a breaking change to allow properties to be partially-specified via the constructor parameter. Unfortunately, this did not work in all cases because subclass properties are assigned after supertype constructors are executed, meaning the change did not work properly in all cases.
+
+We have therefore deprecated the use of constructor parameters with v3, meaning this v2 code:
+
+```typescript
+const david = new Author({
+  id: "david",
+  name: "David Brooks",
+  lastLoginDateTime: "2021-07-24T11:00:00.000Z",
+});
+```
+
+must be rewritten as:
+
+```typescript
+const david = Author.create({
+  id: "david",
+  name: "David Brooks",
+  lastLoginDateTime: "2021-07-24T11:00:00.000Z",
+});
+```
+
+or:
+
+```typescript
+const david = newInstance(Author, {
+  id: "david",
+  name: "David Brooks",
+  lastLoginDateTime: "2021-07-24T11:00:00.000Z",
+});
+```
+
+or the original format:
+
+```typescript
+const david = new Author();
+david.id = "david";
+david.name = "David Brooks";
+david.lastLoginDateTime = "2021-07-24T11:00:00.000Z";
+```
+
+The v2 format may still work for you, but you are recommended to avoid it, and consider it deprecated:
+
+```typescript
+// DON'T DO THIS, IT'S DEPRECATED AND THERE IS NO GUARANTEE IT WILL WORK
+const david = new Author({
+  id: "david",
+  name: "David Brooks",
+  lastLoginDateTime: "2021-07-24T11:00:00.000Z",
+});
+```
+
 ## From 1.x to 2.x
 
 The 2.x release line includes a breaking change to allow properties to be partially-specified via the constructor parameter.
