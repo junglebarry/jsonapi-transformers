@@ -5,7 +5,7 @@ import {
   getLinkMetadata,
   getMetaMetadata,
   getRelationshipMetadata,
-} from "../decorators";
+} from "../decorators/index.js";
 
 import {
   jsonapiIdentifier,
@@ -15,9 +15,9 @@ import {
   ResourceObject,
   TopLevel,
   newEntity,
-} from "../jsonapi";
+} from "../jsonapi/index.js";
 
-import { isDefined, keyBy } from "./utils";
+import { isDefined, keyBy } from "./utils.js";
 
 /**
  * Key a resource object by type and ID.

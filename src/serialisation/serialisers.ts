@@ -2,11 +2,11 @@ import {
   getAttributeMetadata,
   getMetaMetadata,
   getRelationshipMetadata,
-} from "../decorators";
+} from "../decorators/index.js";
 
-import { jsonapiLinkage, ResourceIdentifier, ResourceObject } from "../jsonapi";
+import { jsonapiLinkage, ResourceIdentifier, ResourceObject } from "../jsonapi/index.js";
 
-import { isEmptyObject, isDefined } from "./utils";
+import { isEmptyObject, isDefined } from "./utils.js";
 
 /**
  * Convert a target JSON:API entity into a JSON:API representation.

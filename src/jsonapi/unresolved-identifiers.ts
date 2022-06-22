@@ -1,4 +1,4 @@
-import { ResourceIdentifier } from "./types";
+import { ResourceIdentifier } from "./types.js";
 
 /**
  * A class representing unresolved resource identifiers.

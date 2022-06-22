@@ -1,4 +1,4 @@
-import { JsonapiEntity } from "../jsonapi";
+import { JsonapiEntity } from "../jsonapi/index.js";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
 export function getEntityPrototypeChain(targetType: any): any[] {

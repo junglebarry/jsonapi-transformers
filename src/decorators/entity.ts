@@ -1,4 +1,4 @@
-import { ResourceIdentifier } from "../jsonapi";
+import { ResourceIdentifier } from "../jsonapi/index.js";
 
 export interface ResourceIdentifierConstructor {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

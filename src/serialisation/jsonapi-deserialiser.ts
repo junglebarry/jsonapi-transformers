@@ -1,6 +1,6 @@
-import { ResourceIdentifier, ResourceObject, TopLevel } from "../jsonapi";
+import { ResourceIdentifier, ResourceObject, TopLevel } from "../jsonapi/index.js";
 
-import { fromJsonApiTopLevel } from "./deserialisers";
+import { fromJsonApiTopLevel } from "./deserialisers.js";
 
 /**
  * A class that encapsulates all traversed and included ResourceObject instances

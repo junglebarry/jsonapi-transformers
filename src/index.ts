@@ -1,3 +1,3 @@
-export * from "./decorators";
-export * from "./jsonapi";
-export * from "./serialisation";
+export * from "./decorators/index.js";
+export * from "./jsonapi/index.js";
+export * from "./serialisation/index.js";

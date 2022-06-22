@@ -1,6 +1,6 @@
-import { MetadataMap } from "./metadata-map";
+import { MetadataMap } from "./metadata-map.js";
 
-import { getEntityPrototypeChain } from "./utils";
+import { getEntityPrototypeChain } from "./utils.js";
 
 const ATTRIBUTES_MAP = new MetadataMap<AttributeOptions>();
 

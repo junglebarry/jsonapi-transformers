@@ -1,5 +1,5 @@
-import { MetadataMap } from "./metadata-map";
-import { getEntityPrototypeChain } from "./utils";
+import { MetadataMap } from "./metadata-map.js";
+import { getEntityPrototypeChain } from "./utils.js";
 
 const RELATIONSHIPS_MAP = new MetadataMap<RelationshipOptions>();
 
