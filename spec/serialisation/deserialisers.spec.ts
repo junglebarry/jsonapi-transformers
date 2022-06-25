@@ -1,5 +1,8 @@
 import { describe, expect, it } from "@jest/globals";
-import { fromJsonApiTopLevel } from "../../src";
+import {
+  fromJsonApiTopLevelResourceDatum,
+  fromJsonApiTopLevelResourcesData,
+} from "../../src";
 
 import {
   Address,
@@ -23,7 +26,8 @@ import * as FAKE_README_BLOG_EXAMPLE_WITH_INCLUDES from "../test-data/jsonapi/fa
 describe("deserialisers", () => {
   describe("fromJsonApiTopLevel", () => {
     describe("JSON API top-level datum deserialisation", () => {
-      const { deserialised } = fromJsonApiTopLevel(FAKE_SINGLE_RESPONSE);
+      const { deserialised } =
+        fromJsonApiTopLevelResourceDatum<Person>(FAKE_SINGLE_RESPONSE);
       const PERSON_1: Person = deserialised;
 
       it("should deserialise the top-level datum from the response, populating object attributes", () => {
@@ -98,7 +102,9 @@ describe("deserialisers", () => {
     });
 
     describe("JSON API top-level data deserialisation", () => {
-      const { deserialised } = fromJsonApiTopLevel(FAKE_MULTIPLE_RESPONSE);
+      const { deserialised } = fromJsonApiTopLevelResourcesData<Person>(
+        FAKE_MULTIPLE_RESPONSE
+      );
       const PEOPLE: Person[] = deserialised;
 
       it("should deserialise each item in the top-level data from the response", () => {
@@ -195,7 +201,7 @@ describe("deserialisers", () => {
     });
 
     describe("JSON API top-level datum deserialisation of a subtype of an unregistered entity", () => {
-      const { deserialised } = fromJsonApiTopLevel(
+      const { deserialised } = fromJsonApiTopLevelResourceDatum<Cat>(
         FAKE_SINGLE_SUBTYPE_RESPONSE
       );
       const CAT_1: Cat = deserialised;
@@ -239,7 +245,9 @@ describe("deserialisers", () => {
 
   describe("README examples", () => {
     describe("author only", () => {
-      const { deserialised } = fromJsonApiTopLevel(FAKE_README_AUTHOR_ONLY);
+      const { deserialised } = fromJsonApiTopLevelResourceDatum<Author>(
+        FAKE_README_AUTHOR_ONLY
+      );
       const AUTHOR_1: Author = deserialised;
 
       it("should deserialise the primary datum from the response", () => {
@@ -256,7 +264,9 @@ describe("deserialisers", () => {
     });
 
     describe("tag1 only", () => {
-      const { deserialised } = fromJsonApiTopLevel(FAKE_README_TAG1_ONLY);
+      const { deserialised } = fromJsonApiTopLevelResourceDatum<Tag>(
+        FAKE_README_TAG1_ONLY
+      );
       const TAG_1: Tag = deserialised;
 
       it("should deserialise the primary datum from the response", () => {
@@ -269,7 +279,9 @@ describe("deserialisers", () => {
     });
 
     describe("tag2 only", () => {
-      const { deserialised } = fromJsonApiTopLevel(FAKE_README_TAG2_ONLY);
+      const { deserialised } = fromJsonApiTopLevelResourceDatum<Tag>(
+        FAKE_README_TAG2_ONLY
+      );
       const TAG_2: Tag = deserialised;
 
       it("should deserialise the primary datum from the response", () => {
@@ -282,7 +294,9 @@ describe("deserialisers", () => {
     });
 
     describe("blog post only", () => {
-      const { deserialised } = fromJsonApiTopLevel(FAKE_README_BLOG_ONLY);
+      const { deserialised } = fromJsonApiTopLevelResourceDatum<BlogPost>(
+        FAKE_README_BLOG_ONLY
+      );
       const POST_1: BlogPost = deserialised;
 
       it("should deserialise the primary datum from the response", () => {
@@ -315,7 +329,7 @@ describe("deserialisers", () => {
     });
 
     describe("full example with includes", () => {
-      const { deserialised } = fromJsonApiTopLevel(
+      const { deserialised } = fromJsonApiTopLevelResourceDatum<BlogPost>(
         FAKE_README_BLOG_EXAMPLE_WITH_INCLUDES
       );
       const POST_1: BlogPost = deserialised;

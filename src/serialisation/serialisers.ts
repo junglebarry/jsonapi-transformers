@@ -3,20 +3,24 @@ import {
   getMetaMetadata,
   getRelationshipMetadata,
 } from "../decorators";
+import { entityConstructor } from "../decorators/utils";
 
-import { jsonapiLinkage, ResourceIdentifier, ResourceObject } from "../jsonapi";
+import { jsonapiLinkage, JsonapiEntity, ResourceObject } from "../jsonapi";
 
 import { isEmptyObject, isDefined } from "./utils";
 
 /**
  * Convert a target JSON:API entity into a JSON:API representation.
  *
- * @param  {ResourceIdentifier} target - a source entity
+ * @param  {T} target - a source entity
  * @return {ResourceObject} a JSON:API resource representation
  */
-export function toJsonApi(target: ResourceIdentifier): ResourceObject {
+export function toJsonApi<T extends JsonapiEntity<T>>(
+  target: T
+): ResourceObject {
+  const targetConstructor = entityConstructor(target);
   // convert attributes
-  const attributeMetadata = getAttributeMetadata(target.constructor);
+  const attributeMetadata = getAttributeMetadata(targetConstructor);
   const attributeReducer = (soFar, attr) => {
     const metadata = attributeMetadata[attr];
     const targetAttribute = target[attr];
@@ -32,7 +36,7 @@ export function toJsonApi(target: ResourceIdentifier): ResourceObject {
   );
 
   // convert meta properties
-  const metaMetadata = getMetaMetadata(target.constructor);
+  const metaMetadata = getMetaMetadata(targetConstructor);
   const metaReducer = (soFar, metaProperty) => {
     const metadata = metaMetadata[metaProperty];
     const targetMeta = target[metaProperty];
@@ -45,7 +49,7 @@ export function toJsonApi(target: ResourceIdentifier): ResourceObject {
   const meta = Object.keys(metaMetadata).reduce(metaReducer, {});
 
   // convert relationships
-  const relationshipMetadata = getRelationshipMetadata(target.constructor);
+  const relationshipMetadata = getRelationshipMetadata(targetConstructor);
 
   const relationshipReducer = (soFar, relationshipName) => {
     const metadata = relationshipMetadata[relationshipName];
