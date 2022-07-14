@@ -283,34 +283,34 @@ describe("deserialisers", () => {
 
     describe("blog post only", () => {
       const { deserialised } = fromJsonApiTopLevel(FAKE_README_BLOG_ONLY);
-      const POST_1: BlogPost = deserialised;
+      const POST_ONLY_1: BlogPost = deserialised;
 
       it("should deserialise the primary datum from the response", () => {
-        expect(POST_1).toEqual(expect.any(BlogPost));
+        expect(POST_ONLY_1).toEqual(expect.any(BlogPost));
       });
 
       it("should deserialise attributes from the primary datum", () => {
-        const { title, content } = POST_1;
+        const { title, content } = POST_ONLY_1;
         expect(title).toEqual("Introducing jsonapi-transformers");
         expect(content).toEqual("<strong>It lives!</strong>");
       });
 
       it("should deserialise links from the primary datum", () => {
-        expect(POST_1.self).toEqual(
+        expect(POST_ONLY_1.self).toEqual(
           "https://example.com/my-jsonapi/blog_posts/post1"
         );
       });
 
       it("should deserialise meta from the primary datum", () => {
-        expect(POST_1.createdDateTime).toEqual("2021-06-24T10:00:00.000Z");
+        expect(POST_ONLY_1.createdDateTime).toEqual("2021-06-24T10:00:00.000Z");
       });
 
       it("should NOT deserialise to-one relationships, leaving them undefined", () => {
-        expect(POST_1.author).toBeUndefined();
+        expect(POST_ONLY_1.author).toBeUndefined();
       });
 
       it("should NOT deserialise to-many relationships, leaving them as an empty array", () => {
-        expect(POST_1.tags).toEqual([]);
+        expect(POST_ONLY_1.tags).toEqual([]);
       });
     });
 
