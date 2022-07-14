@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   node: circleci/node@4.5.1
+  sonarcloud: sonarsource/sonarcloud@1.0.3
 
 executors:
   default_executor:
@@ -38,6 +39,9 @@ jobs:
       - run:
           name: Run unit tests
           command: npm run test
+      - store_artifacts:
+          path: coverage
+      - sonarcloud/scan
       - run:
           name: Rebuild the release directory (lib/)
           command: npm run build
@@ -48,4 +52,5 @@ jobs:
 workflows:
   test:
     jobs:
-      - build_and_test
+      - build_and_test:
+          context: SonarCloud
