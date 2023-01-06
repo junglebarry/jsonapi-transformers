@@ -53,4 +53,6 @@ workflows:
   test:
     jobs:
       - build_and_test:
-          context: SonarCloud
+          context:
+            - dockerhub/junglebarry
+            - sonarcloud/junglebarry
