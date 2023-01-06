@@ -16,16 +16,10 @@ export function relationship(options?: RelationshipOptions): PropertyDecorator {
   const opts = Object.assign({}, DefaultRelationshipOptions, options || {});
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (target: any, key: string) => {
-    RELATIONSHIPS_MAP.setMetadataByType(
-      target.constructor,
-      key,
-      Object.assign(
-        {
-          name: key,
-        },
-        opts
-      )
-    );
+    RELATIONSHIPS_MAP.setMetadataByType(target.constructor, key, {
+      name: key,
+      ...opts,
+    });
   };
 }
 
