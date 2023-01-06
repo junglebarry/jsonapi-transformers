@@ -19,7 +19,7 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "8d:a8:fa:bc:ae:5f:5c:51:f0:df:41:ed:3a:8f:c7:12" # 'deploykey_junglebarry_jsonapitransformers_ed25519'
+            - "04:e1:85:d2:0f:ac:cc:35:da:f6:93:b4:3f:9a:68:15" # 'deploykey_junglebarry_jsonapitransformers_circleci_ed25519_2023_01_06'
       - checkout
       - node/install-packages
       - run:
@@ -53,4 +53,6 @@ workflows:
   test:
     jobs:
       - build_and_test:
-          context: SonarCloud
+          context:
+            - dockerhub/junglebarry
+            - sonarcloud/junglebarry
