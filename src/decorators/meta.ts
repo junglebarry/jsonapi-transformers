@@ -12,16 +12,10 @@ export function meta(options?: MetaOptions): PropertyDecorator {
   const opts = options || {};
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (target: any, key: string) => {
-    META_PROPERTIES_MAP.setMetadataByType(
-      target.constructor,
-      key,
-      Object.assign(
-        {
-          name: key,
-        },
-        opts
-      )
-    );
+    META_PROPERTIES_MAP.setMetadataByType(target.constructor, key, {
+      name: key,
+      ...opts,
+    });
   };
 }
 
