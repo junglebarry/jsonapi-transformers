@@ -8,7 +8,7 @@ executors:
   default_executor:
     working_directory: ~/jsonapi-transformers
     docker:
-      - image: cimg/node:18.4.0
+      - image: cimg/node:18.12.1
         auth:
           username: $DOCKER_USERNAME
           password: $DOCKER_PASSWORD
