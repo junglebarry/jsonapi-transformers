@@ -74,10 +74,11 @@ export function isEntityConstructorRegistered(
  * to be serialisable to and deserialisable from appropriate JSON:API data.
  *
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any -- constructor types cannot be known */
 export function entity(
   options: EntityOptions
 ): (ResourceIdentifierConstructor) => any {
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   const { type } = options;
 
   return (original: ResourceIdentifierConstructor) => {
