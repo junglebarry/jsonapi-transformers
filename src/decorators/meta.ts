@@ -26,6 +26,6 @@ export function getMetaMetadata(target: any): MetaMetadata {
   return getEntityPrototypeChain(target).reduce(
     (soFar, prototype) =>
       Object.assign(soFar, META_PROPERTIES_MAP.getMetadataByType(prototype)),
-    {}
+    {},
   );
 }

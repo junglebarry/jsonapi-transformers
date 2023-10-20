@@ -106,7 +106,7 @@ describe("serialisers", () => {
     it("should deserialise an object without relationships", () => {
       const address1FromJsonapi: Address = fromJsonApiResourceObject(
         address1Jsonapi,
-        {}
+        {},
       );
       expect(address1FromJsonapi).toEqual(expect.any(Address));
       expect(address1FromJsonapi).toEqual(address1);
@@ -115,7 +115,7 @@ describe("serialisers", () => {
     it("should deserialise an object with unresolved relationships omitted", () => {
       const person1FromJsonapi: Person = fromJsonApiResourceObject(
         person1Jsonapi,
-        {}
+        {},
       );
       expect(person1FromJsonapi).toEqual(expect.any(Person));
       expect(person1FromJsonapi.id).toEqual("person1");
@@ -130,7 +130,7 @@ describe("serialisers", () => {
     it("should deserialise an object with unresolved relationships left as identifiers", () => {
       const person2FromJsonapi: Person = fromJsonApiResourceObject(
         person2Jsonapi,
-        {}
+        {},
       );
       expect(person2FromJsonapi).toEqual(expect.any(Person));
       expect(person2FromJsonapi.id).toEqual("person2");
@@ -139,7 +139,7 @@ describe("serialisers", () => {
       expect(person2FromJsonapi.address).toBeFalsy();
       expect(person2FromJsonapi.oldAddresses).toBeFalsy();
       expect(person2FromJsonapi.work_address).toEqual(
-        unresolvedIdentifier(address2)
+        unresolvedIdentifier(address2),
       );
       expect(person2FromJsonapi.old_work_addresses).toEqual([
         unresolvedIdentifier(address1),
@@ -154,7 +154,7 @@ describe("serialisers", () => {
 
       const person1FromJsonapi: Person = fromJsonApiResourceObject(
         person1Jsonapi,
-        INCLUDED
+        INCLUDED,
       );
       expect(person1FromJsonapi).toEqual(expect.any(Person));
       expect(person1FromJsonapi.id).toEqual("person1");

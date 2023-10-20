@@ -37,11 +37,11 @@ jsonapiResponseFiles.forEach((file) => {
 const invalidFilenames = Object.keys(errorsByFilename);
 
 console.log(
-  `The test-data contains ${validFiles.length} valid JSON:API example file(s)`
+  `The test-data contains ${validFiles.length} valid JSON:API example file(s)`,
 );
 if (invalidFilenames.length > 0) {
   console.error(
-    `The test-data contains ${invalidFilenames.length} invalid JSON:API example file(s)`
+    `The test-data contains ${invalidFilenames.length} invalid JSON:API example file(s)`,
   );
   invalidFilenames.forEach((invalidFile) => {
     console.error(`\n\n=== ${invalidFile} ===`);

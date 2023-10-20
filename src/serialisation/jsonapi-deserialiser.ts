@@ -23,7 +23,7 @@ export class JsonApiDeserialiser {
   deserialiseOne<T extends ResourceIdentifier>(topLevel: TopLevel): T {
     const { deserialised, referents } = fromJsonApiTopLevel(
       topLevel,
-      this.includes
+      this.includes,
     );
     this.includes = referents;
     return deserialised as T;
@@ -39,7 +39,7 @@ export class JsonApiDeserialiser {
   deserialiseMany<T extends ResourceIdentifier>(topLevel: TopLevel): T[] {
     const { deserialised, referents } = fromJsonApiTopLevel(
       topLevel,
-      this.includes
+      this.includes,
     );
     this.includes = referents;
     return deserialised as T[];
@@ -64,7 +64,7 @@ export class JsonApiDeserialiser {
  * @return {T} the deserialised response object
  */
 export function deserialiseOne<T extends ResourceIdentifier>(
-  topLevel: TopLevel
+  topLevel: TopLevel,
 ): T {
   const { deserialised } = fromJsonApiTopLevel(topLevel);
   return deserialised as T;
@@ -78,7 +78,7 @@ export function deserialiseOne<T extends ResourceIdentifier>(
  * @return {T[]} the deserialised response objects, as an array
  */
 export function deserialiseMany<T extends ResourceIdentifier>(
-  topLevel: TopLevel
+  topLevel: TopLevel,
 ): T[] {
   const { deserialised } = fromJsonApiTopLevel(topLevel);
   return deserialised as T[];

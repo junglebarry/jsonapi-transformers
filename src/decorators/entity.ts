@@ -28,7 +28,7 @@ export class TypeMap {
 export const ENTITIES_MAP = new TypeMap();
 
 export function getClassForJsonapiType(
-  type: string
+  type: string,
 ): ResourceIdentifierConstructor {
   return ENTITIES_MAP.get(type);
 }
@@ -44,7 +44,7 @@ export interface EntityOptions {
 
 export function registerEntityConstructorForType(
   constructor: ResourceIdentifierConstructor,
-  type: string
+  type: string,
 ): boolean {
   const existingConstructor = ENTITIES_MAP.get(type);
   if (!existingConstructor) {
@@ -55,12 +55,12 @@ export function registerEntityConstructorForType(
   }
 
   throw new Error(
-    `Attempt to reregister JSON:API type '${type}' to the entity constructor type: ${constructor.name}`
+    `Attempt to reregister JSON:API type '${type}' to the entity constructor type: ${constructor.name}`,
   );
 }
 
 export function isEntityConstructorRegistered(
-  constructor: ResourceIdentifierConstructor
+  constructor: ResourceIdentifierConstructor,
 ): boolean {
   const instance = new constructor();
   return ENTITIES_MAP.get(instance.type) ? true : false;
@@ -76,7 +76,7 @@ export function isEntityConstructorRegistered(
  */
 /* eslint-disable @typescript-eslint/no-explicit-any -- constructor types cannot be known */
 export function entity(
-  options: EntityOptions
+  options: EntityOptions,
 ): (ResourceIdentifierConstructor) => any {
   /* eslint-enable @typescript-eslint/no-explicit-any */
   const { type } = options;

@@ -28,7 +28,7 @@ export function toJsonApi(target: ResourceIdentifier): ResourceObject {
   };
   const attributes = Object.keys(attributeMetadata).reduce(
     attributeReducer,
-    {}
+    {},
   );
 
   // convert meta properties
@@ -59,7 +59,7 @@ export function toJsonApi(target: ResourceIdentifier): ResourceObject {
 
   const relationships = Object.keys(relationshipMetadata).reduce(
     relationshipReducer,
-    {}
+    {},
   );
 
   // compose the object and return
