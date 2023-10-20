@@ -49,11 +49,12 @@ export type DeserialisedLookup = { [typeAndId: string]: any };
  * @param  {ResourceObject[]} resourceObjects - known resource objects, for resolution
  * @return {any} - an entity or entities representing the top-level
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any -- should be typed, in future */
 export function fromJsonApiTopLevel(
   topLevel: TopLevel,
   resourceObjects: ResourceObject[] = []
 ): any {
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   // extract primary data and included resources
   const { data, included } = topLevel;
 
@@ -110,12 +111,13 @@ export function fromJsonApiTopLevel(
  * @param  {IncludedLookup} resourceObjectsByTypeAndId - known resources, keyed by type-and-ID
  * @return {any} - a resource object, deserialised from JSON:API
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any -- should be typed, in future */
 export function fromJsonApiResourceObject(
   jsonapiResource: ResourceObject,
   resourceObjectsByTypeAndId: IncludedLookup,
   deserialisedObjects: DeserialisedLookup = {}
 ): any {
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   // deconstruct primary data and remap into an instance of the chosen type
   const {
     id,
@@ -226,13 +228,14 @@ export function fromJsonApiResourceObject(
  * @param {boolean} allowUnresolvedIdentifiers - when `true`, identifiers are substituted for unresolved objects
  * @return {any}
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any -- respects type of `deserialisedObjects` and `fromJsonApiResourceObject` */
 function extractResourceObjectFromRelationship(
   relationIdentifier: ResourceIdentifier,
   resourceObjectsByTypeAndId: IncludedLookup,
   deserialisedObjects: DeserialisedLookup,
   allowUnresolvedIdentifiers: boolean
 ): any {
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   const relationId = byTypeAndId(relationIdentifier);
 
   // already deserialised and cached
@@ -272,13 +275,14 @@ function extractResourceObjectFromRelationship(
  * @param {boolean} allowUnresolvedIdentifiers - when `true`, identifiers are substituted for unresolved objects
  * @return {any} -
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any -- respects type of `extractResourceObjectFromRelationship` */
 function extractResourceObjectOrObjectsFromRelationship(
   resourceLinkage: ResourceLinkage,
   resourceObjectsByTypeAndId: IncludedLookup,
   deserialisedObjects: DeserialisedLookup,
   allowUnresolvedIdentifiers: boolean
 ): any {
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   const extractResourceObject = (linkage) =>
     extractResourceObjectFromRelationship(
       linkage,
