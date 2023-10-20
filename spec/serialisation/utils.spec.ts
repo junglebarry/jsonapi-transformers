@@ -70,7 +70,7 @@ describe("utils", () => {
       });
 
       expect(
-        keyBy(["foo", "bar", "oobaz"], (str: string) => str.charAt(0))
+        keyBy(["foo", "bar", "oobaz"], (str: string) => str.charAt(0)),
       ).toEqual({
         f: "foo",
         b: "bar",
@@ -80,14 +80,14 @@ describe("utils", () => {
 
     it("should return the last values in array-order, where key collisions occur", () => {
       expect(
-        keyBy([1, 2, 3, 4, 5, 6], (num: number) => (num % 2 === 0).toString())
+        keyBy([1, 2, 3, 4, 5, 6], (num: number) => (num % 2 === 0).toString()),
       ).toEqual({
         true: 6,
         false: 5,
       });
 
       expect(
-        keyBy(["foo", "bar", "fubar"], (str: string) => str.charAt(0))
+        keyBy(["foo", "bar", "fubar"], (str: string) => str.charAt(0)),
       ).toEqual({
         f: "fubar",
         b: "bar",

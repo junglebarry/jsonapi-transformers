@@ -35,7 +35,7 @@ export type KeyingFunction<T> = (t: T) => string;
  */
 export function keyBy<T>(
   array: T[],
-  keyFunc: KeyingFunction<T>
+  keyFunc: KeyingFunction<T>,
 ): { [key: string]: T } {
   const reducer = (soFar, element) =>
     Object.assign(soFar, {

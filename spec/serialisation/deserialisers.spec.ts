@@ -196,7 +196,7 @@ describe("deserialisers", () => {
 
     describe("JSON API top-level datum deserialisation of a subtype of an unregistered entity", () => {
       const { deserialised } = fromJsonApiTopLevel(
-        FAKE_SINGLE_SUBTYPE_RESPONSE
+        FAKE_SINGLE_SUBTYPE_RESPONSE,
       );
       const CAT_1: Cat = deserialised;
 
@@ -297,7 +297,7 @@ describe("deserialisers", () => {
 
       it("should deserialise links from the primary datum", () => {
         expect(POST_ONLY_1.self).toEqual(
-          "https://example.com/my-jsonapi/blog_posts/post1"
+          "https://example.com/my-jsonapi/blog_posts/post1",
         );
       });
 
@@ -316,7 +316,7 @@ describe("deserialisers", () => {
 
     describe("full example with includes", () => {
       const { deserialised } = fromJsonApiTopLevel(
-        FAKE_README_BLOG_EXAMPLE_WITH_INCLUDES
+        FAKE_README_BLOG_EXAMPLE_WITH_INCLUDES,
       );
       const POST_1: BlogPost = deserialised;
 
@@ -332,7 +332,7 @@ describe("deserialisers", () => {
 
       it("should deserialise links from the primary datum", () => {
         expect(POST_1.self).toEqual(
-          "https://example.com/my-jsonapi/blog_posts/post1"
+          "https://example.com/my-jsonapi/blog_posts/post1",
         );
       });
 

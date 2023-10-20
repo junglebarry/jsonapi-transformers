@@ -50,7 +50,7 @@ describe("entity", () => {
         type: "addresses",
         street: "Acacia Road",
         city: "Nuttytown",
-      })
+      }),
     );
   });
 });
@@ -73,27 +73,27 @@ describe("registerEntityConstructorForType", () => {
 
   it("should register a new type/constructor pair", () => {
     expect(
-      registerEntityConstructorForType(TestEntity, "test_entities")
+      registerEntityConstructorForType(TestEntity, "test_entities"),
     ).toEqual(true);
   });
 
   it("should (re)register an existing type/constructor pair", () => {
     expect(
-      registerEntityConstructorForType(TestEntity, "test_entities")
+      registerEntityConstructorForType(TestEntity, "test_entities"),
     ).toEqual(true);
     expect(
-      registerEntityConstructorForType(TestEntity, "test_entities")
+      registerEntityConstructorForType(TestEntity, "test_entities"),
     ).toEqual(false);
   });
 
   it("should throw an error if attempting to replace an existing type/constructor pair", () => {
     expect(
-      registerEntityConstructorForType(TestEntity, "test_entities")
+      registerEntityConstructorForType(TestEntity, "test_entities"),
     ).toEqual(true);
     expect(() =>
-      registerEntityConstructorForType(NotTestEntity, "test_entities")
+      registerEntityConstructorForType(NotTestEntity, "test_entities"),
     ).toThrowError(
-      "Attempt to reregister JSON:API type 'test_entities' to the entity constructor type: NotTestEntity"
+      "Attempt to reregister JSON:API type 'test_entities' to the entity constructor type: NotTestEntity",
     );
   });
 });

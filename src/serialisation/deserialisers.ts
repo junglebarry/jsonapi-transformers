@@ -52,7 +52,7 @@ export type DeserialisedLookup = { [typeAndId: string]: any };
 /* eslint-disable @typescript-eslint/no-explicit-any -- should be typed, in future */
 export function fromJsonApiTopLevel(
   topLevel: TopLevel,
-  resourceObjects: ResourceObject[] = []
+  resourceObjects: ResourceObject[] = [],
 ): any {
   /* eslint-enable @typescript-eslint/no-explicit-any */
   // extract primary data and included resources
@@ -71,12 +71,12 @@ export function fromJsonApiTopLevel(
   ).concat(included || []);
 
   const allResourceObjects = primaryResourceObjects.concat(
-    includedResourceObjects
+    includedResourceObjects,
   );
 
   const resourceObjectsByTypeAndId: IncludedLookup = keyBy(
     allResourceObjects,
-    byTypeAndId
+    byTypeAndId,
   );
 
   const deserialisedObjectsByTypeAndId: DeserialisedLookup = {};
@@ -87,14 +87,14 @@ export function fromJsonApiTopLevel(
       fromJsonApiResourceObject(
         datum,
         resourceObjectsByTypeAndId,
-        deserialisedObjectsByTypeAndId
-      )
+        deserialisedObjectsByTypeAndId,
+      ),
     );
   } else if (data) {
     deserialised = fromJsonApiResourceObject(
       data,
       resourceObjectsByTypeAndId,
-      deserialisedObjectsByTypeAndId
+      deserialisedObjectsByTypeAndId,
     );
   }
 
@@ -115,7 +115,7 @@ export function fromJsonApiTopLevel(
 export function fromJsonApiResourceObject(
   jsonapiResource: ResourceObject,
   resourceObjectsByTypeAndId: IncludedLookup,
-  deserialisedObjects: DeserialisedLookup = {}
+  deserialisedObjects: DeserialisedLookup = {},
 ): any {
   /* eslint-enable @typescript-eslint/no-explicit-any */
   // deconstruct primary data and remap into an instance of the chosen type
@@ -187,13 +187,13 @@ export function fromJsonApiResourceObject(
 
   const extractResourceObject = (
     linkage: ResourceLinkage,
-    whenNoIncludeRetainIdentifier: boolean
+    whenNoIncludeRetainIdentifier: boolean,
   ) =>
     extractResourceObjectOrObjectsFromRelationship(
       linkage,
       resourceObjectsByTypeAndId,
       deserialisedObjects,
-      whenNoIncludeRetainIdentifier
+      whenNoIncludeRetainIdentifier,
     );
 
   Object.keys(relationshipMetadata).forEach((relationshipName) => {
@@ -204,13 +204,13 @@ export function fromJsonApiResourceObject(
     if (data && Array.isArray(data)) {
       instance[relationshipName] = data
         .map((datum) =>
-          extractResourceObject(datum, allowUnresolvedIdentifiers)
+          extractResourceObject(datum, allowUnresolvedIdentifiers),
         )
         .filter((x) => x);
     } else if (data) {
       instance[relationshipName] = extractResourceObject(
         data,
-        allowUnresolvedIdentifiers
+        allowUnresolvedIdentifiers,
       );
     }
   });
@@ -233,7 +233,7 @@ function extractResourceObjectFromRelationship(
   relationIdentifier: ResourceIdentifier,
   resourceObjectsByTypeAndId: IncludedLookup,
   deserialisedObjects: DeserialisedLookup,
-  allowUnresolvedIdentifiers: boolean
+  allowUnresolvedIdentifiers: boolean,
 ): any {
   /* eslint-enable @typescript-eslint/no-explicit-any */
   const relationId = byTypeAndId(relationIdentifier);
@@ -261,7 +261,7 @@ function extractResourceObjectFromRelationship(
   return fromJsonApiResourceObject(
     includedForRelationId,
     resourceObjectsByTypeAndId,
-    deserialisedObjects
+    deserialisedObjects,
   );
 }
 
@@ -280,7 +280,7 @@ function extractResourceObjectOrObjectsFromRelationship(
   resourceLinkage: ResourceLinkage,
   resourceObjectsByTypeAndId: IncludedLookup,
   deserialisedObjects: DeserialisedLookup,
-  allowUnresolvedIdentifiers: boolean
+  allowUnresolvedIdentifiers: boolean,
 ): any {
   /* eslint-enable @typescript-eslint/no-explicit-any */
   const extractResourceObject = (linkage) =>
@@ -288,7 +288,7 @@ function extractResourceObjectOrObjectsFromRelationship(
       linkage,
       resourceObjectsByTypeAndId,
       deserialisedObjects,
-      allowUnresolvedIdentifiers
+      allowUnresolvedIdentifiers,
     );
 
   if (Array.isArray(resourceLinkage)) {

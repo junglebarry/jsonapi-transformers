@@ -15,14 +15,14 @@ describe("unresolved-identifiers", () => {
     it("should return true for a valid UnresolvedResourceIdentifier", () => {
       expect(
         isUnresolvedIdentifier(
-          new UnresolvedResourceIdentifier("foo", "things")
-        )
+          new UnresolvedResourceIdentifier("foo", "things"),
+        ),
       ).toEqual(true);
     });
 
     it("should return false for other subtypes of ResourceIdentifier", () => {
       expect(isUnresolvedIdentifier({ id: "foo", type: "things" })).toEqual(
-        false
+        false,
       );
       expect(isUnresolvedIdentifier(new FakeJsonapiEntity())).toEqual(false);
     });

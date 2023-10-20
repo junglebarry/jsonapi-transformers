@@ -70,7 +70,7 @@ export interface ResourceObject extends ResourceIdentifier {
  * @return {ResourceIdentifier} an identifier (not a subtype thereof)
  */
 export function resourceIdentifier(
-  target: ResourceIdentifier
+  target: ResourceIdentifier,
 ): ResourceIdentifier {
   const { id, meta = undefined, type } = target;
   return { id, ...(meta ? { meta } : {}), type };
@@ -83,7 +83,7 @@ export function resourceIdentifier(
  * @return {JsonapiIdentifier} an identifier (not a subtype thereof)
  */
 export function jsonapiIdentifier(
-  target: ResourceIdentifier
+  target: ResourceIdentifier,
 ): ResourceIdentifier {
   const { id, type } = target;
   return { id, type };

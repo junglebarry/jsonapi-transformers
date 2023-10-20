@@ -22,7 +22,7 @@ export class JsonapiEntity<E extends JsonapiEntity<E>>
 
   static create<E extends JsonapiEntity<E>>(
     this: JsonapiEntityConstructor<E>,
-    properties: Partial<E> = {}
+    properties: Partial<E> = {},
   ): E {
     return newEntity(this, properties);
   }
@@ -34,7 +34,7 @@ export interface JsonapiEntityConstructor<E extends JsonapiEntity<E>> {
 
 export function newEntity<E extends JsonapiEntity<E>>(
   entity: JsonapiEntityConstructor<E>,
-  properties: Partial<E> = {}
+  properties: Partial<E> = {},
 ): E {
   return Object.assign(new entity(properties), properties);
 }

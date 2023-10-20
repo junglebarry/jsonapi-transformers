@@ -9,7 +9,10 @@ import { ResourceIdentifier } from "./types";
  * documents without being able to fully resolve references to all entities.
  */
 export class UnresolvedResourceIdentifier implements ResourceIdentifier {
-  constructor(public id: string, public type: string) {}
+  constructor(
+    public id: string,
+    public type: string,
+  ) {}
 }
 
 /**
@@ -19,7 +22,7 @@ export class UnresolvedResourceIdentifier implements ResourceIdentifier {
  * @return {UnresolvedResourceIdentifier} an identifier (not a subtype thereof)
  */
 export function unresolvedIdentifier(
-  target: ResourceIdentifier
+  target: ResourceIdentifier,
 ): UnresolvedResourceIdentifier {
   const { id, type } = target;
   return new UnresolvedResourceIdentifier(id, type);
@@ -32,7 +35,7 @@ export function unresolvedIdentifier(
  * @return {boolean} whether the provided identifier is unresolved
  */
 export function isUnresolvedIdentifier(
-  identifier: ResourceIdentifier
+  identifier: ResourceIdentifier,
 ): boolean {
   return identifier instanceof UnresolvedResourceIdentifier;
 }

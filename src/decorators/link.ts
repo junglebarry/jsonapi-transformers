@@ -26,6 +26,6 @@ export function getLinkMetadata(target: any): LinkMetadata {
   return getEntityPrototypeChain(target).reduce(
     (soFar, prototype) =>
       Object.assign(soFar, LINKS_MAP.getMetadataByType(prototype)),
-    {}
+    {},
   );
 }

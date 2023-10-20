@@ -17,7 +17,7 @@ export class MetadataMap<T> {
       classType,
       Object.assign({}, this.getMetadataByType(classType), {
         [keyName]: metadata,
-      })
+      }),
     );
   }
 }

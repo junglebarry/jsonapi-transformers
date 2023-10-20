@@ -30,6 +30,6 @@ export function getRelationshipMetadata(target: any): RelationshipMetadata {
   return getEntityPrototypeChain(target).reduce(
     (soFar, prototype) =>
       Object.assign(soFar, RELATIONSHIPS_MAP.getMetadataByType(prototype)),
-    {}
+    {},
   );
 }
