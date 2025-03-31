@@ -1,4 +1,26 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"]
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":enableVulnerabilityAlerts",
+    "npm:unpublishSafe",
+    ":maintainLockFilesWeekly"
+  ],
+  "autoApprove": true,
+  "automergeType": "pr",
+  "automerge": true,
+  "configMigration": true,
+  "labels": ["dependencies"],
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "major": {
+    "dependencyDashboardApproval": true
+  },
+  "prConcurrentLimit": 1,
+  "prHourlyLimit": 0,
+  "rangeStrategy": "auto",
+  "rebaseWhen": "behind-base-branch",
+  "timezone": "Europe/London"
 }
