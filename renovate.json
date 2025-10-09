@@ -4,14 +4,16 @@
     "config:recommended",
     ":dependencyDashboard",
     ":enableVulnerabilityAlerts",
-    "npm:unpublishSafe",
+    "security:minimumReleaseAgeNpm",
     ":maintainLockFilesWeekly"
   ],
   "autoApprove": true,
   "automergeType": "pr",
   "automerge": true,
   "configMigration": true,
-  "labels": ["dependencies"],
+  "labels": [
+    "dependencies"
+  ],
   "lockFileMaintenance": {
     "enabled": true
   },
