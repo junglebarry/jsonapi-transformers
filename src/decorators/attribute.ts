@@ -21,7 +21,7 @@ export function attribute(options?: AttributeOptions): PropertyDecorator {
 
 export type AttributeMetadata = { [name: string]: AttributeOptions };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getAttributeMetadata(target: any): AttributeMetadata {
   return getEntityPrototypeChain(target).reduce(
     (soFar, prototype) =>

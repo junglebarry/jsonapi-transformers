@@ -6,12 +6,12 @@ export class MetadataMap<T> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private metadataByType = new Map<any, MetadataByPropertyName<T>>();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getMetadataByType(classType: any): MetadataByPropertyName<T> {
     return this.metadataByType.get(classType) || {};
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setMetadataByType(classType: any, keyName: string, metadata: T): void {
     this.metadataByType.set(
       classType,

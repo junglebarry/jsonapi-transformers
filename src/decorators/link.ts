@@ -21,7 +21,7 @@ export function link(options?: LinkOptions): PropertyDecorator {
 
 export type LinkMetadata = { [name: string]: LinkOptions };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getLinkMetadata(target: any): LinkMetadata {
   return getEntityPrototypeChain(target).reduce(
     (soFar, prototype) =>
