@@ -25,7 +25,7 @@ export function relationship(options?: RelationshipOptions): PropertyDecorator {
 
 export type RelationshipMetadata = { [name: string]: RelationshipOptions };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getRelationshipMetadata(target: any): RelationshipMetadata {
   return getEntityPrototypeChain(target).reduce(
     (soFar, prototype) =>

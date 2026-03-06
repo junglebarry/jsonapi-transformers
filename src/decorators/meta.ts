@@ -21,7 +21,7 @@ export function meta(options?: MetaOptions): PropertyDecorator {
 
 export type MetaMetadata = { [name: string]: MetaOptions };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getMetaMetadata(target: any): MetaMetadata {
   return getEntityPrototypeChain(target).reduce(
     (soFar, prototype) =>
