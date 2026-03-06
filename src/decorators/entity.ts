@@ -32,10 +32,13 @@ export function getClassForJsonapiType(
 ): ResourceIdentifierConstructor {
   return ENTITIES_MAP.get(type);
 }
-// eslint-disable-next-line @typescript-eslint/ban-types
-export function getConstructorForJsonapiType(type: string): Function {
+export function getConstructorForJsonapiType(
+  type: string,
+): ResourceIdentifierConstructor | undefined {
   const clazz = getClassForJsonapiType(type);
-  return clazz && clazz.prototype && clazz.prototype.constructor;
+  return clazz?.prototype?.constructor as
+    | ResourceIdentifierConstructor
+    | undefined;
 }
 
 export interface EntityOptions {
