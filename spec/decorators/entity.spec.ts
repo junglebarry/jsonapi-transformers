@@ -92,7 +92,7 @@ describe("registerEntityConstructorForType", () => {
     ).toEqual(true);
     expect(() =>
       registerEntityConstructorForType(NotTestEntity, "test_entities"),
-    ).toThrowError(
+    ).toThrow(
       "Attempt to reregister JSON:API type 'test_entities' to the entity constructor type: NotTestEntity",
     );
   });
