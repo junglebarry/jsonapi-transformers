@@ -2,7 +2,6 @@ version: 2.1
 
 orbs:
   node: circleci/node@5.2.0
-  sonarcloud: sonarsource/sonarcloud@2.0.0
 
 executors:
   default_executor:
@@ -41,13 +40,14 @@ jobs:
           command: npm run test
       - store_artifacts:
           path: coverage
-      - sonarcloud/scan
       - run:
           name: Rebuild the release directory (lib/)
           command: npm run build
       - run:
           name: Semantic Release
-          command: npx semantic-release
+          command: |
+            export NPM_ID_TOKEN=$(circleci run oidc get --claims '{"aud": "npm:registry.npmjs.org"}')
+            npx semantic-release
 
 workflows:
   test:
@@ -55,4 +55,3 @@ workflows:
       - build_and_test:
           context:
             - dockerhub/junglebarry
-            - sonarcloud/junglebarry
