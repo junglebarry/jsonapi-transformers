@@ -11,9 +11,7 @@
   "automergeType": "pr",
   "automerge": true,
   "configMigration": true,
-  "labels": [
-    "dependencies"
-  ],
+  "labels": ["dependencies"],
   "lockFileMaintenance": {
     "enabled": true
   },
