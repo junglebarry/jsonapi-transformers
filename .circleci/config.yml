@@ -45,7 +45,16 @@ jobs:
           command: npm run build
       - run:
           name: Semantic Release
-          command: npx semantic-release
+          command: |
+            NPM_TOKEN=$(curl --silent --show-error --fail \
+              -X POST https://registry.npmjs.org/-/npm/v1/user/tokens/ \
+              -H "Content-Type: application/json" \
+              -H "Authorization: Bearer $CIRCLE_OIDC_TOKEN" | jq -r '.token')
+            if [ -z "$NPM_TOKEN" ] || [ "$NPM_TOKEN" = "null" ]; then
+              echo "Failed to obtain npm token via OIDC" >&2
+              exit 1
+            fi
+            NPM_TOKEN=$NPM_TOKEN npx semantic-release
 
 workflows:
   test:
