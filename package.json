@@ -43,8 +43,8 @@
   },
   "homepage": "https://github.com/junglebarry/jsonapi-transformers#readme",
   "devDependencies": {
-    "@commitlint/cli": "^20.0.0",
-    "@commitlint/config-conventional": "^20.0.0",
+    "@commitlint/cli": "^21.0.0",
+    "@commitlint/config-conventional": "^21.0.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.0",
     "@eslint/js": "^10.0.0",
