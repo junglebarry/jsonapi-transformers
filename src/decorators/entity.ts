@@ -37,8 +37,7 @@ export function getConstructorForJsonapiType(
 ): ResourceIdentifierConstructor | undefined {
   const clazz = getClassForJsonapiType(type);
   return clazz?.prototype?.constructor as
-    | ResourceIdentifierConstructor
-    | undefined;
+    ResourceIdentifierConstructor | undefined;
 }
 
 export interface EntityOptions {

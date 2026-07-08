@@ -49,6 +49,5 @@ export type OneUnresolvedIdentifierOr<T> = UnresolvedResourceIdentifier | T;
  * A to-many relationship that permits replacement with unresolved identifiers.
  */
 export type ManyUnresolvedIdentifiersOr<T> = (
-  | UnresolvedResourceIdentifier
-  | T
+  UnresolvedResourceIdentifier | T
 )[];
